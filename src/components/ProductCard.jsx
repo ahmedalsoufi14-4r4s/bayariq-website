@@ -11,7 +11,8 @@ function ProductCard({ product, onOpen }) {
   const quantity = getQuantity(product.id)
 
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-emerald-700 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-emerald-400">
+    // isolate keeps the z-10 below inside this card, so the button can never cover the sticky header.
+    <article className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-emerald-700 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-emerald-400">
       <ProductImage product={product} />
 
       <div className="absolute start-2 top-2 flex flex-wrap gap-1 text-xs font-medium">

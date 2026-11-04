@@ -13,7 +13,9 @@ function Header() {
   const otherLanguage = language === 'ar' ? 'en' : 'ar'
 
   return (
-    <header className="sticky top-0 z-10 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    // z-30 keeps the sticky header above everything on the page.
+    // Dialogs (the cart and product details) still open above it, because showModal() puts them in a top layer.
+    <header className="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-2 focus:z-20 focus:rounded focus:bg-emerald-700 focus:px-4 focus:py-2 focus:text-white"
