@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test'
-import { openSite, products, store, texts } from './helpers.js'
+import {
+  openSite,
+  products,
+  recordLayoutShifts,
+  store,
+  texts,
+  totalLayoutShift,
+  waitForFonts,
+} from './helpers.js'
 
 const LANGUAGES = ['ar', 'en']
 const WIDTHS = [360, 1280]
@@ -126,4 +134,26 @@ for (const width of WIDTHS) {
     await expect(cartDrawer).toBeVisible()
     expect(await coversHeader(cartDrawer)).toBe(true)
   })
+}
+
+// 768px too: there the logo, menu and buttons share one row, which a wider font could break onto two.
+for (const language of LANGUAGES) {
+  for (const width of [360, 768, 1280]) {
+    test(`${language} at ${width}px: nothing jumps when the web font arrives late`, async ({
+      page,
+    }) => {
+      // Holds the font files back for 1.5 s, like a slow phone connection, so the page
+      // first shows in a system font and then swaps to IBM Plex Sans Arabic.
+      await page.route('**/*.woff2', async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await route.continue()
+      })
+      await page.setViewportSize({ width, height: 800 })
+      await openSite(page, language)
+      await recordLayoutShifts(page, { fromPageStart: true })
+      await waitForFonts(page)
+
+      expect(await totalLayoutShift(page)).toBeLessThan(0.01)
+    })
+  }
 }

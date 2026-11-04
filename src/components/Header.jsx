@@ -23,22 +23,32 @@ function Header() {
         {t.skipToContent}
       </a>
 
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:gap-x-6">
+      {/* The header keeps the same height while the web font loads. Until it arrives the text
+          shows in a system font, which can be wider, so the store name could take more lines
+          (or push the row onto two rows) and then jump back. Here its height never depends on
+          the font: on phones the name always takes a two-line box, and from md up the row never
+          wraps and the name stays on one line. Below 360px (narrower than the site is designed
+          for) the name keeps its natural height instead, so it is never cut off. */}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:flex-nowrap md:gap-x-6">
         {/* NEEDS-AHMED: replace the bag mark and the text logo with the store's real logo image.
-            On phones, basis-0 grow gives the logo only the space left next to the buttons
-            (it wraps onto two lines if it must), so the cart button never drops to another row. */}
+            On phones, basis-0 grow gives the logo only the space left next to the buttons,
+            so the cart button never drops to another row. */}
         <a
           href="#home"
-          className="flex min-w-0 grow basis-0 items-center gap-2 font-bold md:grow-0 md:basis-auto md:text-lg"
+          className="flex min-w-0 grow basis-0 items-center gap-2 font-bold min-[360px]:h-12 md:h-auto md:grow-0 md:basis-auto md:text-lg"
         >
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent">
             <CartIcon className="size-5" />
           </span>
-          {localize(store, 'name')}
+          {/* line-clamp-2 shows at most two lines and ends the text with "…" if it needs more.
+              min-[360px]: works like md:, but from a width we choose (360px and wider). */}
+          <span className="min-[360px]:line-clamp-2 md:line-clamp-1">
+            {localize(store, 'name')}
+          </span>
         </a>
 
         {/* On phones the menu moves to its own row under the logo. */}
-        <nav className="order-last w-full md:order-none md:w-auto">
+        <nav className="order-last w-full md:order-none md:w-auto md:shrink-0">
           <ul className="flex flex-wrap gap-x-5 text-sm">
             {NAV_IDS.map((id) => (
               <li key={id}>
