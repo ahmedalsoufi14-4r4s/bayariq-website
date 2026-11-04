@@ -1,4 +1,4 @@
-// Outline icons from Heroicons (MIT license, heroicons.com).
+// Outline icons from Heroicons (MIT license, heroicons.com), and category icons drawn in the same style.
 // They use currentColor, so they take the text color of their parent.
 // aria-hidden hides them from screen readers because the text next to them says the same thing.
 
@@ -115,4 +115,82 @@ export function ClockIcon({ className }) {
       <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
     </Icon>
   )
+}
+
+// Category icons, drawn for this site in the same outline style as the Heroicons above.
+// The "icon" field in categories.json names one of them.
+
+export function CarrotIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M11.2 8.8a2.8 2.8 0 0 1 4 4l-11.1 7.5c-.5.3-1-.2-.7-.7Z" />
+      <path d="M7.4 14.7l1.3 1.3M9.3 11.8l1.6 1.6" />
+      <path d="M15.2 8.8 18.5 5.5M15.2 8.8c.3-1.8 0-3.2-1-4.3M15.2 8.8c1.8-.3 3.2 0 4.3 1" />
+    </Icon>
+  )
+}
+
+export function MilkIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M9.5 2.75h5v2.5h-5z" />
+      <path d="M9.5 5.25 7.2 8.6a2 2 0 0 0-.45 1.27v9.63a1.75 1.75 0 0 0 1.75 1.75h7a1.75 1.75 0 0 0 1.75-1.75V9.87a2 2 0 0 0-.45-1.27L14.5 5.25" />
+      <path d="M12 13.5c-1.2 1.4-1.75 2.3-1.75 3a1.75 1.75 0 0 0 3.5 0c0-.7-.55-1.6-1.75-3Z" />
+    </Icon>
+  )
+}
+
+export function BreadIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M6.5 20.25h11a1 1 0 0 0 1-1v-8.1a3.75 3.75 0 0 0-1.5-6.9H7a3.75 3.75 0 0 0-1.5 6.9v8.1a1 1 0 0 0 1 1Z" />
+      <path d="m9.5 12.5 1.5-1.5M13 15.5l1.5-1.5" />
+    </Icon>
+  )
+}
+
+export function JarIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M7.5 3.75h9a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h-9a.75.75 0 0 1-.75-.75V4.5a.75.75 0 0 1 .75-.75Z" />
+      <path d="M7.5 6.75h9A2.25 2.25 0 0 1 18.75 9v9.75A2.25 2.25 0 0 1 16.5 21h-9a2.25 2.25 0 0 1-2.25-2.25V9A2.25 2.25 0 0 1 7.5 6.75Z" />
+      <path d="M8.25 11.25h7.5v4.5h-7.5z" />
+    </Icon>
+  )
+}
+
+export function CupIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M5.75 8.25h12.5l-1.4 11.35a1.75 1.75 0 0 1-1.74 1.53H8.89a1.75 1.75 0 0 1-1.74-1.53L5.75 8.25Z" />
+      <path d="M4.75 8.25h14.5M6.3 12.75h11.4" />
+      <path d="M12.75 8.25 14 3.75h2.5" />
+    </Icon>
+  )
+}
+
+export function SprayIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M8.25 11.25h6l1.5 2.25v6.75a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V13.5l1.5-2.25Z" />
+      <path d="M8.25 6h6.75v3H8.25zM15 7.5h1.5M9.75 9v2.25M13.5 9v2.25" />
+      <path d="M18.75 6h.008M18.75 9h.008M20.25 7.5h.008" />
+    </Icon>
+  )
+}
+
+const CATEGORY_ICONS = {
+  carrot: CarrotIcon,
+  milk: MilkIcon,
+  bread: BreadIcon,
+  jar: JarIcon,
+  cup: CupIcon,
+  spray: SprayIcon,
+}
+
+// The icon a category names in categories.json. An unknown name (for example a typo)
+// shows the shopping bag instead of nothing.
+export function CategoryIcon({ name, className }) {
+  const MatchingIcon = CATEGORY_ICONS[name] ?? CartIcon
+  return <MatchingIcon className={className} />
 }

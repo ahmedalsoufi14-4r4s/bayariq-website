@@ -36,7 +36,7 @@ function ThemeToggle() {
       onClick={toggleTheme}
       aria-pressed={isDark}
       aria-label={t.darkMode}
-      className="rounded-full p-2 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950"
+      className="rounded-full p-2 hover:bg-on-main/10"
     >
       {isDark ? (
         <SunIcon className="size-6" />

@@ -7,13 +7,14 @@ import { formatPrice } from '../lib/price.js'
 import EmptyState from './EmptyState.jsx'
 import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from './Icons.jsx'
 import OrderForm from './OrderForm.jsx'
+import { BUTTON_MAIN } from './styles.js'
 
 const STEP_BUTTON =
-  'flex size-9 items-center justify-center rounded-full border border-gray-300 hover:border-emerald-700 dark:border-gray-700 dark:hover:border-emerald-400'
+  'flex size-9 items-center justify-center rounded-full border border-line transition hover:border-main-ink hover:bg-main-soft motion-safe:active:scale-90'
 
 // The cart opens as a full-height panel on the end side (left in Arabic, right in English).
 // Like the product details, it is a <dialog> opened with showModal().
-// The "drawer" class makes it slide in (see index.css).
+// The "drawer" class makes it slide in (see index.css). Its title sits on a navy band.
 function CartDrawer() {
   const { t, localize } = useLanguage()
   const {
@@ -52,38 +53,38 @@ function CartDrawer() {
       onClose={closeCart}
       onClick={handleClick}
       aria-labelledby="cart-title"
-      className="drawer my-0 ms-auto me-0 h-dvh max-h-none w-full max-w-md bg-white p-0 text-gray-900 backdrop:bg-black/50 dark:bg-gray-900 dark:text-gray-100 dark:backdrop:bg-black/70"
+      className="drawer my-0 ms-auto me-0 h-dvh max-h-none w-full max-w-md bg-surface p-0 text-ink backdrop:bg-black/50 dark:backdrop:bg-black/70"
     >
-      <div className="p-5">
-        <div className="flex items-center justify-between gap-4">
-          <h2 id="cart-title" className="text-xl font-bold">
-            {t.cart.title}
-          </h2>
-          <button
-            type="button"
-            onClick={close}
-            aria-label={t.cart.close}
-            className="-m-2 rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            <CloseIcon className="size-6" />
-          </button>
-        </div>
+      <div className="surface-main flex items-center justify-between gap-4 px-5 py-4">
+        <h2 id="cart-title" className="text-xl font-bold">
+          {t.cart.title}
+        </h2>
+        <button
+          type="button"
+          onClick={close}
+          aria-label={t.cart.close}
+          className="-m-2 rounded-full p-2 hover:bg-on-main/10"
+        >
+          <CloseIcon className="size-6" />
+        </button>
+      </div>
 
+      <div className="p-5">
         {lines.length === 0 ? (
-          <div className="mt-4">
+          <div>
             {/* close() runs first, then the link scrolls the page to the products. */}
             <EmptyState Icon={CartIcon} text={t.cart.empty}>
               <a
                 href="#products"
                 onClick={close}
-                className="rounded-full bg-emerald-700 px-5 py-2 text-white hover:bg-emerald-800"
+                className={`${BUTTON_MAIN} px-5 py-2`}
               >
                 {t.cart.browse}
               </a>
             </EmptyState>
           </div>
         ) : (
-          <ul className="mt-4 divide-y divide-gray-200 dark:divide-gray-800">
+          <ul className="-mt-3 divide-y divide-line">
             {lines.map(({ product, quantity }) => {
               const name = localize(product, 'name')
               return (
@@ -93,7 +94,7 @@ function CartDrawer() {
                 >
                   <div>
                     <p>{name}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted">
                       {localize(product, 'unit')} ·{' '}
                       {product.price === null
                         ? t.products.priceOnRequest
@@ -103,7 +104,7 @@ function CartDrawer() {
                       type="button"
                       onClick={() => remove(product)}
                       aria-label={`${t.cart.remove} ${name}`}
-                      className="mt-1 text-sm text-gray-600 underline hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                      className="mt-1 text-sm text-muted underline hover:text-ink"
                     >
                       {t.cart.remove}
                     </button>
@@ -137,20 +138,20 @@ function CartDrawer() {
         {hasPricedItems && (
           <p className="mt-4 flex justify-between font-bold">
             <span>{t.cart.total}</span>
-            <span>{formatPrice(getEstimatedTotal(lines), t.currency)}</span>
+            <span className="text-main-ink">
+              {formatPrice(getEstimatedTotal(lines), t.currency)}
+            </span>
           </p>
         )}
         {hasUnpricedItems && (
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {t.cart.unpricedNote}
-          </p>
+          <p className="mt-2 text-sm text-muted">{t.cart.unpricedNote}</p>
         )}
 
         {(lines.length > 0 || extraItems !== '') && (
           <button
             type="button"
             onClick={clear}
-            className="mt-3 text-sm text-gray-600 underline hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+            className="mt-3 text-sm text-muted underline hover:text-ink"
           >
             {t.cart.clear}
           </button>

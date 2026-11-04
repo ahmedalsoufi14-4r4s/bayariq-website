@@ -6,6 +6,7 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatPrice } from '../lib/price.js'
 import { CloseIcon, PlusIcon } from './Icons.jsx'
 import ProductImage from './ProductImage.jsx'
+import { BUTTON_ACCENT } from './styles.js'
 
 // Product details in the browser's built-in <dialog>. Opened with showModal(), it keeps
 // keyboard focus inside, dims the page behind it and closes with the Escape key.
@@ -54,7 +55,7 @@ function ProductDialog({ product, onClose }) {
       onClose={onClose}
       onClick={handleClick}
       aria-labelledby="product-dialog-title"
-      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-0 text-gray-900 backdrop:bg-black/50 dark:bg-gray-900 dark:text-gray-100 dark:backdrop:bg-black/70"
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/50 dark:backdrop:bg-black/70"
     >
       {product && (
         <div className="p-5">
@@ -66,7 +67,7 @@ function ProductDialog({ product, onClose }) {
               type="button"
               onClick={close}
               aria-label={t.products.close}
-              className="-m-2 rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="-m-2 rounded-full p-2 hover:bg-main-soft"
             >
               <CloseIcon className="size-6" />
             </button>
@@ -81,9 +82,9 @@ function ProductDialog({ product, onClose }) {
             {details.map(([label, value]) => (
               <div
                 key={label}
-                className="flex justify-between gap-4 border-b border-gray-200 pb-2 dark:border-gray-800"
+                className="flex justify-between gap-4 border-b border-line pb-2"
               >
-                <dt className="text-gray-600 dark:text-gray-400">{label}</dt>
+                <dt className="text-muted">{label}</dt>
                 <dd>{value}</dd>
               </div>
             ))}
@@ -93,13 +94,13 @@ function ProductDialog({ product, onClose }) {
             type="button"
             onClick={() => add(product)}
             disabled={!product.inStock}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
+            className={`${BUTTON_ACCENT} mt-5 w-full px-5 py-3`}
           >
             <PlusIcon className="size-5" />
             {t.cart.add}
           </button>
           {getQuantity(product.id) > 0 && (
-            <p className="mt-2 text-center text-sm text-emerald-700 dark:text-emerald-400">
+            <p className="mt-2 text-center text-sm font-bold text-main-ink">
               {t.cart.inCart} {getQuantity(product.id)}
             </p>
           )}

@@ -3,36 +3,36 @@
     "id": "fruits-vegetables",
     "name_ar": "خضار وفواكه",
     "name_en": "Fruits & vegetables",
-    "icon": "🥕"
+    "icon": "carrot"
   },
   {
     "id": "dairy",
     "name_ar": "ألبان وأجبان",
     "name_en": "Dairy & cheese",
-    "icon": "🥛"
+    "icon": "milk"
   },
   {
     "id": "bakery",
     "name_ar": "مخبوزات",
     "name_en": "Bakery",
-    "icon": "🍞"
+    "icon": "bread"
   },
   {
     "id": "pantry",
     "name_ar": "مواد غذائية",
     "name_en": "Pantry",
-    "icon": "🍚"
+    "icon": "jar"
   },
   {
     "id": "drinks",
     "name_ar": "مشروبات",
     "name_en": "Drinks",
-    "icon": "🧃"
+    "icon": "cup"
   },
   {
     "id": "cleaning",
     "name_ar": "منظفات",
     "name_en": "Cleaning",
-    "icon": "🧼"
+    "icon": "spray"
   }
 ]

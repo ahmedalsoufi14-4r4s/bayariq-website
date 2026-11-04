@@ -17,7 +17,8 @@ The website of a neighborhood supermarket with four branches in Jeddah: Al Hamda
 - Offers with a "valid until" date. Expired offers hide themselves.
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
 - A card for each branch with its own name, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
-- Dark mode, subtle animations (off for people who ask their device for less motion), keyboard friendly, AA contrast.
+- Off-white, deep navy and saffron in a 60-30-10 split, defined once as color tokens in `src/index.css`, with a dark mode that keeps the same split.
+- Cards fade in as they scroll into view, buttons react to hover and press, and dialogs slide and fade (all off for people who ask their device for less motion). Keyboard friendly, AA contrast checked on every piece of text.
 - Fast on phones: on the live site, Lighthouse mobile gives about 95 for Performance (89 to 98 across runs) and 100 for Accessibility, Best Practices and SEO.
 
 ## Tech
@@ -53,7 +54,7 @@ All content lives in `src/data/` and `src/i18n/`. Nothing in the components need
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/data/store.json`         | Store name, website, social links, and the branches: name, district, phone, WhatsApp number, opening hours, address, map links, delivery. |
 | `src/data/products.json`      | Products: names in both languages, category, price (or `null`), unit, photo.                                                              |
-| `src/data/categories.json`    | Categories with an emoji icon.                                                                                                            |
+| `src/data/categories.json`    | Categories, each with the name of its icon in `src/components/Icons.jsx`.                                                                 |
 | `src/data/offers.json`        | Offers with a last day (`validUntil`, `YYYY-MM-DD`).                                                                                      |
 | `src/i18n/ar.json`, `en.json` | Every text on the page, in Arabic and English.                                                                                            |
 
@@ -85,4 +86,4 @@ One-time setting in the repository: **Settings → Pages → Build and deploymen
 ## Credits
 
 - Font: [IBM Plex Sans Arabic](https://github.com/IBM/plex) by IBM, SIL Open Font License ([public/fonts/OFL.txt](public/fonts/OFL.txt)).
-- Icons: [Heroicons](https://heroicons.com) by Tailwind Labs, MIT license.
+- Icons: [Heroicons](https://heroicons.com) by Tailwind Labs, MIT license. The category icons are drawn for this site in the same style.

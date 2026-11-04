@@ -7,9 +7,10 @@ import { buildOrderMessage, buildWhatsAppUrl } from '../lib/orderMessage.js'
 import { isPlaceholder } from '../lib/placeholder.js'
 import { fillIn } from '../lib/text.js'
 import { ChatIcon } from './Icons.jsx'
+import { BUTTON_ACCENT } from './styles.js'
 
 const INPUT =
-  'mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 focus:border-emerald-700 dark:border-gray-700 dark:bg-gray-950 dark:focus:border-emerald-400'
+  'mt-1 w-full rounded-xl border border-line bg-base px-3 py-2 transition focus:border-main-ink'
 
 function OrderForm() {
   const { t, language, localize } = useLanguage()
@@ -68,7 +69,7 @@ function OrderForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-6 space-y-4 border-t border-gray-200 pt-6 dark:border-gray-800"
+      className="mt-6 space-y-4 border-t border-line pt-6"
     >
       <div>
         <label htmlFor="extra-items">{t.order.extraItems}</label>
@@ -96,7 +97,7 @@ function OrderForm() {
                 checked={customer.branch === item.id}
                 onChange={handleChange}
                 required
-                className="size-4 accent-emerald-700 dark:accent-emerald-400"
+                className="size-4 accent-main-ink"
               />
               {branchLabel(item)}
             </label>
@@ -141,14 +142,14 @@ function OrderForm() {
                   value={option}
                   checked={method === option}
                   onChange={handleChange}
-                  className="size-4 accent-emerald-700 dark:accent-emerald-400"
+                  className="size-4 accent-main-ink"
                 />
                 {t.order.message[option]}
               </label>
             ))}
           </div>
           {method === 'delivery' && !isPlaceholder(branch.delivery_ar) && (
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted">
               {localize(branch, 'delivery')}
             </p>
           )}
@@ -187,16 +188,13 @@ function OrderForm() {
         type="submit"
         disabled={sendHintKey !== null}
         aria-describedby={sendHintKey ? 'send-hint' : undefined}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
+        className={`${BUTTON_ACCENT} w-full px-5 py-3`}
       >
         <ChatIcon className="size-5" />
         {t.order.send}
       </button>
       {sendHintKey && (
-        <p
-          id="send-hint"
-          className="text-center text-sm text-gray-600 dark:text-gray-400"
-        >
+        <p id="send-hint" className="text-center text-sm text-muted">
           {t.order[sendHintKey]}
         </p>
       )}

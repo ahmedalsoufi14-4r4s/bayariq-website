@@ -17,7 +17,14 @@ const favicon = readFileSync(
 )
 const FONT_LINK =
   '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap">'
-const GREEN = '#007a55'
+// The colors come from the palette in src/index.css (the first, light-mode value of each),
+// so the images follow when the palette changes.
+const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
+function themeColor(name) {
+  return css.match(new RegExp(`--color-${name}: (#[0-9a-f]{6});`))[1]
+}
+const NAVY = themeColor('main')
+const SAFFRON = themeColor('accent')
 
 // Playwright wants a plain file path, so the file URL is turned into one.
 function outputPath(relativePath) {
@@ -29,10 +36,11 @@ async function makeShareImage(browser) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 } })
   await page.setContent(
     `${FONT_LINK}
-    <body style="margin:0; font-family:'IBM Plex Sans Arabic'; background:${GREEN}; color:white">
+    <body style="margin:0; font-family:'IBM Plex Sans Arabic'; background:${NAVY}; color:white">
       <main style="height:630px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; text-align:center">
         <div style="width:120px; height:120px">${favicon}</div>
         <h1 dir="rtl" style="margin:0; font-size:76px; font-weight:700">${store.name_ar}</h1>
+        <div style="width:96px; height:8px; border-radius:4px; background:${SAFFRON}"></div>
         <p style="margin:0; font-size:40px">${store.name_en}</p>
         <p dir="rtl" style="margin:0; font-size:30px; opacity:0.85">
           ${store.branches.map((branch) => branch.district_ar).join(' · ')}
@@ -46,11 +54,11 @@ async function makeShareImage(browser) {
   await page.close()
 }
 
-// iPhones round the corners themselves, so the icon fills the whole square with green.
+// iPhones round the corners themselves, so the icon fills the whole square with navy.
 async function makeAppleTouchIcon(browser) {
   const page = await browser.newPage({ viewport: { width: 180, height: 180 } })
   await page.setContent(
-    `<body style="margin:0; background:${GREEN}">
+    `<body style="margin:0; background:${NAVY}">
       <div style="width:180px; height:180px">${favicon}</div>
     </body>`,
   )

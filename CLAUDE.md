@@ -27,7 +27,7 @@
 
 ## Data files
 - `store.json`: store names (ar/en), website, social links, and `branches`: one entry per branch with id, name (ar/en), district (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours (`hours` rows plus the short `openingHours` form for search engines), address, Google Maps link and embed link, and delivery info (`delivers`: true or false, plus details). Every branch detail Ahmed has not given yet is `NEEDS-AHMED`.
-- `categories.json`: id, name_ar, name_en, icon.
+- `categories.json`: id, name_ar, name_en, icon (the name of a category icon in `src/components/Icons.jsx`, like `carrot`).
 - `products.json`: id, name_ar, name_en, category, price (number or null), unit_ar, unit_en, image, featured, inStock.
 - `offers.json`: id, title_ar, title_en, details_ar, details_en, image, validUntil (ISO date). Hide expired offers automatically.
 
@@ -42,6 +42,15 @@
 - Accessibility: semantic HTML, visible focus, AA contrast, keyboard friendly, aria-live for cart changes.
 - Lighthouse 90+ on mobile for Performance, Accessibility, Best Practices and SEO.
 - SEO: Arabic title and description, Open Graph image, favicon, JSON-LD (a schema.org Organization with one GroceryStore per branch).
+
+## Design style (60-30-10)
+- Colors: 60% a main neutral (page backgrounds), 30% a second main color (header, footer, section bands, cards), 10% one strong contrasting accent, used only for the most important things: Add to cart, Send order, badges, active states and key highlights. Only these three, plus grays and status colors.
+- Define them once as Tailwind @theme tokens (base, main, accent, with dark-mode versions) and use only the tokens in components, so the palette can be swapped in one place when the logo arrives.
+- Replace the current green with a modern palette that suits a Saudi supermarket, for example off-white + deep navy + saffron yellow. Explain your choice in two lines with hex values. Dark mode keeps the same split. All text must pass AA contrast; if the accent fails as text, use it only as a background.
+- Motion: sections and cards fade and rise in on scroll (IntersectionObserver), with a small stagger in the product grid. Buttons and cards react to hover and press, the cart badge animates when items are added, and dialogs and the drawer transition smoothly. 150 to 400 ms, eased, never blocking, and all of it off with prefers-reduced-motion.
+- Graphics: a hero with depth (soft gradient shapes or a subtle pattern in the main and accent colors), one consistent icon style for categories and highlights instead of mixed emoji, and shapes or dividers that add depth between sections. Use inline SVG and CSS.
+- Prefer CSS only. If a motion library is really needed, only `motion` (Motion for React) is allowed.
+- Keep Lighthouse 90+ on mobile, with no layout shift from animations.
 
 ## How to work (keep token use low)
 - Do only the step Ahmed asks for. Do not start the next step.

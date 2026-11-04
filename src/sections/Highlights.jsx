@@ -1,4 +1,7 @@
 import { ChatIcon, MapPinIcon, TagIcon } from '../components/Icons.jsx'
+import { reveal } from '../components/reveal.js'
+import SectionHeading from '../components/SectionHeading.jsx'
+import { CARD } from '../components/styles.js'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { fillIn } from '../lib/text.js'
@@ -24,17 +27,17 @@ function Highlights() {
       aria-labelledby="highlights-title"
       className="mx-auto max-w-6xl px-4 py-16"
     >
-      <h2 id="highlights-title" className="text-2xl font-bold md:text-3xl">
+      <SectionHeading id="highlights-title">
         {t.highlights.title}
-      </h2>
+      </SectionHeading>
       <ul className="mt-8 grid gap-4 sm:grid-cols-3">
         {HIGHLIGHTS.map(({ id, Icon }) => (
-          <li key={id} className="rounded-2xl bg-gray-50 p-6 dark:bg-gray-900">
-            <span className="flex size-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+          <li key={id} ref={reveal} className={`reveal ${CARD} p-6`}>
+            <span className="flex size-12 items-center justify-center rounded-xl bg-main-soft text-main-ink">
               <Icon className="size-6" />
             </span>
             <h3 className="mt-4 text-lg font-bold">{t.highlights[id].title}</h3>
-            <p className="mt-1 text-gray-600 dark:text-gray-400">
+            <p className="mt-1 text-muted">
               {fillIn(t.highlights[id].text, { districts })}
             </p>
           </li>

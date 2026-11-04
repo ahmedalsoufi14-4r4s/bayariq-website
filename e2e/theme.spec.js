@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test'
 import { openSite, texts } from './helpers.js'
 
 const t = texts.ar
-const WHITE = 'rgb(255, 255, 255)'
 
 function themeButton(page) {
   return page.getByRole('button', { name: t.darkMode })
@@ -31,12 +30,14 @@ test('the button switches the theme, and the saved choice beats the device setti
   const body = page.locator('body')
   await page.emulateMedia({ colorScheme: 'light' })
   await page.goto('./')
-  await expect(body).toHaveCSS('background-color', WHITE)
+  const lightBackground = await body.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  )
 
   await themeButton(page).click()
   await expect(html).toContainClass('dark')
   await expect(themeButton(page)).toHaveAttribute('aria-pressed', 'true')
-  await expect(body).not.toHaveCSS('background-color', WHITE)
+  await expect(body).not.toHaveCSS('background-color', lightBackground)
   await page.reload()
   await expect(html).toContainClass('dark')
 

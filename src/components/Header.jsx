@@ -15,22 +15,25 @@ function Header() {
   return (
     // z-30 keeps the sticky header above everything on the page.
     // Dialogs (the cart and product details) still open above it, because showModal() puts them in a top layer.
-    <header className="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    <header className="surface-main sticky top-0 z-30 border-b border-on-main/10 shadow-md shadow-black/10">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-2 focus:z-20 focus:rounded focus:bg-emerald-700 focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-2 focus:z-20 focus:rounded focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent"
       >
         {t.skipToContent}
       </a>
 
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:gap-x-6">
-        {/* NEEDS-AHMED: replace the text logo with the store's real logo image.
+        {/* NEEDS-AHMED: replace the bag mark and the text logo with the store's real logo image.
             On phones, basis-0 grow gives the logo only the space left next to the buttons
             (it wraps onto two lines if it must), so the cart button never drops to another row. */}
         <a
           href="#home"
-          className="min-w-0 grow basis-0 text-base font-bold text-emerald-700 md:grow-0 md:basis-auto md:text-lg dark:text-emerald-400"
+          className="flex min-w-0 grow basis-0 items-center gap-2 font-bold md:grow-0 md:basis-auto md:text-lg"
         >
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent">
+            <CartIcon className="size-5" />
+          </span>
           {localize(store, 'name')}
         </a>
 
@@ -41,7 +44,7 @@ function Header() {
               <li key={id}>
                 <a
                   href={`#${id}`}
-                  className="inline-block py-1 hover:text-emerald-700 dark:hover:text-emerald-400"
+                  className="inline-block py-1 text-on-main/85 hover:text-accent"
                 >
                   {t.nav[id]}
                 </a>
@@ -55,7 +58,7 @@ function Header() {
             type="button"
             lang={otherLanguage}
             onClick={toggleLanguage}
-            className="me-1 rounded-full border border-emerald-700 px-4 py-2 text-sm text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-950"
+            className="me-1 rounded-full border border-on-main/40 px-4 py-2 text-sm hover:border-on-main hover:bg-on-main/10"
           >
             {t.switchLanguage}
           </button>
@@ -66,14 +69,14 @@ function Header() {
             type="button"
             onClick={openCart}
             aria-label={`${t.cart.open} ${count}`}
-            className="relative rounded-full p-2 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950"
+            className="relative rounded-full p-2 hover:bg-on-main/10"
           >
             <CartIcon className="size-6" />
             {/* A new key makes React draw a new badge, so the pop animation plays on every change. */}
             {count > 0 && (
               <span
                 key={count}
-                className="absolute -end-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-700 px-1 text-xs font-bold text-white motion-safe:animate-pop"
+                className="absolute -end-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-on-accent motion-safe:animate-pop"
               >
                 {count}
               </span>

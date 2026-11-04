@@ -2,12 +2,15 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatDate } from '../lib/offers.js'
 import { ClockIcon, TagIcon } from './Icons.jsx'
 import Photo from './Photo.jsx'
+import { CARD } from './styles.js'
 
 function OfferCard({ offer }) {
   const { t, localize } = useLanguage()
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    <article
+      className={`flex h-full flex-col overflow-hidden text-ink ${CARD}`}
+    >
       <Photo
         src={offer.image}
         alt={localize(offer, 'title')}
@@ -15,7 +18,7 @@ function OfferCard({ offer }) {
         height={360}
         className="aspect-video w-full object-cover"
         fallback={
-          <div className="flex aspect-video w-full items-center justify-center bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+          <div className="flex aspect-video w-full items-center justify-center bg-main-soft text-main-ink">
             <TagIcon className="size-12" />
           </div>
         }
@@ -23,10 +26,8 @@ function OfferCard({ offer }) {
 
       <div className="flex flex-1 flex-col gap-2 p-5">
         <h3 className="text-lg font-bold">{localize(offer, 'title')}</h3>
-        <p className="text-gray-600 dark:text-gray-400">
-          {localize(offer, 'details')}
-        </p>
-        <p className="mt-auto flex items-center gap-1.5 pt-2 text-sm text-emerald-700 dark:text-emerald-400">
+        <p className="text-muted">{localize(offer, 'details')}</p>
+        <p className="mt-auto flex items-center gap-1.5 pt-2 text-sm font-bold text-main-ink">
           <ClockIcon className="size-4" />
           <span>
             {t.offers.validUntil}{' '}

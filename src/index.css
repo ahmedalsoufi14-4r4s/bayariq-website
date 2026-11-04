@@ -76,11 +76,51 @@
       scale: 1.3;
     }
   }
+
+  /* The site's colors, split 60-30-10. Components use only these names, never raw colors,
+     so a new palette (for example from the store's logo) is changed here and nowhere else.
+     Tailwind makes classes from each name: bg-base, text-ink, bg-main, text-on-main, bg-accent...
+     Never write text-base: because of the color named base it sets that color, not Tailwind's
+     normal font size. Text is text-ink, and 16 px is already the default size.
+     --color-*: initial removes Tailwind's own colors (emerald, gray...), so they cannot sneak back in.
+     Every text color passes WCAG AA (4.5:1) on the backgrounds it is used on, in both themes. */
+  --color-*: initial;
+  --color-black: #000;
+
+  /* 60%: the off-white page. Cards and dialogs sit on it in white. */
+  --color-base: #f8f6f1;
+  --color-surface: #ffffff;
+  --color-ink: #10192d; /* body text */
+  --color-muted: #4e586b; /* secondary text */
+  --color-line: #dcdfe6; /* borders */
+
+  /* 30%: deep navy for the header, hero, offers band, footer and the tops of the branch cards. */
+  --color-main: #14284b;
+  --color-main-hover: #0c1a35;
+  --color-on-main: #ffffff; /* text on navy */
+  --color-main-ink: #14284b; /* navy text and icons on light backgrounds */
+  --color-main-soft: #e8edf6; /* light navy tint for icon tiles and photo placeholders */
+
+  /* 10%: saffron, only for Add to cart, Send order, badges and active states.
+     It is too light to read as text on off-white (1.7:1), so on light backgrounds it is
+     only ever a background with navy text on it. As text it only goes on navy. */
+  --color-accent: #f4b41a;
+  --color-accent-hover: #e5a50a;
+  --color-on-accent: #14284b;
 }
 
 /* dark: classes apply when <html> has the "dark" class.
    index.html sets it before the page shows, and ThemeToggle.jsx changes it. */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* A navy area (the 30%): navy background and light text. Keyboard focus inside it gets a
+   saffron outline, because the usual navy outline would not show on navy.
+   @utility turns this into a Tailwind class, used like any other: className="surface-main". */
+@utility surface-main {
+  background-color: var(--color-main);
+  color: var(--color-on-main);
+  --focus-color: var(--color-accent);
+}
 
 /* Stop the page behind an open dialog from scrolling. */
 body:has(dialog[open]) {
@@ -93,25 +133,35 @@ body:has(dialog[open]) {
   :root {
     color-scheme: light;
   }
+
+  /* Dark mode keeps the same 60-30-10 split: a near-black navy page, a lighter navy for
+     the 30%, and the same saffron. Tailwind's color classes read these variables,
+     so bg-base, text-ink and the others switch on their own, with no dark: classes. */
   :root.dark {
     color-scheme: dark;
+    --color-base: #0b1222;
+    --color-surface: #131c31;
+    --color-ink: #e9edf4;
+    --color-muted: #a3adc0;
+    --color-line: #2a3652;
+    --color-main: #1b2f56;
+    --color-main-hover: #233b68;
+    --color-on-main: #f4f6fa;
+    --color-main-ink: #a9c1ee;
+    --color-main-soft: #1a2540;
+    --color-accent-hover: #ffc444;
   }
 
-  /* A clear outline around whatever has keyboard focus, in both themes. */
+  /* A clear outline around whatever has keyboard focus: navy on light backgrounds,
+     light blue in dark mode, saffron inside navy areas (see surface-main above). */
   :focus-visible {
-    outline: 2px solid var(--color-emerald-700);
+    outline: 2px solid var(--focus-color, var(--color-main-ink));
     outline-offset: 2px;
-  }
-  .dark :focus-visible {
-    outline-color: var(--color-emerald-400);
   }
 
   /* The browser's default placeholder grey is too light to read (AA contrast). */
   ::placeholder {
-    color: var(--color-gray-500);
-  }
-  .dark ::placeholder {
-    color: var(--color-gray-400);
+    color: var(--color-muted);
   }
 
   /* Hover colors fade instead of jumping. */
@@ -127,20 +177,22 @@ body:has(dialog[open]) {
       scroll-behavior: smooth;
     }
 
-    /* Dialogs and their dark backdrop fade in and out.
+    /* Dialogs and their dark backdrop fade in and out: ease-out while opening, ease-in while closing.
        @starting-style gives the values an opening dialog starts from.
        allow-discrete keeps a closing dialog on screen until its fade has ended. */
     dialog,
     dialog::backdrop {
       transition:
         opacity 200ms,
-        translate 200ms,
-        display 200ms allow-discrete,
-        overlay 200ms allow-discrete;
+        translate 300ms,
+        display 300ms allow-discrete,
+        overlay 300ms allow-discrete;
+      transition-timing-function: ease-out;
     }
     dialog:not([open]),
     dialog:not([open])::backdrop {
       opacity: 0;
+      transition-timing-function: ease-in;
     }
     @starting-style {
       dialog[open],
@@ -149,7 +201,17 @@ body:has(dialog[open]) {
       }
     }
 
-    /* The cart drawer (CartDrawer.jsx) also slides in from its side:
+    /* The product dialog also rises a little as it opens. */
+    dialog:not(.drawer):not([open]) {
+      translate: 0 1rem;
+    }
+    @starting-style {
+      dialog:not(.drawer)[open] {
+        translate: 0 1rem;
+      }
+    }
+
+    /* The cart drawer (CartDrawer.jsx) slides in from its side instead:
        from the right in English and from the left in Arabic. */
     .drawer:not([open]) {
       translate: 100%;
@@ -165,5 +227,29 @@ body:has(dialog[open]) {
         translate: -100%;
       }
     }
+  }
+}
+
+/* Scroll-in animation (see src/components/reveal.js). An element with the "reveal" class
+   stays invisible until it first scrolls into view, then fades and rises into place.
+   Only opacity and translate change, so nothing around it moves (no layout shift).
+   --reveal-delay makes cards that come into view together start one after another.
+   "backwards" keeps the element invisible during that delay.
+   People who ask for less motion see everything right away. */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal:not([data-revealed]) {
+      opacity: 0;
+    }
+    .reveal[data-revealed] {
+      animation: reveal 400ms ease-out var(--reveal-delay, 0ms) backwards;
+    }
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
   }
 }

@@ -1,0 +1,354 @@
+import { expect, test } from '@playwright/test'
+import { categories, products, texts } from './helpers.js'
+
+const t = texts.ar
+const THEMES = ['light', 'dark']
+const inStockProduct = products.find((product) => product.inStock)
+const featuredProduct = products.find((product) => product.featured)
+
+// A color token from src/index.css (for example "main"), as the browser writes colors: "rgb(20, 40, 75)".
+function tokenColor(page, name) {
+  return page.evaluate((token) => {
+    const probe = document.createElement('div')
+    probe.style.color = `var(--color-${token})`
+    document.body.append(probe)
+    const color = getComputedStyle(probe).color
+    probe.remove()
+    return color
+  }, name)
+}
+
+function addButton(page, product) {
+  return page
+    .locator('#products')
+    .getByRole('button', { name: `${t.cart.add}: ${product.name_ar}` })
+}
+
+function productCard(page, product) {
+  return page.locator('#products article').filter({
+    has: page.getByRole('heading', { name: product.name_ar, exact: true }),
+  })
+}
+
+// Finds visible text that fails WCAG AA: 4.5:1, or 3:1 for large text (24 px, or 18.66 px bold).
+// For each piece of text it paints the backgrounds behind it and then the text color on a
+// one-pixel canvas, so see-through colors (like text-on-main/80) are measured as they look.
+// Disabled buttons are left out, because AA does not cover them.
+function findLowContrastText(page) {
+  return page.evaluate(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1
+    canvas.height = 1
+    const context = canvas.getContext('2d', { willReadFrequently: true })
+
+    function paint(colors) {
+      context.clearRect(0, 0, 1, 1)
+      for (const color of colors) {
+        context.fillStyle = color
+        context.fillRect(0, 0, 1, 1)
+      }
+      return [...context.getImageData(0, 0, 1, 1).data]
+    }
+
+    // The backgrounds behind an element: from the nearest solid one up to the element itself.
+    function backgroundLayers(element) {
+      const layers = []
+      for (let node = element; node; node = node.parentElement) {
+        const color = getComputedStyle(node).backgroundColor
+        layers.unshift(color)
+        if (paint([color])[3] === 255) break
+      }
+      return layers
+    }
+
+    function luminance([red, green, blue]) {
+      const [r, g, b] = [red, green, blue].map((value) => {
+        const channel = value / 255
+        return channel <= 0.04045
+          ? channel / 12.92
+          : ((channel + 0.055) / 1.055) ** 2.4
+      })
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    const failures = []
+    for (const element of document.body.querySelectorAll('*')) {
+      const hasText = [...element.childNodes].some(
+        (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim(),
+      )
+      if (!hasText || element.closest(':disabled')) continue
+      const box = element.getBoundingClientRect()
+      const isVisible =
+        box.width > 1 &&
+        box.height > 1 &&
+        element.checkVisibility({
+          opacityProperty: true,
+          visibilityProperty: true,
+        })
+      if (!isVisible) continue
+
+      const style = getComputedStyle(element)
+      const layers = backgroundLayers(element)
+      const background = luminance(paint(layers))
+      const text = luminance(paint([...layers, style.color]))
+      const ratio =
+        (Math.max(background, text) + 0.05) /
+        (Math.min(background, text) + 0.05)
+      const size = parseFloat(style.fontSize)
+      const isLarge =
+        size >= 24 || (size >= 18.66 && Number(style.fontWeight) >= 700)
+      if (ratio < (isLarge ? 3 : 4.5)) {
+        failures.push(`${element.textContent.trim()} (${ratio.toFixed(2)}:1)`)
+      }
+    }
+    return failures
+  })
+}
+
+for (const theme of THEMES) {
+  test.describe(`${theme} mode`, () => {
+    test.use({ colorScheme: theme })
+
+    test('60-30-10: off-white (or dark) page, navy bands, saffron only on the key actions', async ({
+      page,
+    }) => {
+      await page.goto('./')
+      const base = await tokenColor(page, 'base')
+      const main = await tokenColor(page, 'main')
+      const accent = await tokenColor(page, 'accent')
+
+      await expect(page.locator('body')).toHaveCSS('background-color', base)
+      for (const navyArea of ['header', '#home', '#offers', 'footer']) {
+        await expect(page.locator(navyArea)).toHaveCSS('background-color', main)
+      }
+
+      // Saffron: Add to cart, the active filter, the "featured" badge and the cart count.
+      await expect(addButton(page, inStockProduct)).toHaveCSS(
+        'background-color',
+        accent,
+      )
+      const filter = page.getByRole('group', {
+        name: t.products.categoriesLabel,
+      })
+      await expect(
+        filter.getByRole('button', { name: t.products.all }),
+      ).toHaveCSS('background-color', accent)
+      await expect(
+        filter.getByRole('button', { name: categories[0].name_ar }),
+      ).not.toHaveCSS('background-color', accent)
+      if (featuredProduct) {
+        await expect(
+          productCard(page, featuredProduct).getByText(t.products.featured),
+        ).toHaveCSS('background-color', accent)
+      }
+      await addButton(page, inStockProduct).click()
+      await expect(
+        page.locator('header').getByText('1', { exact: true }),
+      ).toHaveCSS('background-color', accent)
+    })
+
+    test('all visible text passes AA contrast, on the page and in the dialogs', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 360, height: 800 })
+      await page.goto('./')
+      expect(await findLowContrastText(page)).toEqual([])
+
+      await page
+        .locator('#products')
+        .getByRole('button', { name: products[0].name_ar, exact: true })
+        .click()
+      expect(await findLowContrastText(page)).toEqual([])
+      await page.keyboard.press('Escape')
+
+      await addButton(page, inStockProduct).click()
+      await page.getByRole('button', { name: t.cart.open }).click()
+      await expect(
+        page.getByRole('dialog', { name: t.cart.title }),
+      ).toBeVisible()
+      expect(await findLowContrastText(page)).toEqual([])
+    })
+  })
+}
+
+test('categories and highlights use one set of SVG icons, never emoji', async ({
+  page,
+}) => {
+  await page.goto('./')
+  const filter = page.getByRole('group', { name: t.products.categoriesLabel })
+
+  for (const category of categories) {
+    await expect(
+      filter.getByRole('button', { name: category.name_ar }).locator('svg'),
+    ).toHaveCount(1)
+  }
+  await expect(
+    page.getByRole('region', { name: t.highlights.title }).locator('li svg'),
+  ).toHaveCount(3)
+  expect(await page.locator('body').innerText()).not.toMatch(
+    /\p{Emoji_Presentation}/u,
+  )
+})
+
+test('icons and decorations are hidden from screen readers', async ({
+  page,
+}) => {
+  await page.goto('./')
+  const visibleToScreenReaders = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('svg')].filter(
+        (svg) => !svg.closest('[aria-hidden="true"]'),
+      ).length,
+  )
+
+  expect(visibleToScreenReaders).toBe(0)
+})
+
+test.describe('with motion allowed', () => {
+  test.use({ reducedMotion: 'no-preference' })
+
+  test('cards fade and rise in when they scroll into view', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 800 })
+    await page.goto('./')
+    const lastCard = page.locator('#products li').last()
+
+    await expect(lastCard).toHaveCSS('opacity', '0')
+    await lastCard.scrollIntoViewIfNeeded()
+    await expect(lastCard).toHaveAttribute('data-revealed', 'true')
+    await expect(lastCard).toHaveCSS('animation-name', 'reveal')
+    await expect(lastCard).toHaveCSS('opacity', '1')
+  })
+
+  test('product cards that come into view together start one after another', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto('./')
+    const cards = page.locator('#products li')
+
+    await cards.first().scrollIntoViewIfNeeded()
+    await expect(cards.nth(3)).toHaveAttribute('data-revealed', 'true')
+    const delays = await cards.evaluateAll((items) =>
+      items
+        .slice(0, 4)
+        .map((item) =>
+          parseFloat(item.style.getPropertyValue('--reveal-delay')),
+        ),
+    )
+
+    for (let index = 1; index < delays.length; index++) {
+      expect(delays[index]).toBeGreaterThan(delays[index - 1])
+    }
+    expect(Math.max(...delays)).toBeLessThanOrEqual(240)
+  })
+
+  test('cards and buttons react to hover and press, and the cart count pops', async ({
+    page,
+  }) => {
+    await page.goto('./')
+    const button = addButton(page, inStockProduct)
+    await button.scrollIntoViewIfNeeded()
+    // Wait until the card has finished fading in, so it does not rise away from under the mouse.
+    const listItem = page.locator('#products li').filter({
+      has: page.getByRole('button', {
+        name: `${t.cart.add}: ${inStockProduct.name_ar}`,
+      }),
+    })
+    await expect(listItem).toHaveAttribute('data-revealed', 'true')
+    await expect
+      .poll(() => listItem.evaluate((item) => item.getAnimations().length))
+      .toBe(0)
+
+    await button.hover()
+    await expect(productCard(page, inStockProduct)).toHaveCSS(
+      'translate',
+      '0px -4px',
+    )
+    await expect(button).toHaveCSS('translate', '0px -2px')
+    await page.mouse.down()
+    await expect(button).toHaveCSS('scale', '0.97')
+    await page.mouse.up()
+
+    await expect(
+      page.locator('header').getByText('1', { exact: true }),
+    ).toHaveCSS('animation-name', 'pop')
+  })
+
+  test('the product dialog fades and rises in', async ({ page }) => {
+    await page.goto('./')
+    await page
+      .locator('#products')
+      .getByRole('button', { name: products[0].name_ar, exact: true })
+      .click()
+
+    const dialog = page.getByRole('dialog', { name: products[0].name_ar })
+    await expect(dialog).toHaveCSS('transition-property', /opacity, translate/)
+    await expect(dialog).toHaveCSS('opacity', '1')
+  })
+
+  test('the animations never shift the layout', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 })
+    await page.goto('./')
+    await page.evaluate(() => {
+      window.layoutShift = 0
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (!entry.hadRecentInput) window.layoutShift += entry.value
+        }
+      }).observe({ type: 'layout-shift', buffered: true })
+    })
+
+    // Scroll down the whole page so every section and card animates in.
+    const pageHeight = await page.evaluate(() => document.body.scrollHeight)
+    for (let y = 0; y < pageHeight; y += 400) {
+      await page.mouse.wheel(0, 400)
+      await page.waitForTimeout(50)
+    }
+    await expect(page.locator('#contact li').last()).toHaveCSS('opacity', '1')
+
+    expect(await page.evaluate(() => window.layoutShift)).toBeLessThan(0.01)
+  })
+})
+
+test('visitors who ask for less motion see every card at once, and nothing moves', async ({
+  page,
+}) => {
+  // playwright.config.js asks for reduced motion in every test.
+  await page.goto('./')
+  const button = addButton(page, inStockProduct)
+
+  await expect(page.locator('#products li').last()).toHaveCSS('opacity', '1')
+  await button.hover()
+  await expect(button).toHaveCSS('translate', 'none')
+  await page.mouse.down()
+  await expect(button).toHaveCSS('scale', 'none')
+  await page.mouse.up()
+  await expect(
+    page.locator('header').getByText('1', { exact: true }),
+  ).toHaveCSS('animation-name', 'none')
+})
+
+// Two extra screenshots for a visual check, next to the usual ones from layout.spec.js and theme.spec.js.
+// The sticky header is hidden in the products one, so it does not cover the cards.
+test('screenshot: the hero in Arabic at 1280px', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('./')
+  await page.locator('#home').screenshot({ path: 'screenshots/hero.png' })
+})
+
+test.describe('dark mode screenshot', () => {
+  test.use({ colorScheme: 'dark' })
+
+  test('screenshot: the products grid in dark mode at 1280px', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto('./')
+    await page.locator('#products').screenshot({
+      path: 'screenshots/products-dark.png',
+      style: 'header { visibility: hidden; }',
+    })
+  })
+})

@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { useLanguage } from '../i18n/LanguageContext.js'
+import { BUTTON_MAIN } from './styles.js'
 
 function ErrorMessage() {
   const { t } = useLanguage()
@@ -7,11 +8,11 @@ function ErrorMessage() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 p-6 text-center">
       <h1 className="text-2xl font-bold">{t.error.title}</h1>
-      <p className="text-gray-600 dark:text-gray-400">{t.error.text}</p>
+      <p className="text-muted">{t.error.text}</p>
       <button
         type="button"
         onClick={() => window.location.reload()}
-        className="rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800"
+        className={`${BUTTON_MAIN} px-5 py-3`}
       >
         {t.error.reload}
       </button>

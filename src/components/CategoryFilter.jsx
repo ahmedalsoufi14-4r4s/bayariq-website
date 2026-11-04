@@ -1,18 +1,20 @@
 import categories from '../data/categories.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
+import { CategoryIcon } from './Icons.jsx'
 
 // aria-pressed tells screen readers which button is the active filter.
+// The active filter is saffron (the accent), the others are white.
 function FilterButton({ isSelected, onClick, children }) {
   const colors = isSelected
-    ? 'border-emerald-700 bg-emerald-700 text-white'
-    : 'border-gray-300 bg-white hover:border-emerald-700 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-emerald-400'
+    ? 'border-accent bg-accent text-on-accent shadow-sm'
+    : 'border-line bg-surface hover:border-main-ink'
 
   return (
     <button
       type="button"
       aria-pressed={isSelected}
       onClick={onClick}
-      className={`flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm ${colors}`}
+      className={`flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition duration-150 ease-out motion-safe:active:scale-97 ${colors}`}
     >
       {children}
     </button>
@@ -41,7 +43,7 @@ function CategoryFilter({ selected, onSelect }) {
           isSelected={selected === category.id}
           onClick={() => onSelect(category.id)}
         >
-          <span aria-hidden="true">{category.icon}</span>
+          <CategoryIcon name={category.icon} className="size-5" />
           {localize(category, 'name')}
         </FilterButton>
       ))}

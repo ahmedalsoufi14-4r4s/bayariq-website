@@ -1,6 +1,11 @@
 import categories from '../data/categories.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
+import { CategoryIcon } from './Icons.jsx'
 import Photo from './Photo.jsx'
+
+// On a product card (a "group"), the picture grows a little while the pointer is over the card.
+const HOVER_ZOOM =
+  'transition duration-300 ease-out motion-safe:group-hover:scale-105'
 
 // Shows the product photo, or the category icon until a photo is added.
 function ProductImage({ product, className = '' }) {
@@ -13,12 +18,15 @@ function ProductImage({ product, className = '' }) {
       alt={localize(product, 'name')}
       width={400}
       height={400}
-      className={`aspect-square w-full object-cover ${className}`}
+      className={`aspect-square w-full object-cover ${HOVER_ZOOM} ${className}`}
       fallback={
         <div
-          className={`flex aspect-square w-full items-center justify-center bg-emerald-50 text-5xl dark:bg-emerald-950 ${className}`}
+          className={`flex aspect-square w-full items-center justify-center bg-main-soft text-main-ink ${className}`}
         >
-          <span aria-hidden="true">{category?.icon}</span>
+          <CategoryIcon
+            name={category?.icon}
+            className={`size-16 ${HOVER_ZOOM}`}
+          />
         </div>
       }
     />

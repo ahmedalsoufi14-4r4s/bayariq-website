@@ -1,6 +1,7 @@
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { isPlaceholder } from '../lib/placeholder.js'
 import { ChatIcon, PhoneIcon } from './Icons.jsx'
+import { BUTTON_MAIN, BUTTON_OUTLINE } from './styles.js'
 
 // WhatsApp and call buttons for one branch, used on its card in the branches section.
 // Each button only shows once the branch's real number is in store.json.
@@ -21,7 +22,7 @@ function ContactButtons({ branch, branchLabel }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${t.contact.whatsapp} – ${branchLabel}`}
-          className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800"
+          className={`${BUTTON_MAIN} px-5 py-3`}
         >
           <ChatIcon className="size-5" />
           {t.contact.whatsapp}
@@ -31,7 +32,7 @@ function ContactButtons({ branch, branchLabel }) {
         <a
           href={`tel:${branch.phone}`}
           aria-label={`${t.contact.call} – ${branchLabel}`}
-          className="inline-flex items-center gap-2 rounded-full border border-emerald-700 bg-white px-5 py-3 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:bg-gray-950 dark:text-emerald-400 dark:hover:bg-emerald-950"
+          className={`${BUTTON_OUTLINE} px-5 py-3`}
         >
           <PhoneIcon className="size-5" />
           {t.contact.call}

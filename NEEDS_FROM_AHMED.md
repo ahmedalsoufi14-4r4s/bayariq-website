@@ -26,14 +26,17 @@ All of these go in `src/data/store.json`. Its `branches` list has the four branc
 
 Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](https://squoosh.app) (choose WebP, quality about 75, width about 800 px). `npm run check` fails if a photo in the data files is missing from `public/`, is not WebP, or is 200 KB or larger. A photo that fails to load on the site falls back to the category icon.
 
-- **Logo** → `public/images/`, replaces the text logo in `src/components/Header.jsx`. SVG is best, PNG or WebP also works. It also replaces the shopping-bag icon in `public/favicon.svg`; then `npm run images` remakes the share image (`public/og-image.png`) and the iPhone icon. If Bayariq Al Tawfiq has its own logo, send that too.
-- **Store photo for the hero** (the front or inside of one of the branches) → `public/images/`, used in `src/sections/Hero.jsx`.
+- **Logo** → `public/images/`, replaces the saffron bag mark and the text logo in `src/components/Header.jsx`. SVG is best, PNG or WebP also works. It also replaces the shopping-bag icon in `public/favicon.svg`; then `npm run images` remakes the share image (`public/og-image.png`) and the iPhone icon. If Bayariq Al Tawfiq has its own logo, send that too.
+- **Store photo for the hero** (the front or inside of one of the branches) → `public/images/`, used in `src/sections/Hero.jsx` in place of the four category icon tiles on wide screens.
 - **Real product list** → `src/data/products.json` (12 sample products now). For each product: Arabic and English name, category, price (or none for "price on request"), unit or size, featured or not, in stock or not.
-- **Real categories** → `src/data/categories.json` (6 sample categories now): Arabic and English name and an emoji icon.
+- **Real categories** → `src/data/categories.json` (6 sample categories now): Arabic and English name, and which icon fits. The six icons now are `carrot`, `milk`, `bread`, `jar`, `cup` and `spray` (in `src/components/Icons.jsx`); Claude can draw more in the same style.
 - **Product photos** → `public/images/products/`, then set each product's `image`, for example `"images/products/milk.webp"`. Square photos look best.
 - **Current offers** → `src/data/offers.json` (empty now). For each offer: Arabic and English title and details, last day (`YYYY-MM-DD`), and an optional photo in `public/images/offers/`.
 
 ## Decisions
+
+- **Match the palette to the logo once it arrives** → the color tokens in `src/index.css` (`@theme`, and the dark-mode versions under `:root.dark`), plus `theme-color` in `index.html` and the two colors in `public/favicon.svg`; then `npm run images`. The site uses off-white `#f8f6f1`, deep navy `#14284b` and saffron `#f4b41a` until then.
+  Recommended: take the navy (30%) and the saffron (10%) from the logo's two main colors and keep the off-white. Claude can do it from the logo file and check that every text still passes AA contrast (`npm run check` tests it).
 
 - **"Why shop with us" points** → `highlights` in `src/i18n/ar.json` and `src/i18n/en.json`. "فرع قريب منك" lists the four districts from `store.json`. Please confirm all three, especially "أسعار اقتصادية" (budget-friendly prices).
   Recommended: keep all three. "أسعار اقتصادية" matches the store's name ("الاقتصادية"), if the family is comfortable saying it.
