@@ -291,13 +291,39 @@ test.describe('with motion allowed', () => {
   test('the animations never shift the layout', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 })
     await page.goto('./')
-    await page.evaluate(() => {
-      window.layoutShift = 0
+    await page.evaluate(async () => {
+      // On a slow machine (like the GitHub runner) the web font can arrive after the first
+      // paint, and swapping to it moves text. That is the font, not the animations, so
+      // measuring starts once every font is in and the page has been drawn with it
+      // (two frames). Without `buffered`, the observer only sees shifts from then on.
+      await document.fonts.ready
+      await new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      )
+
+      // Keeps each layout shift with the elements that moved, so a failure shows what moved.
+      const position = (rect) =>
+        `x ${Math.round(rect.x)} y ${Math.round(rect.y)} (${Math.round(rect.width)}×${Math.round(rect.height)})`
+      window.layoutShifts = []
       new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (!entry.hadRecentInput) window.layoutShift += entry.value
+          if (entry.hadRecentInput) continue
+          window.layoutShifts.push({
+            value: entry.value,
+            time: Math.round(entry.startTime),
+            sources: entry.sources.map(
+              ({ node, previousRect, currentRect }) => {
+                const element =
+                  node?.nodeType === Node.TEXT_NODE ? node.parentElement : node
+                const name = element
+                  ? `<${element.tagName.toLowerCase()}> "${element.textContent.trim().slice(0, 30)}"`
+                  : '(removed element)'
+                return `${name}: ${position(previousRect)} → ${position(currentRect)}`
+              },
+            ),
+          })
         }
-      }).observe({ type: 'layout-shift', buffered: true })
+      }).observe({ type: 'layout-shift' })
     })
 
     // Scroll down the whole page so every section and card animates in.
@@ -308,7 +334,13 @@ test.describe('with motion allowed', () => {
     }
     await expect(page.locator('#contact li').last()).toHaveCSS('opacity', '1')
 
-    expect(await page.evaluate(() => window.layoutShift)).toBeLessThan(0.01)
+    const shifts = await page.evaluate(() => window.layoutShifts)
+    for (const shift of shifts) {
+      console.log(`layout shift ${shift.value.toFixed(4)} at ${shift.time} ms`)
+      for (const source of shift.sources) console.log(`  ${source}`)
+    }
+    const total = shifts.reduce((sum, shift) => sum + shift.value, 0)
+    expect(total).toBeLessThan(0.01)
   })
 })
 
