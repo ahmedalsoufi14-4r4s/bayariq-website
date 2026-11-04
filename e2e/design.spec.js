@@ -113,11 +113,11 @@ for (const theme of THEMES) {
       page,
     }) => {
       await page.goto('./')
-      const base = await tokenColor(page, 'base')
+      const canvas = await tokenColor(page, 'canvas')
       const main = await tokenColor(page, 'main')
       const accent = await tokenColor(page, 'accent')
 
-      await expect(page.locator('body')).toHaveCSS('background-color', base)
+      await expect(page.locator('body')).toHaveCSS('background-color', canvas)
       for (const navyArea of ['header', '#home', '#offers', 'footer']) {
         await expect(page.locator(navyArea)).toHaveCSS('background-color', main)
       }

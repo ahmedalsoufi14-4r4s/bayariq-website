@@ -20,7 +20,7 @@ function Offers() {
       aria-labelledby="offers-title"
       className="surface-main"
     >
-      <WaveDivider flip className="fill-base" />
+      <WaveDivider flip className="fill-canvas" />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <SectionHeading id="offers-title">{t.offers.title}</SectionHeading>
 
@@ -38,7 +38,7 @@ function Offers() {
           </div>
         )}
       </div>
-      <WaveDivider className="fill-base" />
+      <WaveDivider className="fill-canvas" />
     </section>
   )
 }

@@ -79,16 +79,14 @@
 
   /* The site's colors, split 60-30-10. Components use only these names, never raw colors,
      so a new palette (for example from the store's logo) is changed here and nowhere else.
-     Tailwind makes classes from each name: bg-base, text-ink, bg-main, text-on-main, bg-accent...
-     Never write text-base: because of the color named base it sets that color, not Tailwind's
-     normal font size. Text is text-ink, and 16 px is already the default size.
+     Tailwind makes classes from each name: bg-canvas, text-ink, bg-main, text-on-main, bg-accent...
      --color-*: initial removes Tailwind's own colors (emerald, gray...), so they cannot sneak back in.
      Every text color passes WCAG AA (4.5:1) on the backgrounds it is used on, in both themes. */
   --color-*: initial;
   --color-black: #000;
 
   /* 60%: the off-white page. Cards and dialogs sit on it in white. */
-  --color-base: #f8f6f1;
+  --color-canvas: #f8f6f1;
   --color-surface: #ffffff;
   --color-ink: #10192d; /* body text */
   --color-muted: #4e586b; /* secondary text */
@@ -136,10 +134,10 @@ body:has(dialog[open]) {
 
   /* Dark mode keeps the same 60-30-10 split: a near-black navy page, a lighter navy for
      the 30%, and the same saffron. Tailwind's color classes read these variables,
-     so bg-base, text-ink and the others switch on their own, with no dark: classes. */
+     so bg-canvas, text-ink and the others switch on their own, with no dark: classes. */
   :root.dark {
     color-scheme: dark;
-    --color-base: #0b1222;
+    --color-canvas: #0b1222;
     --color-surface: #131c31;
     --color-ink: #e9edf4;
     --color-muted: #a3adc0;

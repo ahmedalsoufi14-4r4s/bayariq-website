@@ -10,7 +10,7 @@ import { ChatIcon } from './Icons.jsx'
 import { BUTTON_ACCENT } from './styles.js'
 
 const INPUT =
-  'mt-1 w-full rounded-xl border border-line bg-base px-3 py-2 transition focus:border-main-ink'
+  'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2 transition focus:border-main-ink'
 
 function OrderForm() {
   const { t, language, localize } = useLanguage()

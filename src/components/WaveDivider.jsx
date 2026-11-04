@@ -1,5 +1,5 @@
 // A soft wave across the full width, where a navy band meets the off-white page.
-// It is filled with the color of the section next to the band (fill-base), so that
+// It is filled with the color of the section next to the band (fill-canvas), so that
 // section's edge seems to curve into the band. flip turns it over for the top edge of a band.
 // Its height is fixed in CSS, so it never moves anything around it (no layout shift).
 function WaveDivider({ flip = false, className = '' }) {

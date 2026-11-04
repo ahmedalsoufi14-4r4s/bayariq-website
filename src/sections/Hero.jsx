@@ -96,7 +96,7 @@ function Hero() {
         <HeroArt />
       </div>
 
-      <WaveDivider className="absolute inset-x-0 -bottom-px fill-base" />
+      <WaveDivider className="absolute inset-x-0 -bottom-px fill-canvas" />
     </section>
   )
 }
