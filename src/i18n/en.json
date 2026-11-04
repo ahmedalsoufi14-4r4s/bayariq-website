@@ -1,0 +1,13 @@
+{
+  "skipToContent": "Skip to main content",
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "offers": "Offers",
+    "contact": "Contact us"
+  },
+  "switchLanguage": "العربية",
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}
