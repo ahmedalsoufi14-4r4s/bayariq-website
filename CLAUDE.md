@@ -11,6 +11,7 @@
 - No backend, database or payments. All content lives in JSON files in `src/data/`.
 - Hosting: GitHub Pages through GitHub Actions. Set Vite `base` to the repo name. Use HashRouter if routes are ever needed.
 - Tests: Vitest for pure logic only (cart totals, WhatsApp message, Arabic search).
+- Browser checks: Playwright (Chromium), tests in `e2e/`.
 - Ask before adding any dependency not listed here. Prefer none.
 
 ## Languages
@@ -46,8 +47,15 @@
 - Do only the step Ahmed asks for. Do not start the next step.
 - Make small, focused changes. Do not rewrite files that do not need it.
 - The first time you use a new React or Tailwind idea, explain it in one or two plain sentences.
-- Before finishing a step, run `npm run build` (and `npm test` once tests exist) and fix any errors.
-- End each step with: what changed (5 lines max), how to check it in the browser, and a one-line commit message.
+- Before finishing a step, follow "Checks and Git" below and fix any errors.
+
+## Checks and Git (after every step)
+- I keep `npm run dev` running in my own terminal on port 5173. Never stop it or start another dev server.
+- Run lint, format:check and build (and `npm test` once unit tests exist).
+- Run `npm run check`: Playwright (Chromium) tests against `vite preview` on port 4173. Load the site in Arabic and English at 360 px and 1280 px wide, fail on console errors or sideways scrolling, and test the step's new features. Save two screenshots (Arabic at 360 px, English at 1280 px) to `screenshots/` (git-ignored) and look at them yourself.
+- Add or update Playwright tests for each new feature.
+- When everything passes, commit with a clear message and push (`git add -A`, `git commit`, `git push`).
+- End with: what changed (5 lines max), what the checks covered, and what I must do myself.
 
 ## Build plan
 1. Setup: Vite + React + Tailwind, ESLint and Prettier, folders (`components`, `sections`, `data`, `i18n`, `lib`, `assets`), font, RTL base layout, `store.json` with TODO placeholders.
