@@ -83,3 +83,19 @@ test('a product photo that fails to load is replaced by the category icon', asyn
   await card.scrollIntoViewIfNeeded()
   await expect(card.locator('img')).toHaveCount(0)
 })
+
+test('the page only uses the font weights it loads (regular and bold)', async ({
+  page,
+}) => {
+  // src/index.css loads only 400 and 700. Any other weight would quietly show as one of them.
+  await page.goto('./')
+  const weights = await page.evaluate(() => [
+    ...new Set(
+      [...document.body.querySelectorAll('*')].map(
+        (element) => getComputedStyle(element).fontWeight,
+      ),
+    ),
+  ])
+
+  expect(weights.sort()).toEqual(['400', '700'])
+})

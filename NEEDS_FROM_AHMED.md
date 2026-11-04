@@ -10,6 +10,7 @@ All of these go in `src/data/store.json`.
 - **WhatsApp number** → `whatsapp`, international digits only, for example `9665XXXXXXXX`. Shows the WhatsApp buttons and turns on "Send order" in the cart.
 - **Opening hours** → `hours`. Replace `"NEEDS-AHMED"` with one row per group of days:
   `[{ "days_ar": "…", "days_en": "…", "time_ar": "…", "time_en": "…" }]`
+  The same hours also go in `openingHours` in the short form search engines read, for example `["Sa-Th 07:00-23:00", "Fr 16:00-23:00"]`. Claude can write this from the rows above.
 - **Full street address** → `address_ar`, `address_en`. Right now it only says "حي الحمدانية، جدة".
 - **Google Maps link** → `mapsUrl` (Google Maps → Share → Copy link). Shows "Open in Google Maps".
 - **Google Maps embed link** → `mapsEmbedUrl` (Google Maps → Share → Embed a map → copy only the link inside `src="…"`). Replaces the "Map coming soon" box.
@@ -20,7 +21,7 @@ All of these go in `src/data/store.json`.
 
 Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](https://squoosh.app) (choose WebP, quality about 75, width about 800 px). `npm run check` fails if a photo in the data files is missing from `public/`, is not WebP, or is 200 KB or larger. A photo that fails to load on the site falls back to the category icon.
 
-- **Logo** → `public/images/`, replaces the text logo in `src/components/Header.jsx`. SVG is best, PNG or WebP also works.
+- **Logo** → `public/images/`, replaces the text logo in `src/components/Header.jsx`. SVG is best, PNG or WebP also works. It also replaces the shopping-bag icon in `public/favicon.svg`; then `npm run images` remakes the share image (`public/og-image.png`) and the iPhone icon.
 - **Store photo for the hero** → `public/images/`, used in `src/sections/Hero.jsx`.
 - **Real product list** → `src/data/products.json` (12 sample products now). For each product: Arabic and English name, category, price (or none for "price on request"), unit or size, featured or not, in stock or not.
 - **Real categories** → `src/data/categories.json` (6 sample categories now): Arabic and English name and an emoji icon.
@@ -31,3 +32,6 @@ Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](htt
 
 - **"Why shop with us" points** → `highlights` in `src/i18n/ar.json` and `src/i18n/en.json`. Please confirm all three, especially "أسعار اقتصادية" (budget-friendly prices).
 - **Offer dates: Gregorian or Hijri** → `dateLocale` in `src/i18n/ar.json`. It shows Gregorian dates now ("30 نوفمبر 2026").
+- **Search and share text** → the description in `index.html` (`description` and `og:description`): "سوقك القريب في حي الحمدانية بجدة. تصفّح منتجاتنا وعروضنا، وأرسل طلبك عبر واتساب." Please confirm or change it.
+- **Font weights** → the site now loads only regular and bold IBM Plex Sans Arabic, because each extra weight made the page clearly slower on phones (Lighthouse 85 → 95). Confirm you are happy with how it looks.
+- **Own domain (optional)** → if the store buys one (for example `bayariq.sa`), change `website` in `src/data/store.json`, the four full URLs in `index.html`, and `base` in `vite.config.js`, then set the domain in GitHub → Settings → Pages.

@@ -22,11 +22,11 @@ function OfferCard({ offer }) {
       />
 
       <div className="flex flex-1 flex-col gap-2 p-5">
-        <h3 className="text-lg font-semibold">{localize(offer, 'title')}</h3>
+        <h3 className="text-lg font-bold">{localize(offer, 'title')}</h3>
         <p className="text-gray-600 dark:text-gray-400">
           {localize(offer, 'details')}
         </p>
-        <p className="mt-auto flex items-center gap-1.5 pt-2 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+        <p className="mt-auto flex items-center gap-1.5 pt-2 text-sm text-emerald-700 dark:text-emerald-400">
           <ClockIcon className="size-4" />
           <span>
             {t.offers.validUntil}{' '}

@@ -59,9 +59,7 @@ function OrderForm() {
       className="mt-6 space-y-4 border-t border-gray-200 pt-6 dark:border-gray-800"
     >
       <div>
-        <label htmlFor="extra-items" className="font-medium">
-          {t.order.extraItems}
-        </label>
+        <label htmlFor="extra-items">{t.order.extraItems}</label>
         <textarea
           id="extra-items"
           value={extraItems}
@@ -72,12 +70,10 @@ function OrderForm() {
         />
       </div>
 
-      <h3 className="pt-2 text-lg font-semibold">{t.order.title}</h3>
+      <h3 className="pt-2 text-lg font-bold">{t.order.title}</h3>
 
       <div>
-        <label htmlFor="order-name" className="font-medium">
-          {t.order.name}
-        </label>
+        <label htmlFor="order-name">{t.order.name}</label>
         <input
           id="order-name"
           name="name"
@@ -90,9 +86,7 @@ function OrderForm() {
       </div>
 
       <div>
-        <label htmlFor="order-district" className="font-medium">
-          {t.order.district}
-        </label>
+        <label htmlFor="order-district">{t.order.district}</label>
         <input
           id="order-district"
           name="district"
@@ -105,7 +99,7 @@ function OrderForm() {
 
       {canDeliver ? (
         <fieldset>
-          <legend className="font-medium">{t.order.method}</legend>
+          <legend>{t.order.method}</legend>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
             {['pickup', 'delivery'].map((method) => (
               <label key={method} className="flex items-center gap-2">
@@ -130,15 +124,12 @@ function OrderForm() {
         </fieldset>
       ) : (
         <p>
-          <span className="font-medium">{t.order.message.method}</span>{' '}
-          {t.order.message.pickup}
+          <span>{t.order.message.method}</span> {t.order.message.pickup}
         </p>
       )}
 
       <div>
-        <label htmlFor="order-time" className="font-medium">
-          {t.order.time}
-        </label>
+        <label htmlFor="order-time">{t.order.time}</label>
         <input
           id="order-time"
           name="time"
@@ -150,9 +141,7 @@ function OrderForm() {
       </div>
 
       <div>
-        <label htmlFor="order-notes" className="font-medium">
-          {t.order.notes}
-        </label>
+        <label htmlFor="order-notes">{t.order.notes}</label>
         <textarea
           id="order-notes"
           name="notes"
@@ -167,7 +156,7 @@ function OrderForm() {
         type="submit"
         disabled={!hasWhatsApp || !hasOrder}
         aria-describedby={sendHint ? 'send-hint' : undefined}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
       >
         <ChatIcon className="size-5" />
         {t.order.send}

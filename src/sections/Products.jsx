@@ -72,7 +72,7 @@ function Products() {
             <button
               type="button"
               onClick={showAll}
-              className="rounded-full border border-emerald-700 px-5 py-2 font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-950"
+              className="rounded-full border border-emerald-700 px-5 py-2 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-950"
             >
               {t.products.showAll}
             </button>

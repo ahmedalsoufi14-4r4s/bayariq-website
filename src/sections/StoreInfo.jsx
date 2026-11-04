@@ -20,7 +20,7 @@ function StoreInfo() {
       <div className="mt-8 grid gap-8 md:grid-cols-2">
         <div className="space-y-8">
           <div>
-            <h3 className="flex items-center gap-2 text-lg font-semibold">
+            <h3 className="flex items-center gap-2 text-lg font-bold">
               <ClockIcon className="size-5 text-emerald-700 dark:text-emerald-400" />
               {t.contact.hours}
             </h3>
@@ -36,7 +36,7 @@ function StoreInfo() {
                     className="flex justify-between gap-4 border-b border-gray-200 pb-2 dark:border-gray-800"
                   >
                     <dt>{localize(row, 'days')}</dt>
-                    <dd className="font-medium">{localize(row, 'time')}</dd>
+                    <dd>{localize(row, 'time')}</dd>
                   </div>
                 ))}
               </dl>
@@ -44,7 +44,7 @@ function StoreInfo() {
           </div>
 
           <div>
-            <h3 className="flex items-center gap-2 text-lg font-semibold">
+            <h3 className="flex items-center gap-2 text-lg font-bold">
               <MapPinIcon className="size-5 text-emerald-700 dark:text-emerald-400" />
               {t.contact.address}
             </h3>
@@ -54,7 +54,7 @@ function StoreInfo() {
                 href={store.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 inline-block font-medium text-emerald-700 underline hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+                className="mt-2 inline-block text-emerald-700 underline hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
               >
                 {t.contact.openInMaps}
               </a>

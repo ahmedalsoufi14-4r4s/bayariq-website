@@ -76,7 +76,7 @@ function CartDrawer() {
               <a
                 href="#products"
                 onClick={close}
-                className="rounded-full bg-emerald-700 px-5 py-2 font-medium text-white hover:bg-emerald-800"
+                className="rounded-full bg-emerald-700 px-5 py-2 text-white hover:bg-emerald-800"
               >
                 {t.cart.browse}
               </a>
@@ -92,7 +92,7 @@ function CartDrawer() {
                   className="flex items-start justify-between gap-3 py-3"
                 >
                   <div>
-                    <p className="font-medium">{name}</p>
+                    <p>{name}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {localize(product, 'unit')} ·{' '}
                       {product.price === null
@@ -118,9 +118,7 @@ function CartDrawer() {
                     >
                       <MinusIcon className="size-4" />
                     </button>
-                    <span className="w-6 text-center font-medium">
-                      {quantity}
-                    </span>
+                    <span className="w-6 text-center">{quantity}</span>
                     <button
                       type="button"
                       onClick={() => changeQuantity(product, quantity + 1)}
@@ -137,7 +135,7 @@ function CartDrawer() {
         )}
 
         {hasPricedItems && (
-          <p className="mt-4 flex justify-between font-semibold">
+          <p className="mt-4 flex justify-between font-bold">
             <span>{t.cart.total}</span>
             <span>{formatPrice(getEstimatedTotal(lines), t.currency)}</span>
           </p>

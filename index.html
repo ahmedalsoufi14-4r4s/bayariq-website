@@ -3,13 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+
+    <!-- Same title as "meta" in src/i18n/ar.json. LanguageProvider.jsx switches it to English. -->
+    <title>أسواق بيارق الخير الاقتصادية | حي الحمدانية، جدة</title>
+    <meta
+      name="description"
+      content="أسواق بيارق الخير الاقتصادية، سوقك القريب في حي الحمدانية بجدة. تصفّح منتجاتنا وعروضنا، وأرسل طلبك عبر واتساب."
     />
-    <title>أسواق بيارق الخير الاقتصادية</title>
+    <!-- The site's address, same as "website" in src/data/store.json. -->
+    <link
+      rel="canonical"
+      href="https://ahmedalsoufi14-4r4s.github.io/bayariq-website/"
+    />
+    <!-- Colors the browser bar on phones (emerald-700, the site's main green). -->
+    <meta name="theme-color" content="#007a55" />
+    <!-- Files in public/. Vite adds the /bayariq-website/ prefix when it builds. -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph: the preview card shown when the link is shared on WhatsApp, X, Facebook and others.
+         Crawlers need full URLs here. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="أسواق بيارق الخير الاقتصادية" />
+    <meta
+      property="og:title"
+      content="أسواق بيارق الخير الاقتصادية | حي الحمدانية، جدة"
+    />
+    <meta
+      property="og:description"
+      content="سوقك القريب في حي الحمدانية بجدة. تصفّح منتجاتنا وعروضنا، وأرسل طلبك عبر واتساب."
+    />
+    <meta
+      property="og:url"
+      content="https://ahmedalsoufi14-4r4s.github.io/bayariq-website/"
+    />
+    <meta
+      property="og:image"
+      content="https://ahmedalsoufi14-4r4s.github.io/bayariq-website/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="أسواق بيارق الخير الاقتصادية، حي الحمدانية، جدة"
+    />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Starts downloading the two font files the first screen needs (regular and bold Arabic)
+         right away, so the text rarely has to switch fonts after it shows. See src/index.css. -->
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-arabic-400-arabic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-arabic-700-arabic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script>
       // Picks light or dark before the page shows, so it never flashes the wrong colors.
       // The visitor's saved choice wins, otherwise we follow their device setting.

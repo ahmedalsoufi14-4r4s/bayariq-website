@@ -1,0 +1,59 @@
+# Builds the site and publishes it on GitHub Pages every time main changes.
+# The site only goes live when lint, formatting, unit tests and the browser checks all pass,
+# so a mistake in a data file can never break the live site.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Adds a "Run workflow" button on the Actions tab, to deploy again by hand.
+  workflow_dispatch:
+
+# The deploy job needs to publish to Pages and prove who it is to GitHub.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. A newer push waits instead of stopping a deploy half-way.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+
+      - name: Install Chromium for the browser checks
+        run: npx playwright install --with-deps chromium
+
+      # npm run check builds the site into dist/ and then tests that build.
+      - run: npm run check
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -25,7 +25,7 @@ function Hero() {
         <div className="mt-8 flex flex-wrap gap-3">
           <a
             href="#products"
-            className="inline-flex items-center rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800"
+            className="inline-flex items-center rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800"
           >
             {t.hero.browse}
           </a>

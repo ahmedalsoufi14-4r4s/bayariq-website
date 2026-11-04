@@ -11,7 +11,7 @@ function ErrorMessage() {
       <button
         type="button"
         onClick={() => window.location.reload()}
-        className="rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800"
+        className="rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800"
       >
         {t.error.reload}
       </button>

@@ -36,7 +36,7 @@ function Header() {
 
         {/* On phones the menu moves to its own row under the logo. */}
         <nav className="order-last w-full md:order-none md:w-auto">
-          <ul className="flex flex-wrap gap-x-5 text-sm font-medium">
+          <ul className="flex flex-wrap gap-x-5 text-sm">
             {NAV_IDS.map((id) => (
               <li key={id}>
                 <a
@@ -55,7 +55,7 @@ function Header() {
             type="button"
             lang={otherLanguage}
             onClick={toggleLanguage}
-            className="me-1 rounded-full border border-emerald-700 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-950"
+            className="me-1 rounded-full border border-emerald-700 px-4 py-2 text-sm text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-950"
           >
             {t.switchLanguage}
           </button>

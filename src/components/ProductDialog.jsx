@@ -84,7 +84,7 @@ function ProductDialog({ product, onClose }) {
                 className="flex justify-between gap-4 border-b border-gray-200 pb-2 dark:border-gray-800"
               >
                 <dt className="text-gray-600 dark:text-gray-400">{label}</dt>
-                <dd className="font-medium">{value}</dd>
+                <dd>{value}</dd>
               </div>
             ))}
           </dl>
@@ -93,7 +93,7 @@ function ProductDialog({ product, onClose }) {
             type="button"
             onClick={() => add(product)}
             disabled={!product.inStock}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
           >
             <PlusIcon className="size-5" />
             {t.cart.add}

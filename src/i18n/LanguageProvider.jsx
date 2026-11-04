@@ -25,6 +25,8 @@ function LanguageProvider({ children }) {
   useLayoutEffect(() => {
     document.documentElement.lang = language
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'
+    // The browser tab title follows the language too. index.html starts with the Arabic one.
+    document.title = translations[language].meta.title
     try {
       localStorage.setItem(STORAGE_KEY, language)
     } catch {
