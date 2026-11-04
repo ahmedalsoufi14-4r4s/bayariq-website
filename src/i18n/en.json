@@ -7,6 +7,34 @@
     "contact": "Contact us"
   },
   "switchLanguage": "العربية",
+  "hero": {
+    "tagline": "Your neighborhood supermarket in Al Hamdaniyah for all your everyday needs."
+  },
+  "highlights": {
+    "title": "Why shop with us?",
+    "prices": {
+      "title": "Budget-friendly prices",
+      "text": "Fair prices for every household."
+    },
+    "whatsapp": {
+      "title": "Easy ordering",
+      "text": "Pick your products and send your order on WhatsApp."
+    },
+    "nearby": {
+      "title": "Close to you",
+      "text": "Right in Al Hamdaniyah, Jeddah."
+    }
+  },
+  "contact": {
+    "title": "Visit us",
+    "hours": "Opening hours",
+    "address": "Address",
+    "openInMaps": "Open in Google Maps",
+    "mapTitle": "Store location on the map",
+    "mapComingSoon": "Map coming soon",
+    "call": "Call us",
+    "whatsapp": "Message us on WhatsApp"
+  },
   "footer": {
     "rights": "All rights reserved."
   }

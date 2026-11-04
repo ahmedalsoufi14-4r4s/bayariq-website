@@ -1,19 +1,18 @@
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
-import store from './data/store.json'
-import { useLanguage } from './i18n/LanguageContext.js'
+import Hero from './sections/Hero.jsx'
+import Highlights from './sections/Highlights.jsx'
+import StoreInfo from './sections/StoreInfo.jsx'
 
-// Page layout. The page sections are added inside <main> from Step 3.
+// Page layout. Products and offers are added inside <main> in the next steps.
 function App() {
-  const { localize } = useLanguage()
-
   return (
     <div className="flex min-h-dvh flex-col bg-white text-gray-900">
       <Header />
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
-        <h1 className="text-start text-3xl font-bold">
-          {localize(store, 'name')}
-        </h1>
+      <main id="main" className="flex-1">
+        <Hero />
+        <Highlights />
+        <StoreInfo />
       </main>
       <Footer />
     </div>
