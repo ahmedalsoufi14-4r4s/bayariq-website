@@ -1,4 +1,4 @@
-import ContactButtons from '../components/ContactButtons.jsx'
+import { MapPinIcon } from '../components/Icons.jsx'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 
@@ -29,7 +29,14 @@ function Hero() {
           >
             {t.hero.browse}
           </a>
-          <ContactButtons />
+          {/* With four branches there is no single number to call, so this leads to the branch list. */}
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-700 bg-white px-5 py-3 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:bg-gray-950 dark:text-emerald-400 dark:hover:bg-emerald-950"
+          >
+            <MapPinIcon className="size-5" />
+            {t.hero.branches}
+          </a>
         </div>
       </div>
     </section>

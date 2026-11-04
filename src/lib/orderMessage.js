@@ -3,11 +3,13 @@ import { formatPrice } from './price.js'
 
 // Builds the WhatsApp order text in the current language.
 // labels are the "order.message" texts from ar.json or en.json.
+// branch is the chosen branch as text, like "فرع الحمدانية", in case branches share a number.
 // Empty optional fields (district, time, notes) are left out.
 export function buildOrderMessage({
   lines,
   extraItems,
   customer,
+  branch,
   language,
   labels,
   currency,
@@ -39,7 +41,8 @@ export function buildOrderMessage({
     message.push('', `${labels.total} ${total}${note}`)
   }
 
-  message.push('', `${labels.name} ${customer.name.trim()}`)
+  message.push('', `${labels.branch} ${branch}`)
+  message.push(`${labels.name} ${customer.name.trim()}`)
   if (customer.district.trim() !== '') {
     message.push(`${labels.district} ${customer.district.trim()}`)
   }

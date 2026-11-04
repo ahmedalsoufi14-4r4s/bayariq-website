@@ -1,20 +1,21 @@
 {
   "meta": {
-    "title": "Aswaq Bayariq Al Khair | Al Hamdaniyah, Jeddah"
+    "title": "Aswaq Bayariq Al Khair | Our branches in Jeddah"
   },
   "skipToContent": "Skip to main content",
   "nav": {
     "home": "Home",
     "products": "Products",
     "offers": "Offers",
-    "contact": "Contact us"
+    "contact": "Our branches"
   },
   "switchLanguage": "العربية",
   "darkMode": "Dark mode",
   "comingSoon": "Coming soon",
   "hero": {
-    "tagline": "Your neighborhood supermarket in Al Hamdaniyah for all your everyday needs.",
-    "browse": "Browse products"
+    "tagline": "Your neighborhood supermarket in Jeddah for all your everyday needs.",
+    "browse": "Browse products",
+    "branches": "Our branches"
   },
   "highlights": {
     "title": "Why shop with us?",
@@ -27,8 +28,8 @@
       "text": "Pick your products and send your order on WhatsApp."
     },
     "nearby": {
-      "title": "Close to you",
-      "text": "Right in Al Hamdaniyah, Jeddah."
+      "title": "A branch near you",
+      "text": "Our branches in Jeddah: {districts}."
     }
   },
   "offers": {
@@ -89,8 +90,12 @@
     "send": "Send order on WhatsApp",
     "whatsappComingSoon": "Sending orders on WhatsApp is coming soon.",
     "emptyHint": "Add a product or write what you need to send an order.",
+    "branch": "Branch",
+    "chooseBranch": "Choose the branch you are ordering from.",
+    "branchWhatsappComingSoon": "Sending orders to this branch on WhatsApp is coming soon.",
     "message": {
       "greeting": "Hello, I would like to order:",
+      "branch": "Branch:",
       "items": "Items:",
       "extraItems": "Other items not on the list:",
       "total": "Estimated total:",
@@ -98,21 +103,22 @@
       "name": "Name:",
       "district": "District:",
       "method": "Order type:",
-      "pickup": "Pickup from the store",
+      "pickup": "Pickup from the branch",
       "delivery": "Delivery",
       "time": "Preferred time:",
       "notes": "Notes:"
     }
   },
   "contact": {
-    "title": "Visit us",
+    "title": "Our branches",
     "hours": "Opening hours",
     "address": "Address",
     "openInMaps": "Open in Google Maps",
-    "mapTitle": "Store location on the map",
+    "mapTitle": "Map of the {branch}",
     "mapComingSoon": "Map coming soon",
     "call": "Call us",
-    "whatsapp": "Message us on WhatsApp"
+    "whatsapp": "Message us on WhatsApp",
+    "branch": "{district} branch"
   },
   "footer": {
     "rights": "All rights reserved."

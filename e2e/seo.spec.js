@@ -66,18 +66,40 @@ test.describe('without JavaScript', () => {
     }
   })
 
-  test('JSON-LD describes the store as a GroceryStore, without placeholders', async ({
+  test('the description and the share text name every branch district', async ({
+    page,
+  }) => {
+    await page.goto('./')
+    const description = await metaContent(page, 'name="description"')
+    const shareText = await metaContent(page, 'property="og:description"')
+
+    for (const branch of store.branches) {
+      expect(description).toContain(branch.district_ar)
+      expect(shareText).toContain(branch.district_ar)
+    }
+  })
+
+  test('JSON-LD describes the store and each branch as a GroceryStore, without placeholders', async ({
     page,
   }) => {
     await page.goto('./')
     const json = await page
       .locator('script[type="application/ld+json"]')
       .textContent()
-    const data = JSON.parse(json)
+    const graph = JSON.parse(json)['@graph']
+    const organization = graph.find((item) => item['@type'] === 'Organization')
+    const branches = graph.filter((item) => item['@type'] === 'GroceryStore')
 
-    expect(data['@type']).toBe('GroceryStore')
-    expect(data.name).toBe(store.name_ar)
-    expect(data.url).toBe(store.website)
+    expect(organization.name).toBe(store.name_ar)
+    expect(organization.url).toBe(store.website)
+    expect(branches.map((branch) => branch.name)).toEqual(
+      store.branches.map(
+        (branch) => `${branch.name_ar} - ${branch.district_ar}`,
+      ),
+    )
+    for (const branch of branches) {
+      expect(branch.parentOrganization).toEqual({ '@id': organization['@id'] })
+    }
     expect(json).not.toContain('NEEDS-AHMED')
   })
 })

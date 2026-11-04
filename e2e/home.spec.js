@@ -1,73 +1,102 @@
 import { expect, test } from '@playwright/test'
 import { isPlaceholder } from '../src/lib/placeholder.js'
+import { fillIn } from '../src/lib/text.js'
 import { store, texts } from './helpers.js'
 
 const t = texts.ar
 
-test('hero links to the products, and shows WhatsApp and call only with real numbers', async ({
-  page,
-}) => {
+function branchLabel(branch) {
+  return fillIn(t.contact.branch, { district: branch.district_ar })
+}
+
+test('hero links to the products and to the branches', async ({ page }) => {
   await page.goto('./')
   const hero = page.locator('#home')
-  const whatsApp = hero.getByRole('link', { name: t.contact.whatsapp })
-  const call = hero.getByRole('link', { name: t.contact.call })
 
   await expect(hero.getByRole('link', { name: t.hero.browse })).toHaveAttribute(
     'href',
     '#products',
   )
-
-  if (isPlaceholder(store.whatsapp)) {
-    await expect(whatsApp).toHaveCount(0)
-  } else {
-    await expect(whatsApp).toHaveAttribute(
-      'href',
-      `https://wa.me/${store.whatsapp}`,
-    )
-  }
-
-  if (isPlaceholder(store.phone)) {
-    await expect(call).toHaveCount(0)
-  } else {
-    await expect(call).toHaveAttribute('href', `tel:${store.phone}`)
-  }
+  await expect(
+    hero.getByRole('link', { name: t.hero.branches }),
+  ).toHaveAttribute('href', '#contact')
 })
 
-test('"why shop with us" shows three highlights', async ({ page }) => {
-  await page.goto('./')
-  const highlights = page.getByRole('region', { name: t.highlights.title })
-
-  await expect(highlights.getByRole('listitem')).toHaveCount(3)
-})
-
-test('store info shows the hours, the address and the map, or "coming soon"', async ({
+test('"why shop with us" shows three highlights, and "nearby" names every branch district', async ({
   page,
 }) => {
   await page.goto('./')
-  const contact = page.getByRole('region', { name: t.contact.title })
-  const mapsLink = contact.getByRole('link', { name: t.contact.openInMaps })
+  const highlights = page.getByRole('region', { name: t.highlights.title })
+  const nearby = highlights
+    .getByRole('listitem')
+    .filter({ hasText: t.highlights.nearby.title })
 
-  if (isPlaceholder(store.hours)) {
-    await expect(contact.getByText(t.comingSoon, { exact: true })).toBeVisible()
-  } else {
-    await expect(contact.locator('dt')).toHaveCount(store.hours.length)
+  await expect(highlights.getByRole('listitem')).toHaveCount(3)
+  for (const branch of store.branches) {
+    await expect(nearby).toContainText(branch.district_ar)
   }
+})
 
-  await expect(contact.getByText(store.address_ar)).toBeVisible()
+test('the branches section shows every branch with its own name, hours, address, buttons and map', async ({
+  page,
+}) => {
+  await page.goto('./')
+  const section = page.getByRole('region', { name: t.contact.title })
+  await expect(section.getByRole('article')).toHaveCount(store.branches.length)
 
-  if (isPlaceholder(store.mapsUrl)) {
-    await expect(mapsLink).toHaveCount(0)
-  } else {
-    await expect(mapsLink).toHaveAttribute('href', store.mapsUrl)
-  }
+  for (const branch of store.branches) {
+    const label = branchLabel(branch)
+    const card = section.getByRole('article', { name: label, exact: true })
+    await expect(card.getByRole('heading', { name: label })).toBeVisible()
+    await expect(card.getByText(branch.name_ar, { exact: true })).toBeVisible()
 
-  if (isPlaceholder(store.mapsEmbedUrl)) {
-    await expect(contact.getByText(t.contact.mapComingSoon)).toBeVisible()
-  } else {
-    await expect(contact.getByTitle(t.contact.mapTitle)).toHaveAttribute(
-      'src',
-      store.mapsEmbedUrl,
+    // Missing hours and address each show "coming soon".
+    const missing = [branch.hours, branch.address_ar].filter(isPlaceholder)
+    await expect(card.getByText(t.comingSoon, { exact: true })).toHaveCount(
+      missing.length,
     )
+    if (!isPlaceholder(branch.hours)) {
+      await expect(card.locator('dt')).toHaveCount(branch.hours.length)
+    }
+    if (!isPlaceholder(branch.address_ar)) {
+      await expect(card.getByText(branch.address_ar)).toBeVisible()
+    }
+
+    const mapsLink = card.getByRole('link', { name: t.contact.openInMaps })
+    if (isPlaceholder(branch.mapsUrl)) {
+      await expect(mapsLink).toHaveCount(0)
+    } else {
+      await expect(mapsLink).toHaveAttribute('href', branch.mapsUrl)
+    }
+
+    if (isPlaceholder(branch.mapsEmbedUrl)) {
+      await expect(card.getByText(t.contact.mapComingSoon)).toBeVisible()
+    } else {
+      await expect(
+        card.getByTitle(fillIn(t.contact.mapTitle, { branch: label })),
+      ).toHaveAttribute('src', branch.mapsEmbedUrl)
+    }
+
+    // Call and WhatsApp show only with the branch's real numbers.
+    const whatsApp = card.getByRole('link', {
+      name: `${t.contact.whatsapp} – ${label}`,
+    })
+    const call = card.getByRole('link', {
+      name: `${t.contact.call} – ${label}`,
+    })
+    if (isPlaceholder(branch.whatsapp)) {
+      await expect(whatsApp).toHaveCount(0)
+    } else {
+      await expect(whatsApp).toHaveAttribute(
+        'href',
+        `https://wa.me/${branch.whatsapp}`,
+      )
+    }
+    if (isPlaceholder(branch.phone)) {
+      await expect(call).toHaveCount(0)
+    } else {
+      await expect(call).toHaveAttribute('href', `tel:${branch.phone}`)
+    }
   }
 })
 

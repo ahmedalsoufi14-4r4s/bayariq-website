@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useCart } from '../cart/CartContext.js'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
+import { getSendHintKey } from '../lib/branches.js'
 import { buildOrderMessage, buildWhatsAppUrl } from '../lib/orderMessage.js'
 import { isPlaceholder } from '../lib/placeholder.js'
+import { fillIn } from '../lib/text.js'
 import { ChatIcon } from './Icons.jsx'
 
 const INPUT =
@@ -13,6 +15,7 @@ function OrderForm() {
   const { t, language, localize } = useLanguage()
   const { lines, extraItems, setExtraItems } = useCart()
   const [customer, setCustomer] = useState({
+    branch: '',
     name: '',
     district: '',
     method: 'pickup',
@@ -20,11 +23,23 @@ function OrderForm() {
     notes: '',
   })
 
-  // Delivery is only offered when store.json says so ("delivers": true).
-  const canDeliver = store.delivers === true
-  // Never send orders to a made-up number: the button stays disabled until the real one is added.
-  const hasWhatsApp = !isPlaceholder(store.whatsapp)
+  const branch = store.branches.find((item) => item.id === customer.branch)
+  // Delivery is only offered when the chosen branch delivers ("delivers": true in store.json).
+  const canDeliver = branch?.delivers === true
+  // A branch that does not deliver always means pickup, even if delivery was picked for another branch.
+  const method = canDeliver ? customer.method : 'pickup'
   const hasOrder = lines.length > 0 || extraItems.trim() !== ''
+  // Never send orders to a made-up number: the button stays disabled until the
+  // chosen branch has its real WhatsApp number (see src/lib/branches.js).
+  const sendHintKey = getSendHintKey({
+    branches: store.branches,
+    branch,
+    hasOrder,
+  })
+
+  function branchLabel(item) {
+    return fillIn(t.contact.branch, { district: localize(item, 'district') })
+  }
 
   // One handler for every field: the input's name says which value to update.
   function handleChange(event) {
@@ -37,21 +52,18 @@ function OrderForm() {
     const message = buildOrderMessage({
       lines,
       extraItems,
-      customer,
+      customer: { ...customer, method },
+      branch: branchLabel(branch),
       language,
       labels: t.order.message,
       currency: t.currency,
     })
     window.open(
-      buildWhatsAppUrl(store.whatsapp, message),
+      buildWhatsAppUrl(branch.whatsapp, message),
       '_blank',
       'noopener,noreferrer',
     )
   }
-
-  let sendHint = null
-  if (!hasWhatsApp) sendHint = t.order.whatsappComingSoon
-  else if (!hasOrder) sendHint = t.order.emptyHint
 
   return (
     <form
@@ -71,6 +83,26 @@ function OrderForm() {
       </div>
 
       <h3 className="pt-2 text-lg font-bold">{t.order.title}</h3>
+
+      <fieldset>
+        <legend>{t.order.branch}</legend>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          {store.branches.map((item) => (
+            <label key={item.id} className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="branch"
+                value={item.id}
+                checked={customer.branch === item.id}
+                onChange={handleChange}
+                required
+                className="size-4 accent-emerald-700 dark:accent-emerald-400"
+              />
+              {branchLabel(item)}
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <div>
         <label htmlFor="order-name">{t.order.name}</label>
@@ -92,7 +124,7 @@ function OrderForm() {
           name="district"
           value={customer.district}
           onChange={handleChange}
-          required={customer.method === 'delivery'}
+          required={method === 'delivery'}
           className={INPUT}
         />
       </div>
@@ -101,26 +133,25 @@ function OrderForm() {
         <fieldset>
           <legend>{t.order.method}</legend>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
-            {['pickup', 'delivery'].map((method) => (
-              <label key={method} className="flex items-center gap-2">
+            {['pickup', 'delivery'].map((option) => (
+              <label key={option} className="flex items-center gap-2">
                 <input
                   type="radio"
                   name="method"
-                  value={method}
-                  checked={customer.method === method}
+                  value={option}
+                  checked={method === option}
                   onChange={handleChange}
                   className="size-4 accent-emerald-700 dark:accent-emerald-400"
                 />
-                {t.order.message[method]}
+                {t.order.message[option]}
               </label>
             ))}
           </div>
-          {customer.method === 'delivery' &&
-            !isPlaceholder(store.delivery_ar) && (
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                {localize(store, 'delivery')}
-              </p>
-            )}
+          {method === 'delivery' && !isPlaceholder(branch.delivery_ar) && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {localize(branch, 'delivery')}
+            </p>
+          )}
         </fieldset>
       ) : (
         <p>
@@ -154,19 +185,19 @@ function OrderForm() {
 
       <button
         type="submit"
-        disabled={!hasWhatsApp || !hasOrder}
-        aria-describedby={sendHint ? 'send-hint' : undefined}
+        disabled={sendHintKey !== null}
+        aria-describedby={sendHintKey ? 'send-hint' : undefined}
         className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
       >
         <ChatIcon className="size-5" />
         {t.order.send}
       </button>
-      {sendHint && (
+      {sendHintKey && (
         <p
           id="send-hint"
           className="text-center text-sm text-gray-600 dark:text-gray-400"
         >
-          {sendHint}
+          {t.order[sendHintKey]}
         </p>
       )}
     </form>

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
-import { isPlaceholder } from '../src/lib/placeholder.js'
+import { takesWhatsAppOrders } from '../src/lib/branches.js'
+import { fillIn } from '../src/lib/text.js'
 import { products, store, texts } from './helpers.js'
 
 const t = texts.ar
@@ -9,6 +10,10 @@ function addButton(page, product) {
   return page
     .locator('#products')
     .getByRole('button', { name: `${t.cart.add}: ${product.name_ar}` })
+}
+
+function branchLabel(branch) {
+  return fillIn(t.contact.branch, { district: branch.district_ar })
 }
 
 function cartButton(page) {
@@ -112,28 +117,43 @@ test('the empty cart links back to the products and closes itself', async ({
   ).toBeInViewport()
 })
 
-test('delivery is offered only when store.json says the store delivers', async ({
+test('the order form lists every branch, and offers delivery only for branches that deliver', async ({
   page,
 }) => {
   await page.goto('./')
   await cartButton(page).click()
   const drawer = cartDrawer(page)
+  const branches = drawer.getByRole('group', { name: t.order.branch })
   const delivery = drawer.getByRole('radio', {
     name: t.order.message.delivery,
   })
 
-  if (store.delivers === true) {
-    await expect(delivery).toBeVisible()
-  } else {
-    await expect(delivery).toHaveCount(0)
-    await expect(drawer.getByText(t.order.message.pickup)).toBeVisible()
+  await expect(branches.getByRole('radio')).toHaveCount(store.branches.length)
+  for (const branch of store.branches) {
+    const choice = branches.getByRole('radio', {
+      name: branchLabel(branch),
+      exact: true,
+    })
+    await expect(choice).toHaveAttribute('required')
+    await choice.check()
+    await expect(choice).toBeChecked()
+
+    if (branch.delivers === true) {
+      await expect(delivery).toBeVisible()
+    } else {
+      await expect(delivery).toHaveCount(0)
+      await expect(drawer.getByText(t.order.message.pickup)).toBeVisible()
+    }
   }
 })
 
 test('"send order" stays disabled with a "coming soon" note until there is a WhatsApp number', async ({
   page,
 }) => {
-  test.skip(!isPlaceholder(store.whatsapp), 'store.json has a WhatsApp number')
+  test.skip(
+    store.branches.some(takesWhatsAppOrders),
+    'a branch in store.json has a WhatsApp number',
+  )
   await page.goto('./')
   await addButton(page, first).click()
   await cartButton(page).click()
@@ -145,14 +165,12 @@ test('"send order" stays disabled with a "coming soon" note until there is a Wha
   await expect(drawer.getByText(t.order.whatsappComingSoon)).toBeVisible()
 })
 
-test('"send order" opens WhatsApp with the order message', async ({
+test('"send order" asks for a branch, then opens WhatsApp with the order for that branch', async ({
   page,
   context,
 }) => {
-  test.skip(
-    isPlaceholder(store.whatsapp),
-    'no WhatsApp number in store.json yet',
-  )
+  const branch = store.branches.find(takesWhatsAppOrders)
+  test.skip(!branch, 'no branch has a WhatsApp number in store.json yet')
   // Answer wa.me locally so the test never leaves the machine.
   await context.route('https://wa.me/**', (route) =>
     route.fulfill({ body: 'WhatsApp' }),
@@ -161,17 +179,26 @@ test('"send order" opens WhatsApp with the order message', async ({
   await addButton(page, first).click()
   await cartButton(page).click()
   const drawer = cartDrawer(page)
+  const send = drawer.getByRole('button', { name: t.order.send })
   await drawer.getByLabel(t.order.name).fill('أحمد')
 
+  await expect(send).toBeDisabled()
+  await expect(drawer.getByText(t.order.chooseBranch)).toBeVisible()
+
+  await drawer
+    .getByRole('radio', { name: branchLabel(branch), exact: true })
+    .check()
   const whatsAppPage = context.waitForEvent('page')
-  await drawer.getByRole('button', { name: t.order.send }).click()
+  await send.click()
   const popup = await whatsAppPage
   await popup.waitForURL(/wa\.me/)
 
   const url = new URL(popup.url())
-  expect(url.pathname).toBe(`/${store.whatsapp}`)
-  expect(url.searchParams.get('text')).toContain(first.name_ar)
-  expect(url.searchParams.get('text')).toContain('أحمد')
+  const text = url.searchParams.get('text')
+  expect(url.pathname).toBe(`/${branch.whatsapp}`)
+  expect(text).toContain(first.name_ar)
+  expect(text).toContain('أحمد')
+  expect(text).toContain(branchLabel(branch))
 })
 
 test('at 360px the cart button fits on the first header row', async ({

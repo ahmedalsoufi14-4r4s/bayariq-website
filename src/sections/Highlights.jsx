@@ -1,5 +1,7 @@
 import { ChatIcon, MapPinIcon, TagIcon } from '../components/Icons.jsx'
+import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
+import { fillIn } from '../lib/text.js'
 
 // Each id is a key in the "highlights" texts.
 // NEEDS-AHMED: the family should confirm these points, especially "prices".
@@ -10,7 +12,12 @@ const HIGHLIGHTS = [
 ]
 
 function Highlights() {
-  const { t } = useLanguage()
+  const { t, language, localize } = useLanguage()
+  // The "nearby" text lists the branch districts from store.json. Intl.ListFormat joins them
+  // the way each language writes a list: "الحمدانية وكيلو 14 والمحاميد" or "Al Hamdaniyah, Kilo 14, and Al Mahamid".
+  const districts = new Intl.ListFormat(language, {
+    type: 'conjunction',
+  }).format(store.branches.map((branch) => localize(branch, 'district')))
 
   return (
     <section
@@ -28,7 +35,7 @@ function Highlights() {
             </span>
             <h3 className="mt-4 text-lg font-bold">{t.highlights[id].title}</h3>
             <p className="mt-1 text-gray-600 dark:text-gray-400">
-              {t.highlights[id].text}
+              {fillIn(t.highlights[id].text, { districts })}
             </p>
           </li>
         ))}

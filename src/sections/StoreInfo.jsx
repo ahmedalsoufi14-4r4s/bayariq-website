@@ -1,11 +1,10 @@
-import ContactButtons from '../components/ContactButtons.jsx'
-import { ClockIcon, MapPinIcon } from '../components/Icons.jsx'
+import BranchCard from '../components/BranchCard.jsx'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
-import { isPlaceholder } from '../lib/placeholder.js'
 
+// "Our branches": one card for each branch in store.json.
 function StoreInfo() {
-  const { t, localize } = useLanguage()
+  const { t } = useLanguage()
 
   return (
     <section
@@ -17,68 +16,13 @@ function StoreInfo() {
         {t.contact.title}
       </h2>
 
-      <div className="mt-8 grid gap-8 md:grid-cols-2">
-        <div className="space-y-8">
-          <div>
-            <h3 className="flex items-center gap-2 text-lg font-bold">
-              <ClockIcon className="size-5 text-emerald-700 dark:text-emerald-400" />
-              {t.contact.hours}
-            </h3>
-            {isPlaceholder(store.hours) ? (
-              <p className="mt-3 text-gray-600 dark:text-gray-400">
-                {t.comingSoon}
-              </p>
-            ) : (
-              <dl className="mt-3 space-y-2">
-                {store.hours.map((row) => (
-                  <div
-                    key={row.days_en}
-                    className="flex justify-between gap-4 border-b border-gray-200 pb-2 dark:border-gray-800"
-                  >
-                    <dt>{localize(row, 'days')}</dt>
-                    <dd>{localize(row, 'time')}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-          </div>
-
-          <div>
-            <h3 className="flex items-center gap-2 text-lg font-bold">
-              <MapPinIcon className="size-5 text-emerald-700 dark:text-emerald-400" />
-              {t.contact.address}
-            </h3>
-            <p className="mt-3">{localize(store, 'address')}</p>
-            {!isPlaceholder(store.mapsUrl) && (
-              <a
-                href={store.mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block text-emerald-700 underline hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
-              >
-                {t.contact.openInMaps}
-              </a>
-            )}
-          </div>
-
-          <ContactButtons />
-        </div>
-
-        {isPlaceholder(store.mapsEmbedUrl) ? (
-          <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-400">
-            {t.contact.mapComingSoon}
-          </div>
-        ) : (
-          <iframe
-            src={store.mapsEmbedUrl}
-            title={t.contact.mapTitle}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-            className="h-80 w-full rounded-2xl border-0"
-          />
-        )}
-      </div>
+      <ul className="mt-8 grid gap-6 md:grid-cols-2">
+        {store.branches.map((branch) => (
+          <li key={branch.id}>
+            <BranchCard branch={branch} />
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }

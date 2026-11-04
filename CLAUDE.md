@@ -1,16 +1,16 @@
 # Bayariq Al Khair Supermarket Website
 
 ## Project
-- Real website for أسواق بيارق الخير الاقتصادية (Aswaq Bayariq Al Khair), a supermarket in Al Hamdaniyah, Jeddah, Saudi Arabia. The store belongs to Ahmed's family.
+- Real website for أسواق بيارق الخير الاقتصادية (Aswaq Bayariq Al Khair), a supermarket in Jeddah, Saudi Arabia, with four branches: Al Hamdaniyah (الحمدانية), Kilo 14 (كيلو 14) and Al Mahamid (المحاميد) are called أسواق بيارق الخير, and Al Harazat (الحرازات) is called بيارق التوفيق (Bayariq Al Tawfiq). The store belongs to Ahmed's family.
 - Developer: Ahmed, a software engineering student. He must be able to read and explain every line, so keep the code simple, readable and well named.
-- Goal: a fast, professional, mobile-first site where customers browse products and offers, find the store, and send their order on WhatsApp.
+- Goal: a fast, professional, mobile-first site where customers browse products and offers, find the nearest branch, and send their order on WhatsApp to the branch they choose.
 - This rebuilds an older HTML/CSS/JS version (in `old/`, if present). Use it only to see which features it had (language switch, search, category filter, product popup, offers timer, dark mode, map). Do not copy its code.
 
 ## Tech
 - React + Vite, JavaScript (no TypeScript), Tailwind CSS.
 - No backend, database or payments. All content lives in JSON files in `src/data/`.
 - Hosting: GitHub Pages through GitHub Actions. Set Vite `base` to the repo name. Use HashRouter if routes are ever needed.
-- Tests: Vitest for pure logic only (cart totals, WhatsApp message, Arabic search).
+- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch rules, Arabic search, JSON-LD).
 - Browser checks: Playwright (Chromium), tests in `e2e/`.
 - Ask before adding any dependency not listed here. Prefer none.
 
@@ -26,22 +26,22 @@
 - Images: the store's own photos or free-license images only. WebP, under 200 KB, lazy-loaded, with alt text in both languages.
 
 ## Data files
-- `store.json`: names (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours, address, Google Maps link and embed link, social links, delivery info (`delivers`: true or false, plus details).
+- `store.json`: store names (ar/en), website, social links, and `branches`: one entry per branch with id, name (ar/en), district (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours (`hours` rows plus the short `openingHours` form for search engines), address, Google Maps link and embed link, and delivery info (`delivers`: true or false, plus details). Every branch detail Ahmed has not given yet is `NEEDS-AHMED`.
 - `categories.json`: id, name_ar, name_en, icon.
 - `products.json`: id, name_ar, name_en, category, price (number or null), unit_ar, unit_en, image, featured, inStock.
 - `offers.json`: id, title_ar, title_en, details_ar, details_en, image, validUntil (ISO date). Hide expired offers automatically.
 
 ## WhatsApp order
 - Customers add products to a cart (saved in localStorage), change quantities, and write a note for items that are not listed.
-- Order form: name, district, pickup or delivery, preferred time, notes.
-- "Send order" builds a clear message in the current language with items, quantities, an estimated total (priced items only) and the customer details, then opens `https://wa.me/<number>?text=<encoded message>`.
-- Keep the message builder a pure function in `src/lib/` with unit tests.
+- Order form: branch (required), name, district, pickup or delivery (delivery only when the chosen branch delivers), preferred time, notes.
+- "Send order" builds a clear message in the current language with items, quantities, an estimated total (priced items only) and the customer details and the chosen branch, then opens `https://wa.me/<that branch's number>?text=<encoded message>`. "Send order" stays disabled until the chosen branch has a real WhatsApp number.
+- Keep the message builder and the branch rules pure functions in `src/lib/` with unit tests.
 
 ## Quality bar
 - Mobile first. Must look right from 360 px wide up to desktop.
 - Accessibility: semantic HTML, visible focus, AA contrast, keyboard friendly, aria-live for cart changes.
 - Lighthouse 90+ on mobile for Performance, Accessibility, Best Practices and SEO.
-- SEO: Arabic title and description, Open Graph image, favicon, JSON-LD (schema.org GroceryStore).
+- SEO: Arabic title and description, Open Graph image, favicon, JSON-LD (a schema.org Organization with one GroceryStore per branch).
 
 ## How to work (keep token use low)
 - Do only the step Ahmed asks for. Do not start the next step.

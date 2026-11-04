@@ -34,8 +34,8 @@ async function makeShareImage(browser) {
         <div style="width:120px; height:120px">${favicon}</div>
         <h1 dir="rtl" style="margin:0; font-size:76px; font-weight:700">${store.name_ar}</h1>
         <p style="margin:0; font-size:40px">${store.name_en}</p>
-        <p style="margin:0; font-size:30px; opacity:0.85">
-          <span dir="rtl">${store.address_ar}</span> · ${store.address_en}
+        <p dir="rtl" style="margin:0; font-size:30px; opacity:0.85">
+          ${store.branches.map((branch) => branch.district_ar).join(' · ')}
         </p>
       </main>
     </body>`,

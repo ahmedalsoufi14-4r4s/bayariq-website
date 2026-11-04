@@ -1,6 +1,6 @@
 # أسواق بيارق الخير الاقتصادية · Aswaq Bayariq Al Khair
 
-The website of a neighborhood supermarket in Al Hamdaniyah, Jeddah. Customers browse products and offers, find the store, and send their order on WhatsApp.
+The website of a neighborhood supermarket with four branches in Jeddah: Al Hamdaniyah, Kilo 14 and Al Mahamid (أسواق بيارق الخير), and Al Harazat (بيارق التوفيق). Customers browse products and offers, find the nearest branch, and send their order to that branch on WhatsApp.
 
 **Live site: [ahmedalsoufi14-4r4s.github.io/bayariq-website](https://ahmedalsoufi14-4r4s.github.io/bayariq-website/)**
 
@@ -16,7 +16,7 @@ The website of a neighborhood supermarket in Al Hamdaniyah, Jeddah. Customers br
 - Product list with category filter and a search that ignores Arabic letter variants (أ إ آ, ة, ى) and diacritics.
 - Offers with a "valid until" date. Expired offers hide themselves.
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
-- Opening hours, address, map, and call and WhatsApp buttons.
+- A card for each branch with its own name, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
 - Dark mode, subtle animations (off for people who ask their device for less motion), keyboard friendly, AA contrast.
 - Fast on phones: on the live site, Lighthouse mobile gives about 95 for Performance (89 to 98 across runs) and 100 for Accessibility, Best Practices and SEO.
 
@@ -49,13 +49,13 @@ The first `npm run check` needs Chromium: `npx playwright install chromium`.
 
 All content lives in `src/data/` and `src/i18n/`. Nothing in the components needs to change.
 
-| File                          | Holds                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `src/data/store.json`         | Name, phone, WhatsApp number, opening hours, address, map links, delivery, website. |
-| `src/data/products.json`      | Products: names in both languages, category, price (or `null`), unit, photo.        |
-| `src/data/categories.json`    | Categories with an emoji icon.                                                      |
-| `src/data/offers.json`        | Offers with a last day (`validUntil`, `YYYY-MM-DD`).                                |
-| `src/i18n/ar.json`, `en.json` | Every text on the page, in Arabic and English.                                      |
+| File                          | Holds                                                                                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/data/store.json`         | Store name, website, social links, and the branches: name, district, phone, WhatsApp number, opening hours, address, map links, delivery. |
+| `src/data/products.json`      | Products: names in both languages, category, price (or `null`), unit, photo.                                                              |
+| `src/data/categories.json`    | Categories with an emoji icon.                                                                                                            |
+| `src/data/offers.json`        | Offers with a last day (`validUntil`, `YYYY-MM-DD`).                                                                                      |
+| `src/i18n/ar.json`, `en.json` | Every text on the page, in Arabic and English.                                                                                            |
 
 Photos go in `public/images/` as WebP under 200 KB ([squoosh.app](https://squoosh.app) converts them for free). `npm run check` fails if a photo is missing, too big or not WebP.
 
