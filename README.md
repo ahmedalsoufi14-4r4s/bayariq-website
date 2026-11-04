@@ -18,7 +18,7 @@ The website of a neighborhood supermarket in Al Hamdaniyah, Jeddah. Customers br
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
 - Opening hours, address, map, and call and WhatsApp buttons.
 - Dark mode, subtle animations (off for people who ask their device for less motion), keyboard friendly, AA contrast.
-- Fast on phones: Lighthouse mobile 94+ for Performance and 100 for Accessibility, Best Practices and SEO.
+- Fast on phones: on the live site, Lighthouse mobile gives about 95 for Performance (89 to 98 across runs) and 100 for Accessibility, Best Practices and SEO.
 
 ## Tech
 
