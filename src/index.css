@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+/* Tailwind v4 reads design tokens from @theme. Overriding --font-sans
+   makes IBM Plex Sans Arabic the default font for the whole site. */
+@theme {
+  --font-sans: 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+}
