@@ -5,3 +5,8 @@
 @theme {
   --font-sans: 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Stop the page behind an open dialog from scrolling. */
+body:has(dialog[open]) {
+  overflow: hidden;
+}

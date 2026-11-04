@@ -25,6 +25,25 @@
       "text": "في حي الحمدانية بجدة."
     }
   },
+  "products": {
+    "title": "منتجاتنا",
+    "searchLabel": "ابحث عن منتج",
+    "searchPlaceholder": "ابحث عن منتج، مثل: حليب",
+    "categoriesLabel": "الأقسام",
+    "all": "الكل",
+    "results": "عدد النتائج:",
+    "noResults": "لا توجد منتجات مطابقة. جرّب كلمة أخرى أو قسمًا آخر.",
+    "priceOnRequest": "السعر عند الطلب",
+    "featured": "مميز",
+    "category": "القسم",
+    "unit": "الوحدة",
+    "price": "السعر",
+    "availability": "التوفر",
+    "inStock": "متوفر",
+    "outOfStock": "غير متوفر حاليًا",
+    "close": "إغلاق"
+  },
+  "currency": "ر.س",
   "contact": {
     "title": "زورونا",
     "hours": "أوقات العمل",

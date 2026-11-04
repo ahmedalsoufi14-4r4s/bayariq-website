@@ -25,6 +25,25 @@
       "text": "Right in Al Hamdaniyah, Jeddah."
     }
   },
+  "products": {
+    "title": "Our products",
+    "searchLabel": "Search for a product",
+    "searchPlaceholder": "Search for a product, e.g. milk",
+    "categoriesLabel": "Categories",
+    "all": "All",
+    "results": "Results:",
+    "noResults": "No matching products. Try another word or category.",
+    "priceOnRequest": "Price on request",
+    "featured": "Featured",
+    "category": "Category",
+    "unit": "Unit",
+    "price": "Price",
+    "availability": "Availability",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "close": "Close"
+  },
+  "currency": "SAR",
   "contact": {
     "title": "Visit us",
     "hours": "Opening hours",

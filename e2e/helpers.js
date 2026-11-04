@@ -8,6 +8,8 @@ function readJson(relativePath) {
 
 // The tests read the same data and texts as the site, so they keep passing when the content changes.
 export const store = readJson('../src/data/store.json')
+export const categories = readJson('../src/data/categories.json')
+export const products = readJson('../src/data/products.json')
 export const texts = {
   ar: readJson('../src/i18n/ar.json'),
   en: readJson('../src/i18n/en.json'),

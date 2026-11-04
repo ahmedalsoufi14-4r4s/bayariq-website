@@ -1,0 +1,38 @@
+[
+  {
+    "id": "fruits-vegetables",
+    "name_ar": "خضار وفواكه",
+    "name_en": "Fruits & vegetables",
+    "icon": "🥕"
+  },
+  {
+    "id": "dairy",
+    "name_ar": "ألبان وأجبان",
+    "name_en": "Dairy & cheese",
+    "icon": "🥛"
+  },
+  {
+    "id": "bakery",
+    "name_ar": "مخبوزات",
+    "name_en": "Bakery",
+    "icon": "🍞"
+  },
+  {
+    "id": "pantry",
+    "name_ar": "مواد غذائية",
+    "name_en": "Pantry",
+    "icon": "🍚"
+  },
+  {
+    "id": "drinks",
+    "name_ar": "مشروبات",
+    "name_en": "Drinks",
+    "icon": "🧃"
+  },
+  {
+    "id": "cleaning",
+    "name_ar": "منظفات",
+    "name_en": "Cleaning",
+    "icon": "🧼"
+  }
+]
