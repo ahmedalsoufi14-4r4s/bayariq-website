@@ -65,12 +65,23 @@ test('search ignores Arabic letter variants and diacritics', async ({
   await expect(title).toBeVisible()
 })
 
-test('a search with no match shows a message', async ({ page }) => {
+test('a search with no match shows a message and a button that brings back every product', async ({
+  page,
+}) => {
   await page.goto('./')
+  const filter = page.getByRole('group', { name: t.products.categoriesLabel })
+  await filter.getByRole('button', { name: categories[0].name_ar }).click()
 
   await searchBox(page).fill('zzzz')
   await expect(productCards(page)).toHaveCount(0)
   await expect(page.getByText(t.products.noResults)).toBeVisible()
+
+  await page.getByRole('button', { name: t.products.showAll }).click()
+  await expect(productCards(page)).toHaveCount(products.length)
+  await expect(searchBox(page)).toHaveValue('')
+  await expect(
+    filter.getByRole('button', { name: t.products.all }),
+  ).toHaveAttribute('aria-pressed', 'true')
 })
 
 test('product details open in a dialog that closes with the button, Escape and the backdrop', async ({

@@ -96,6 +96,22 @@ test('the drawer closes with its button and with Escape', async ({ page }) => {
   await expect(drawer).toBeHidden()
 })
 
+test('the empty cart links back to the products and closes itself', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await cartButton(page).click()
+  const drawer = cartDrawer(page)
+  await expect(drawer.getByText(t.cart.empty)).toBeVisible()
+
+  await drawer.getByRole('link', { name: t.cart.browse }).click()
+  await expect(drawer).toBeHidden()
+  await expect(page).toHaveURL(/#products$/)
+  await expect(
+    page.getByRole('heading', { name: t.products.title }),
+  ).toBeInViewport()
+})
+
 test('delivery is offered only when store.json says the store delivers', async ({
   page,
 }) => {

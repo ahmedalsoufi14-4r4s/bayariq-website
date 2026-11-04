@@ -1,3 +1,5 @@
+import EmptyState from '../components/EmptyState.jsx'
+import { TagIcon } from '../components/Icons.jsx'
 import OfferCard from '../components/OfferCard.jsx'
 import offers from '../data/offers.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
@@ -9,7 +11,11 @@ function Offers() {
   const activeOffers = getActiveOffers(offers, new Date())
 
   return (
-    <section id="offers" aria-labelledby="offers-title" className="bg-gray-50">
+    <section
+      id="offers"
+      aria-labelledby="offers-title"
+      className="bg-gray-50 dark:bg-gray-900"
+    >
       <div className="mx-auto max-w-6xl px-4 py-16">
         <h2 id="offers-title" className="text-2xl font-bold md:text-3xl">
           {t.offers.title}
@@ -24,9 +30,9 @@ function Offers() {
             ))}
           </ul>
         ) : (
-          <p className="mt-8 rounded-2xl bg-white p-6 text-center text-gray-600">
-            {t.offers.none}
-          </p>
+          <div className="mt-8">
+            <EmptyState Icon={TagIcon} text={t.offers.none} />
+          </div>
         )}
       </div>
     </section>

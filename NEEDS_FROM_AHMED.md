@@ -18,7 +18,7 @@ All of these go in `src/data/store.json`.
 
 ## Content and photos
 
-Photos: WebP, under 200 KB each.
+Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](https://squoosh.app) (choose WebP, quality about 75, width about 800 px). `npm run check` fails if a photo in the data files is missing from `public/`, is not WebP, or is 200 KB or larger. A photo that fails to load on the site falls back to the category icon.
 
 - **Logo** → `public/images/`, replaces the text logo in `src/components/Header.jsx`. SVG is best, PNG or WebP also works.
 - **Store photo for the hero** → `public/images/`, used in `src/sections/Hero.jsx`.

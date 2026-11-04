@@ -22,14 +22,16 @@ function Highlights() {
       </h2>
       <ul className="mt-8 grid gap-4 sm:grid-cols-3">
         {HIGHLIGHTS.map(({ id, Icon }) => (
-          <li key={id} className="rounded-2xl bg-gray-50 p-6">
-            <span className="flex size-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+          <li key={id} className="rounded-2xl bg-gray-50 p-6 dark:bg-gray-900">
+            <span className="flex size-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
               <Icon className="size-6" />
             </span>
             <h3 className="mt-4 text-lg font-semibold">
               {t.highlights[id].title}
             </h3>
-            <p className="mt-1 text-gray-600">{t.highlights[id].text}</p>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">
+              {t.highlights[id].text}
+            </p>
           </li>
         ))}
       </ul>

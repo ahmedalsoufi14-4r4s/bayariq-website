@@ -1,12 +1,105 @@
 @import 'tailwindcss';
 
 /* Tailwind v4 reads design tokens from @theme. Overriding --font-sans
-   makes IBM Plex Sans Arabic the default font for the whole site. */
+   makes IBM Plex Sans Arabic the default font for the whole site.
+   --animate-pop creates the class animate-pop (used by the cart count in Header.jsx). */
 @theme {
   --font-sans: 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+  --animate-pop: pop 300ms ease-out;
+
+  @keyframes pop {
+    50% {
+      scale: 1.3;
+    }
+  }
 }
+
+/* dark: classes apply when <html> has the "dark" class.
+   index.html sets it before the page shows, and ThemeToggle.jsx changes it. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Stop the page behind an open dialog from scrolling. */
 body:has(dialog[open]) {
   overflow: hidden;
+}
+
+/* @layer base puts these rules under Tailwind's classes, so a class on an element still wins. */
+@layer base {
+  /* Tells the browser which colors to use for its own parts, like scrollbars and form controls. */
+  :root {
+    color-scheme: light;
+  }
+  :root.dark {
+    color-scheme: dark;
+  }
+
+  /* A clear outline around whatever has keyboard focus, in both themes. */
+  :focus-visible {
+    outline: 2px solid var(--color-emerald-700);
+    outline-offset: 2px;
+  }
+  .dark :focus-visible {
+    outline-color: var(--color-emerald-400);
+  }
+
+  /* The browser's default placeholder grey is too light to read (AA contrast). */
+  ::placeholder {
+    color: var(--color-gray-500);
+  }
+  .dark ::placeholder {
+    color: var(--color-gray-400);
+  }
+
+  /* Hover colors fade instead of jumping. */
+  a,
+  button {
+    transition-property: color, background-color, border-color;
+    transition-duration: 150ms;
+  }
+
+  /* Movement only for people who have not asked their device for less motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Dialogs and their dark backdrop fade in and out.
+       @starting-style gives the values an opening dialog starts from.
+       allow-discrete keeps a closing dialog on screen until its fade has ended. */
+    dialog,
+    dialog::backdrop {
+      transition:
+        opacity 200ms,
+        translate 200ms,
+        display 200ms allow-discrete,
+        overlay 200ms allow-discrete;
+    }
+    dialog:not([open]),
+    dialog:not([open])::backdrop {
+      opacity: 0;
+    }
+    @starting-style {
+      dialog[open],
+      dialog[open]::backdrop {
+        opacity: 0;
+      }
+    }
+
+    /* The cart drawer (CartDrawer.jsx) also slides in from its side:
+       from the right in English and from the left in Arabic. */
+    .drawer:not([open]) {
+      translate: 100%;
+    }
+    [dir='rtl'] .drawer:not([open]) {
+      translate: -100%;
+    }
+    @starting-style {
+      .drawer[open] {
+        translate: 100%;
+      }
+      [dir='rtl'] .drawer[open] {
+        translate: -100%;
+      }
+    }
+  }
 }

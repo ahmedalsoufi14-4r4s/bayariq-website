@@ -6,7 +6,11 @@ function Hero() {
   const { t, localize } = useLanguage()
 
   return (
-    <section id="home" aria-labelledby="hero-title" className="bg-emerald-50">
+    <section
+      id="home"
+      aria-labelledby="hero-title"
+      className="bg-emerald-50 dark:bg-emerald-950"
+    >
       {/* NEEDS-AHMED: add a photo of the store here. */}
       <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
         <h1
@@ -15,7 +19,9 @@ function Hero() {
         >
           {localize(store, 'name')}
         </h1>
-        <p className="mt-4 max-w-xl text-lg text-gray-700">{t.hero.tagline}</p>
+        <p className="mt-4 max-w-xl text-lg text-gray-700 dark:text-gray-300">
+          {t.hero.tagline}
+        </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a
             href="#products"

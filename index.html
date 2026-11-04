@@ -10,8 +10,23 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
     />
     <title>أسواق بيارق الخير الاقتصادية</title>
+    <script>
+      // Picks light or dark before the page shows, so it never flashes the wrong colors.
+      // The visitor's saved choice wins, otherwise we follow their device setting.
+      // Same storage key as in src/components/ThemeToggle.jsx.
+      let savedTheme = null
+      try {
+        savedTheme = localStorage.getItem('bayariq-theme')
+      } catch {
+        // Storage is blocked: follow the device setting.
+      }
+      const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches
+      if (savedTheme === 'dark' || (savedTheme !== 'light' && prefersDark)) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
   </head>
-  <body>
+  <body class="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

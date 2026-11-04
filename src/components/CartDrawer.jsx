@@ -4,14 +4,16 @@ import { useCart } from '../cart/CartContext.js'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { getEstimatedTotal } from '../lib/cart.js'
 import { formatPrice } from '../lib/price.js'
-import { CloseIcon, MinusIcon, PlusIcon } from './Icons.jsx'
+import EmptyState from './EmptyState.jsx'
+import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from './Icons.jsx'
 import OrderForm from './OrderForm.jsx'
 
 const STEP_BUTTON =
-  'flex size-9 items-center justify-center rounded-full border border-gray-300 hover:border-emerald-700'
+  'flex size-9 items-center justify-center rounded-full border border-gray-300 hover:border-emerald-700 dark:border-gray-700 dark:hover:border-emerald-400'
 
 // The cart opens as a full-height panel on the end side (left in Arabic, right in English).
 // Like the product details, it is a <dialog> opened with showModal().
+// The "drawer" class makes it slide in (see index.css).
 function CartDrawer() {
   const { t, localize } = useLanguage()
   const {
@@ -50,7 +52,7 @@ function CartDrawer() {
       onClose={closeCart}
       onClick={handleClick}
       aria-labelledby="cart-title"
-      className="my-0 ms-auto me-0 h-dvh max-h-none w-full max-w-md bg-white p-0 text-gray-900 backdrop:bg-black/50"
+      className="drawer my-0 ms-auto me-0 h-dvh max-h-none w-full max-w-md bg-white p-0 text-gray-900 backdrop:bg-black/50 dark:bg-gray-900 dark:text-gray-100 dark:backdrop:bg-black/70"
     >
       <div className="p-5">
         <div className="flex items-center justify-between gap-4">
@@ -61,18 +63,27 @@ function CartDrawer() {
             type="button"
             onClick={close}
             aria-label={t.cart.close}
-            className="-m-2 rounded-full p-2 hover:bg-gray-100"
+            className="-m-2 rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <CloseIcon className="size-6" />
           </button>
         </div>
 
         {lines.length === 0 ? (
-          <p className="mt-4 rounded-2xl bg-gray-50 p-4 text-gray-600">
-            {t.cart.empty}
-          </p>
+          <div className="mt-4">
+            {/* close() runs first, then the link scrolls the page to the products. */}
+            <EmptyState Icon={CartIcon} text={t.cart.empty}>
+              <a
+                href="#products"
+                onClick={close}
+                className="rounded-full bg-emerald-700 px-5 py-2 font-medium text-white hover:bg-emerald-800"
+              >
+                {t.cart.browse}
+              </a>
+            </EmptyState>
+          </div>
         ) : (
-          <ul className="mt-4 divide-y divide-gray-200">
+          <ul className="mt-4 divide-y divide-gray-200 dark:divide-gray-800">
             {lines.map(({ product, quantity }) => {
               const name = localize(product, 'name')
               return (
@@ -82,7 +93,7 @@ function CartDrawer() {
                 >
                   <div>
                     <p className="font-medium">{name}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {localize(product, 'unit')} ·{' '}
                       {product.price === null
                         ? t.products.priceOnRequest
@@ -92,7 +103,7 @@ function CartDrawer() {
                       type="button"
                       onClick={() => remove(product)}
                       aria-label={`${t.cart.remove} ${name}`}
-                      className="mt-1 text-sm text-gray-600 underline hover:text-gray-900"
+                      className="mt-1 text-sm text-gray-600 underline hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                     >
                       {t.cart.remove}
                     </button>
@@ -132,14 +143,16 @@ function CartDrawer() {
           </p>
         )}
         {hasUnpricedItems && (
-          <p className="mt-2 text-sm text-gray-600">{t.cart.unpricedNote}</p>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            {t.cart.unpricedNote}
+          </p>
         )}
 
         {(lines.length > 0 || extraItems !== '') && (
           <button
             type="button"
             onClick={clear}
-            className="mt-3 text-sm text-gray-600 underline hover:text-gray-900"
+            className="mt-3 text-sm text-gray-600 underline hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
           >
             {t.cart.clear}
           </button>

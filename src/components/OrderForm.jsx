@@ -7,7 +7,7 @@ import { isPlaceholder } from '../lib/placeholder.js'
 import { ChatIcon } from './Icons.jsx'
 
 const INPUT =
-  'mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 focus:border-emerald-700'
+  'mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 focus:border-emerald-700 dark:border-gray-700 dark:bg-gray-950 dark:focus:border-emerald-400'
 
 function OrderForm() {
   const { t, language, localize } = useLanguage()
@@ -56,7 +56,7 @@ function OrderForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-6 space-y-4 border-t border-gray-200 pt-6"
+      className="mt-6 space-y-4 border-t border-gray-200 pt-6 dark:border-gray-800"
     >
       <div>
         <label htmlFor="extra-items" className="font-medium">
@@ -115,7 +115,7 @@ function OrderForm() {
                   value={method}
                   checked={customer.method === method}
                   onChange={handleChange}
-                  className="size-4 accent-emerald-700"
+                  className="size-4 accent-emerald-700 dark:accent-emerald-400"
                 />
                 {t.order.message[method]}
               </label>
@@ -123,7 +123,7 @@ function OrderForm() {
           </div>
           {customer.method === 'delivery' &&
             !isPlaceholder(store.delivery_ar) && (
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 {localize(store, 'delivery')}
               </p>
             )}
@@ -167,13 +167,16 @@ function OrderForm() {
         type="submit"
         disabled={!hasWhatsApp || !hasOrder}
         aria-describedby={sendHint ? 'send-hint' : undefined}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
       >
         <ChatIcon className="size-5" />
         {t.order.send}
       </button>
       {sendHint && (
-        <p id="send-hint" className="text-center text-sm text-gray-600">
+        <p
+          id="send-hint"
+          className="text-center text-sm text-gray-600 dark:text-gray-400"
+        >
           {sendHint}
         </p>
       )}

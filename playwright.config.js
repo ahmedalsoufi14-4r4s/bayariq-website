@@ -9,6 +9,9 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: SITE_URL,
+    // Tests act like a visitor who asked for less motion, so they never wait for animations.
+    // e2e/polish.spec.js turns motion back on to check the animations.
+    reducedMotion: 'reduce',
   },
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173 --strictPort',

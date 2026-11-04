@@ -7,6 +7,7 @@
     "contact": "Contact us"
   },
   "switchLanguage": "العربية",
+  "darkMode": "Dark mode",
   "comingSoon": "Coming soon",
   "hero": {
     "tagline": "Your neighborhood supermarket in Al Hamdaniyah for all your everyday needs.",
@@ -49,7 +50,8 @@
     "availability": "Availability",
     "inStock": "In stock",
     "outOfStock": "Out of stock",
-    "close": "Close"
+    "close": "Close",
+    "showAll": "Show all products"
   },
   "currency": "SAR",
   "cart": {
@@ -68,7 +70,8 @@
     "added": "Added to cart:",
     "quantityChanged": "Quantity changed:",
     "removed": "Removed from cart:",
-    "cleared": "Cart emptied."
+    "cleared": "Cart emptied.",
+    "browse": "Browse products"
   },
   "order": {
     "extraItems": "Items not on the list",
@@ -110,5 +113,10 @@
   },
   "footer": {
     "rights": "All rights reserved."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "text": "Sorry about that. Please reload the page and try again.",
+    "reload": "Reload the page"
   }
 }

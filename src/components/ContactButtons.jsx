@@ -28,7 +28,7 @@ function ContactButtons() {
       {hasPhone && (
         <a
           href={`tel:${store.phone}`}
-          className="inline-flex items-center gap-2 rounded-full border border-emerald-700 bg-white px-5 py-3 font-medium text-emerald-700 hover:bg-emerald-50"
+          className="inline-flex items-center gap-2 rounded-full border border-emerald-700 bg-white px-5 py-3 font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400 dark:bg-gray-950 dark:text-emerald-400 dark:hover:bg-emerald-950"
         >
           <PhoneIcon className="size-5" />
           {t.contact.call}

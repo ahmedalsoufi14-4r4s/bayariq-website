@@ -5,7 +5,7 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 function FilterButton({ isSelected, onClick, children }) {
   const colors = isSelected
     ? 'border-emerald-700 bg-emerald-700 text-white'
-    : 'border-gray-300 bg-white hover:border-emerald-700'
+    : 'border-gray-300 bg-white hover:border-emerald-700 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-emerald-400'
 
   return (
     <button

@@ -9,9 +9,10 @@ import Products from './sections/Products.jsx'
 import StoreInfo from './sections/StoreInfo.jsx'
 
 // Page layout. The cart drawer stays hidden until the cart button opens it.
+// The page colors for light and dark mode are set on <body> in index.html.
 function App() {
   return (
-    <div className="flex min-h-dvh flex-col bg-white text-gray-900">
+    <div className="flex min-h-dvh flex-col">
       <Header />
       <main id="main" className="flex-1">
         <Hero />

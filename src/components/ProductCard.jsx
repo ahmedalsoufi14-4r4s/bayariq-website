@@ -11,7 +11,7 @@ function ProductCard({ product, onOpen }) {
   const quantity = getQuantity(product.id)
 
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white hover:border-emerald-700">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-emerald-700 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950 dark:hover:border-emerald-400">
       <ProductImage product={product} />
 
       <div className="absolute start-2 top-2 flex flex-wrap gap-1 text-xs font-medium">
@@ -28,7 +28,7 @@ function ProductCard({ product, onOpen }) {
       </div>
 
       {quantity > 0 && (
-        <span className="absolute end-2 top-2 rounded-full bg-white px-2 py-1 text-xs font-medium text-emerald-700 shadow">
+        <span className="absolute end-2 top-2 rounded-full bg-white px-2 py-1 text-xs font-medium text-emerald-700 shadow dark:bg-gray-900 dark:text-emerald-400">
           {t.cart.inCart} {quantity}
         </span>
       )}
@@ -45,8 +45,10 @@ function ProductCard({ product, onOpen }) {
             {name}
           </button>
         </h3>
-        <p className="text-sm text-gray-600">{localize(product, 'unit')}</p>
-        <p className="mt-auto pt-2 text-sm font-semibold text-emerald-700">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {localize(product, 'unit')}
+        </p>
+        <p className="mt-auto pt-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
           {product.price === null
             ? t.products.priceOnRequest
             : formatPrice(product.price, t.currency)}
@@ -57,7 +59,7 @@ function ProductCard({ product, onOpen }) {
           onClick={() => add(product)}
           disabled={!product.inStock}
           aria-label={`${t.cart.add}: ${name}`}
-          className="relative z-10 mt-2 flex items-center justify-center gap-1 rounded-full bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
+          className="relative z-10 mt-2 flex items-center justify-center gap-1 rounded-full bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 dark:disabled:bg-gray-800 dark:disabled:text-gray-400"
         >
           <PlusIcon className="size-4" />
           {t.cart.add}
