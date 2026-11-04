@@ -22,11 +22,11 @@
 - Arabic copy: clear Modern Standard Arabic, warm and short. Prices in SAR (ر.س).
 
 ## Content rules
-- Never invent real store facts (phone, prices, hours, address, delivery). Use placeholders marked `TODO` until Ahmed provides them.
+- Never invent real store facts (phone, prices, hours, address, delivery). Use placeholders tagged `NEEDS-AHMED` until Ahmed provides them (see "Things that need Ahmed").
 - Images: the store's own photos or free-license images only. WebP, under 200 KB, lazy-loaded, with alt text in both languages.
 
 ## Data files
-- `store.json`: names (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours, address, Google Maps link, social links, delivery info.
+- `store.json`: names (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours, address, Google Maps link and embed link, social links, delivery info (`delivers`: true or false, plus details).
 - `categories.json`: id, name_ar, name_en, icon.
 - `products.json`: id, name_ar, name_en, category, price (number or null), unit_ar, unit_en, image, featured, inStock.
 - `offers.json`: id, title_ar, title_en, details_ar, details_en, image, validUntil (ISO date). Hide expired offers automatically.
@@ -49,16 +49,22 @@
 - The first time you use a new React or Tailwind idea, explain it in one or two plain sentences.
 - Before finishing a step, follow "Checks and Git" below and fix any errors.
 
+## Things that need Ahmed
+- Never stop or wait for me. When something needs my input (store details, real content, photos, a decision or a confirmation), use a placeholder and keep going.
+- Tag every placeholder in code and data with NEEDS-AHMED instead of TODO. On the page, never show "TODO": show a neutral "قريبًا" / "Coming soon" or hide the element. Never invent phone numbers: keep the call and WhatsApp buttons hidden or disabled until a real number is added.
+- Keep one list of everything you need from me in NEEDS_FROM_AHMED.md, grouped into store details, content and photos, and decisions, with where each item goes. Update it every step.
+- Don't list "what you must do yourself" after each step. Give me the full NEEDS_FROM_AHMED.md list only after Step 8, as everything needed to finish version 1.
+
 ## Checks and Git (after every step)
 - I keep `npm run dev` running in my own terminal on port 5173. Never stop it or start another dev server.
 - Run lint, format:check and build (and `npm test` once unit tests exist).
 - Run `npm run check`: Playwright (Chromium) tests against `vite preview` on port 4173. Load the site in Arabic and English at 360 px and 1280 px wide, fail on console errors or sideways scrolling, and test the step's new features. Save two screenshots (Arabic at 360 px, English at 1280 px) to `screenshots/` (git-ignored) and look at them yourself.
 - Add or update Playwright tests for each new feature.
 - When everything passes, commit with a clear message and push (`git add -A`, `git commit`, `git push`).
-- End with: what changed (5 lines max), what the checks covered, and what I must do myself.
+- End with: what changed (5 lines max) and what the checks covered.
 
 ## Build plan
-1. Setup: Vite + React + Tailwind, ESLint and Prettier, folders (`components`, `sections`, `data`, `i18n`, `lib`, `assets`), font, RTL base layout, `store.json` with TODO placeholders.
+1. Setup: Vite + React + Tailwind, ESLint and Prettier, folders (`components`, `sections`, `data`, `i18n`, `lib`, `assets`), font, RTL base layout, `store.json` with NEEDS-AHMED placeholders.
 2. Language system: AR/EN context, header toggle, `lang`/`dir` switch, saved choice. Header with logo and navigation, plus footer.
 3. Home and store info: hero, short "why shop with us" highlights, opening hours, Google Maps embed, call and WhatsApp buttons.
 4. Products: category filter, search that ignores Arabic letter variants (أ إ آ to ا, ة to ه, ى to ي) and diacritics, product cards, product details dialog.
@@ -66,4 +72,4 @@
 6. Cart and WhatsApp order: cart drawer, quantities, order form, message builder, wa.me link, Vitest tests for the cart and the message.
 7. Polish: dark mode, subtle animations, accessibility pass, image optimization, empty and error states.
 8. SEO and launch: meta tags, Open Graph image, favicon, JSON-LD, GitHub Actions deploy to GitHub Pages, README with screenshots and the live link.
-9. Real content: replace every TODO with the owner's details, photos, products and offers, then run a final Lighthouse check.
+9. Real content: replace every NEEDS-AHMED placeholder with the owner's details, photos, products and offers, then run a final Lighthouse check.

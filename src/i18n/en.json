@@ -7,8 +7,10 @@
     "contact": "Contact us"
   },
   "switchLanguage": "العربية",
+  "comingSoon": "Coming soon",
   "hero": {
-    "tagline": "Your neighborhood supermarket in Al Hamdaniyah for all your everyday needs."
+    "tagline": "Your neighborhood supermarket in Al Hamdaniyah for all your everyday needs.",
+    "browse": "Browse products"
   },
   "highlights": {
     "title": "Why shop with us?",

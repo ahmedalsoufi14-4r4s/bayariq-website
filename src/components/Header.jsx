@@ -18,7 +18,7 @@ function Header() {
       </a>
 
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3">
-        {/* TODO: replace the text logo with the store's real logo image. */}
+        {/* NEEDS-AHMED: replace the text logo with the store's real logo image. */}
         <a href="#home" className="text-lg font-bold text-emerald-700">
           {localize(store, 'name')}
         </a>

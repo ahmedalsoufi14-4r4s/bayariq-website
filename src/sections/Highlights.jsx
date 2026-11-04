@@ -2,6 +2,7 @@ import { ChatIcon, MapPinIcon, TagIcon } from '../components/Icons.jsx'
 import { useLanguage } from '../i18n/LanguageContext.js'
 
 // Each id is a key in the "highlights" texts.
+// NEEDS-AHMED: the family should confirm these points, especially "prices".
 const HIGHLIGHTS = [
   { id: 'prices', Icon: TagIcon },
   { id: 'whatsapp', Icon: ChatIcon },

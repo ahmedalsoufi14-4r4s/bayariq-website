@@ -19,6 +19,7 @@ function offerTitles(page) {
 test('before any offer ends, every offer shows, soonest ending first', async ({
   page,
 }) => {
+  test.skip(offers.length === 0, 'offers.json is empty')
   await page.clock.setFixedTime(new Date('2000-01-01T12:00:00+03:00'))
   await page.goto('./')
 

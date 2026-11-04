@@ -3,6 +3,7 @@ import offers from '../data/offers.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { getActiveOffers } from '../lib/offers.js'
 
+// NEEDS-AHMED: offers.json stays empty (the page says "no offers right now") until real offers arrive.
 function Offers() {
   const { t } = useLanguage()
   const activeOffers = getActiveOffers(offers, new Date())

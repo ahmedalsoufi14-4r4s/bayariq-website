@@ -9,7 +9,7 @@ const SCREENSHOTS = ['ar-360', 'en-1280']
 
 for (const language of LANGUAGES) {
   for (const width of WIDTHS) {
-    test(`${language} at ${width}px: right direction, no console errors, no sideways scrolling`, async ({
+    test(`${language} at ${width}px: right direction, no console errors, no sideways scrolling, no placeholder text`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 800 })
@@ -33,6 +33,10 @@ for (const language of LANGUAGES) {
       )
       expect(hasSidewaysScroll).toBe(false)
       expect(errors).toEqual([])
+
+      // Missing details must show as "coming soon" or be hidden, never as a raw tag.
+      await expect(page.locator('body')).not.toContainText('NEEDS-AHMED')
+      await expect(page.locator('body')).not.toContainText('TODO')
 
       const name = `${language}-${width}`
       if (SCREENSHOTS.includes(name)) {

@@ -1,26 +1,15 @@
 {
   "name_ar": "أسواق بيارق الخير الاقتصادية",
   "name_en": "Aswaq Bayariq Al Khair",
-  "phone": "TODO",
-  "whatsapp": "TODO",
-  "hours": [
-    {
-      "days_ar": "TODO",
-      "days_en": "TODO",
-      "time_ar": "TODO",
-      "time_en": "TODO"
-    }
-  ],
-  "address_ar": "TODO: العنوان التفصيلي، حي الحمدانية، جدة",
-  "address_en": "TODO: street address, Al Hamdaniyah, Jeddah",
-  "mapsUrl": "TODO",
-  "mapsEmbedUrl": "TODO",
-  "social": {
-    "instagram": "TODO",
-    "snapchat": "TODO",
-    "tiktok": "TODO",
-    "x": "TODO"
-  },
-  "delivery_ar": "TODO",
-  "delivery_en": "TODO"
+  "phone": "NEEDS-AHMED",
+  "whatsapp": "NEEDS-AHMED",
+  "hours": "NEEDS-AHMED",
+  "address_ar": "حي الحمدانية، جدة",
+  "address_en": "Al Hamdaniyah, Jeddah",
+  "mapsUrl": "NEEDS-AHMED",
+  "mapsEmbedUrl": "NEEDS-AHMED",
+  "social": "NEEDS-AHMED",
+  "delivers": "NEEDS-AHMED",
+  "delivery_ar": "NEEDS-AHMED",
+  "delivery_en": "NEEDS-AHMED"
 }

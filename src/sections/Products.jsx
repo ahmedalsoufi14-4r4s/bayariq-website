@@ -7,6 +7,7 @@ import products from '../data/products.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { filterProducts } from '../lib/productSearch.js'
 
+// NEEDS-AHMED: products.json and categories.json hold sample items until the real list arrives.
 function Products() {
   const { t } = useLanguage()
   const [category, setCategory] = useState('all')

@@ -7,7 +7,7 @@ function Hero() {
 
   return (
     <section id="home" aria-labelledby="hero-title" className="bg-emerald-50">
-      {/* TODO: add a photo of the store here once we have one. */}
+      {/* NEEDS-AHMED: add a photo of the store here. */}
       <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
         <h1
           id="hero-title"
@@ -16,7 +16,13 @@ function Hero() {
           {localize(store, 'name')}
         </h1>
         <p className="mt-4 max-w-xl text-lg text-gray-700">{t.hero.tagline}</p>
-        <div className="mt-8">
+        <div className="mt-8 flex flex-wrap gap-3">
+          <a
+            href="#products"
+            className="inline-flex items-center rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800"
+          >
+            {t.hero.browse}
+          </a>
           <ContactButtons />
         </div>
       </div>
