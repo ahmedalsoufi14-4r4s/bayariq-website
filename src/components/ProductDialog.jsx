@@ -1,14 +1,17 @@
 import { useEffect, useRef } from 'react'
+import CartAnnouncer from '../cart/CartAnnouncer.jsx'
+import { useCart } from '../cart/CartContext.js'
 import categories from '../data/categories.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatPrice } from '../lib/price.js'
-import { CloseIcon } from './Icons.jsx'
+import { CloseIcon, PlusIcon } from './Icons.jsx'
 import ProductImage from './ProductImage.jsx'
 
 // Product details in the browser's built-in <dialog>. Opened with showModal(), it keeps
 // keyboard focus inside, dims the page behind it and closes with the Escape key.
 function ProductDialog({ product, onClose }) {
   const { t, localize } = useLanguage()
+  const { add, getQuantity } = useCart()
   const dialogRef = useRef(null)
 
   useEffect(() => {
@@ -84,6 +87,22 @@ function ProductDialog({ product, onClose }) {
               </div>
             ))}
           </dl>
+
+          <button
+            type="button"
+            onClick={() => add(product)}
+            disabled={!product.inStock}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 font-medium text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600"
+          >
+            <PlusIcon className="size-5" />
+            {t.cart.add}
+          </button>
+          {getQuantity(product.id) > 0 && (
+            <p className="mt-2 text-center text-sm text-emerald-700">
+              {t.cart.inCart} {getQuantity(product.id)}
+            </p>
+          )}
+          <CartAnnouncer />
         </div>
       )}
     </dialog>
