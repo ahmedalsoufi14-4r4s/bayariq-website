@@ -10,6 +10,7 @@ function readJson(relativePath) {
 export const store = readJson('../src/data/store.json')
 export const categories = readJson('../src/data/categories.json')
 export const products = readJson('../src/data/products.json')
+export const offers = readJson('../src/data/offers.json')
 export const texts = {
   ar: readJson('../src/i18n/ar.json'),
   en: readJson('../src/i18n/en.json'),

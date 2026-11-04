@@ -2,7 +2,7 @@ import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 
 // Each id is a page section (added in later steps) and a key in the "nav" texts.
-const NAV_IDS = ['home', 'products', 'offers', 'contact']
+const NAV_IDS = ['home', 'offers', 'products', 'contact']
 
 function Header() {
   const { language, t, toggleLanguage, localize } = useLanguage()

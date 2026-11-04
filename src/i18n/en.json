@@ -25,6 +25,12 @@
       "text": "Right in Al Hamdaniyah, Jeddah."
     }
   },
+  "offers": {
+    "title": "Our offers",
+    "validUntil": "Valid until",
+    "none": "No offers right now. Please check back later."
+  },
+  "dateLocale": "en-GB",
   "products": {
     "title": "Our products",
     "searchLabel": "Search for a product",

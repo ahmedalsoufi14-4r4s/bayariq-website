@@ -25,6 +25,12 @@
       "text": "في حي الحمدانية بجدة."
     }
   },
+  "offers": {
+    "title": "عروضنا",
+    "validUntil": "ساري حتى",
+    "none": "لا توجد عروض حاليًا. تفقّد هذا القسم لاحقًا."
+  },
+  "dateLocale": "ar-SA-u-ca-gregory-nu-latn",
   "products": {
     "title": "منتجاتنا",
     "searchLabel": "ابحث عن منتج",
