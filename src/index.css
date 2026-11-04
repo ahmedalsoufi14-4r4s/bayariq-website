@@ -64,11 +64,54 @@
     U+2215, U+FEFF, U+FFFD;
 }
 
+/* Until IBM Plex Sans Arabic arrives, text shows in a font already on the device. On Linux
+   that is usually DejaVu Sans, which is much wider, so the hero heading could wrap onto
+   another line and then jump back. These two faces use that DejaVu Sans (local() means
+   "a font installed on this device", nothing is downloaded), scaled with size-adjust to
+   about the width of IBM Plex Sans Arabic (measured on the site's texts).
+   Arabic letters need a little more scaling than Latin ones, so each weight has two faces:
+   one for all text, and one for the Arabic letters only (unicode-range). When faces overlap,
+   the browser checks the one defined last first, so Arabic letters use the Arabic face.
+   Devices without DejaVu Sans skip these and use the next font in --font-sans. */
+@font-face {
+  font-family: 'IBM Plex Sans Arabic Fallback';
+  font-weight: 400;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 90%;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans Arabic Fallback';
+  font-weight: 400;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 88%;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans Arabic Fallback';
+  font-weight: 700;
+  src: local('DejaVu Sans Bold'), local('DejaVuSans-Bold');
+  size-adjust: 84%;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans Arabic Fallback';
+  font-weight: 700;
+  src: local('DejaVu Sans Bold'), local('DejaVuSans-Bold');
+  size-adjust: 79%;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 /* Tailwind v4 reads design tokens from @theme. Overriding --font-sans
    makes IBM Plex Sans Arabic the default font for the whole site.
    --animate-pop creates the class animate-pop (used by the cart count in Header.jsx). */
 @theme {
-  --font-sans: 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    'IBM Plex Sans Arabic', 'IBM Plex Sans Arabic Fallback', ui-sans-serif,
+    system-ui, sans-serif;
   --animate-pop: pop 300ms ease-out;
 
   @keyframes pop {
