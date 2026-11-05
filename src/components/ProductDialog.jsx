@@ -6,7 +6,7 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatPrice } from '../lib/price.js'
 import { CloseIcon, PlusIcon } from './Icons.jsx'
 import ProductImage from './ProductImage.jsx'
-import { BUTTON_ACCENT } from './styles.js'
+import { BUTTON_ACCENT, ICON_BUTTON } from './styles.js'
 
 // Product details in the browser's built-in <dialog>. Opened with showModal(), it keeps
 // keyboard focus inside, dims the page behind it and closes with the Escape key.
@@ -67,9 +67,9 @@ function ProductDialog({ product, onClose }) {
               type="button"
               onClick={close}
               aria-label={t.products.close}
-              className="-m-2 rounded-full p-2 hover:bg-main-soft"
+              className={`${ICON_BUTTON} -m-2.5 hover:bg-main-soft`}
             >
-              <CloseIcon className="size-6" />
+              <CloseIcon className="size-6 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
             </button>
           </div>
 

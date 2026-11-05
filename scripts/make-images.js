@@ -107,6 +107,8 @@ async function makeReadmeScreenshots(browser) {
         .locator(shot.section)
         .evaluate((section) => section.scrollIntoView())
     }
+    // Waits for color fades to end, like the menu link of the section on screen turning saffron.
+    await page.waitForFunction(() => document.getAnimations().length === 0)
     await page.screenshot({
       path: outputPath(`docs/screenshots/${shot.name}.jpg`),
       type: 'jpeg',

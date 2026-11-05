@@ -8,15 +8,18 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 // Depth behind the text: a saffron glow, a light navy glow, and a faint pattern of
 // eight-pointed stars (two overlapping squares), a shape often seen in Saudi design.
 // All CSS gradients and inline SVG, so nothing extra to download.
+// The two glows drift (drift in index.css), a little further and faster than the shapes behind
+// the rest of the page. mask-b-from-60% fades all of it out toward the bottom, so it meets the
+// navy wave under the hero without a hard edge.
 // The text itself never animates, so it shows right away (Lighthouse measures when it appears).
 function HeroBackdrop() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 -z-10"
+      className="pointer-events-none absolute inset-0 -z-10 mask-b-from-60%"
     >
-      <div className="absolute -end-48 -top-56 size-[32rem] rounded-full bg-radial from-accent/20 to-transparent to-70%" />
-      <div className="absolute -start-48 -bottom-56 size-[34rem] rounded-full bg-radial from-on-main/15 to-transparent to-70%" />
+      <div className="drift absolute -end-48 -top-56 size-[32rem] rounded-full bg-radial from-accent/20 to-transparent to-70% [--drift-time:22s] [--drift-x:-10rem] [--drift-y:6rem]" />
+      <div className="drift absolute -start-56 top-0 size-[34rem] rounded-full bg-radial from-on-main/15 to-transparent to-70% [--drift-time:26s] [--drift-x:12rem] [--drift-y:4rem]" />
       <svg className="absolute inset-0 size-full opacity-8">
         <defs>
           <pattern
@@ -63,41 +66,43 @@ function Hero() {
   const { t, localize } = useLanguage()
 
   return (
-    // isolate starts a new layer stack, so -z-10 puts the backdrop behind the text but not behind the page.
-    <section
-      id="home"
-      aria-labelledby="hero-title"
-      className="surface-main relative isolate overflow-hidden"
-    >
-      <HeroBackdrop />
+    // The wave under the hero sits outside it, on the page, so the drifting background shows around it.
+    <>
+      {/* isolate starts a new layer stack, so -z-10 puts the backdrop behind the text but not behind the page. */}
+      <section
+        id="home"
+        aria-labelledby="hero-title"
+        className="surface-main relative isolate overflow-hidden"
+      >
+        <HeroBackdrop />
 
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pt-16 pb-24 md:grid-cols-[1fr_auto] md:pt-24 md:pb-32">
-        <div>
-          <h1
-            id="hero-title"
-            className="max-w-2xl text-3xl leading-snug font-bold md:text-5xl"
-          >
-            {localize(store, 'name')}
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-on-main/80">
-            {t.hero.tagline}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#products" className={`${BUTTON_ACCENT} px-6 py-3`}>
-              {t.hero.browse}
-            </a>
-            {/* With four branches there is no single number to call, so this leads to the branch list. */}
-            <a href="#contact" className={`${BUTTON_ON_MAIN} px-5 py-3`}>
-              <MapPinIcon className="size-5" />
-              {t.hero.branches}
-            </a>
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pt-16 pb-18 md:grid-cols-[1fr_auto] md:pt-24 md:pb-20">
+          <div>
+            <h1
+              id="hero-title"
+              className="max-w-2xl text-3xl leading-snug font-bold md:text-5xl"
+            >
+              {localize(store, 'name')}
+            </h1>
+            <p className="mt-4 max-w-xl text-lg text-on-main/80">
+              {t.hero.tagline}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="#products" className={`${BUTTON_ACCENT} px-6 py-3`}>
+                {t.hero.browse}
+              </a>
+              {/* With four branches there is no single number to call, so this leads to the branch list. */}
+              <a href="#contact" className={`${BUTTON_ON_MAIN} px-5 py-3`}>
+                <MapPinIcon className="size-5" />
+                {t.hero.branches}
+              </a>
+            </div>
           </div>
+          <HeroArt />
         </div>
-        <HeroArt />
-      </div>
-
-      <WaveDivider className="absolute inset-x-0 -bottom-px fill-canvas" />
-    </section>
+      </section>
+      <WaveDivider flip />
+    </>
   )
 }
 

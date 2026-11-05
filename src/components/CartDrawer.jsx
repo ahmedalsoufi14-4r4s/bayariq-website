@@ -7,10 +7,13 @@ import { formatPrice } from '../lib/price.js'
 import EmptyState from './EmptyState.jsx'
 import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from './Icons.jsx'
 import OrderForm from './OrderForm.jsx'
-import { BUTTON_MAIN } from './styles.js'
+import { BUTTON_MAIN, ICON_BUTTON } from './styles.js'
 
 const STEP_BUTTON =
-  'flex size-9 items-center justify-center rounded-full border border-line transition hover:border-main-ink hover:bg-main-soft motion-safe:active:scale-90'
+  'flex size-11 items-center justify-center rounded-full border border-line transition hover:border-main-ink hover:bg-main-soft motion-safe:active:scale-90'
+
+// A new key makes React draw a new number, so it rolls in each time it changes.
+const ROLL = 'motion-safe:animate-roll'
 
 // The cart opens as a full-height panel on the end side (left in Arabic, right in English).
 // Like the product details, it is a <dialog> opened with showModal().
@@ -46,6 +49,7 @@ function CartDrawer() {
 
   const hasPricedItems = lines.some((line) => line.product.price !== null)
   const hasUnpricedItems = lines.some((line) => line.product.price === null)
+  const total = getEstimatedTotal(lines)
 
   return (
     <dialog
@@ -63,9 +67,9 @@ function CartDrawer() {
           type="button"
           onClick={close}
           aria-label={t.cart.close}
-          className="-m-2 rounded-full p-2 hover:bg-on-main/10"
+          className={`${ICON_BUTTON} -m-2.5 hover:bg-on-main/10`}
         >
-          <CloseIcon className="size-6" />
+          <CloseIcon className="size-6 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
         </button>
       </div>
 
@@ -119,7 +123,9 @@ function CartDrawer() {
                     >
                       <MinusIcon className="size-4" />
                     </button>
-                    <span className="w-6 text-center">{quantity}</span>
+                    <span key={quantity} className={`w-6 text-center ${ROLL}`}>
+                      {quantity}
+                    </span>
                     <button
                       type="button"
                       onClick={() => changeQuantity(product, quantity + 1)}
@@ -138,8 +144,8 @@ function CartDrawer() {
         {hasPricedItems && (
           <p className="mt-4 flex justify-between font-bold">
             <span>{t.cart.total}</span>
-            <span className="text-main-ink">
-              {formatPrice(getEstimatedTotal(lines), t.currency)}
+            <span key={total} className={`text-main-ink ${ROLL}`}>
+              {formatPrice(total, t.currency)}
             </span>
           </p>
         )}

@@ -42,6 +42,7 @@
     "title": "Our products",
     "searchLabel": "Search for a product",
     "searchPlaceholder": "Search for a product, e.g. milk",
+    "clearSearch": "Clear search",
     "categoriesLabel": "Categories",
     "all": "All",
     "results": "Results:",

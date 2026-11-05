@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import CategoryFilter from '../components/CategoryFilter.jsx'
 import EmptyState from '../components/EmptyState.jsx'
-import { SearchIcon } from '../components/Icons.jsx'
+import { CloseIcon, SearchIcon } from '../components/Icons.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import ProductDialog from '../components/ProductDialog.jsx'
 import { reveal } from '../components/reveal.js'
 import SectionHeading from '../components/SectionHeading.jsx'
-import { BUTTON_OUTLINE } from '../components/styles.js'
+import { BUTTON_OUTLINE, ICON_BUTTON } from '../components/styles.js'
 import products from '../data/products.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { filterProducts } from '../lib/productSearch.js'
@@ -17,6 +17,7 @@ function Products() {
   const [category, setCategory] = useState('all')
   const [query, setQuery] = useState('')
   const [selectedProduct, setSelectedProduct] = useState(null)
+  const searchRef = useRef(null)
 
   // Not stored in state: worked out again on every render from the filter and the search text.
   const visibleProducts = filterProducts(products, category, query)
@@ -24,6 +25,12 @@ function Products() {
   function showAll() {
     setCategory('all')
     setQuery('')
+  }
+
+  // The clear button disappears with the text, so focus goes back to the search box.
+  function clearSearch() {
+    setQuery('')
+    searchRef.current.focus()
   }
 
   return (
@@ -38,22 +45,43 @@ function Products() {
         <label htmlFor="product-search" className="sr-only">
           {t.products.searchLabel}
         </label>
-        <SearchIcon className="pointer-events-none absolute start-4 top-1/2 size-5 -translate-y-1/2 text-muted" />
+        {/* On focus the border turns navy and a soft ring fades in around it.
+            peer marks the input, so the icon after it can react to its focus (peer-focus:). */}
         <input
+          ref={searchRef}
           id="product-search"
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t.products.searchPlaceholder}
-          className="w-full rounded-full border border-line bg-surface py-3 ps-11 pe-4 shadow-sm transition focus:border-main-ink"
+          className="peer w-full rounded-full border border-line bg-surface py-3 ps-11 pe-14 shadow-sm transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15"
         />
+        <SearchIcon className="pointer-events-none absolute start-4 top-1/2 size-5 -translate-y-1/2 text-muted transition duration-200 ease-out peer-focus:text-main-ink motion-safe:peer-focus:scale-110" />
+        {/* inset-y-0 and my-auto center the button without translate, which animate-appear uses. */}
+        {query !== '' && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            aria-label={t.products.clearSearch}
+            className={`${ICON_BUTTON} absolute inset-y-0 end-1 my-auto text-muted hover:bg-main-soft hover:text-ink motion-safe:animate-appear`}
+          >
+            <CloseIcon className="size-5 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
+          </button>
+        )}
       </div>
 
       <CategoryFilter selected={category} onSelect={setCategory} />
 
-      {/* aria-live makes screen readers read the new count after each change. */}
+      {/* aria-live makes screen readers read the new count after each change.
+          A new key makes React draw a new number, so it rolls in on every change. */}
       <p aria-live="polite" className="mt-4 text-sm text-muted">
-        {t.products.results} {visibleProducts.length}
+        {t.products.results}{' '}
+        <span
+          key={visibleProducts.length}
+          className="inline-block motion-safe:animate-roll"
+        >
+          {visibleProducts.length}
+        </span>
       </p>
 
       {visibleProducts.length > 0 ? (

@@ -36,6 +36,18 @@ export async function openSite(page, language) {
   return errors
 }
 
+// A color token from src/index.css (for example "main"), as the browser writes colors: "rgb(20, 40, 75)".
+export function tokenColor(page, name) {
+  return page.evaluate((token) => {
+    const probe = document.createElement('div')
+    probe.style.color = `var(--color-${token})`
+    document.body.append(probe)
+    const color = getComputedStyle(probe).color
+    probe.remove()
+    return color
+  }, name)
+}
+
 // Waits until every web font has loaded and the page has been drawn with it (two frames).
 export function waitForFonts(page) {
   return page.evaluate(async () => {

@@ -2,15 +2,25 @@ import { useCart } from '../cart/CartContext.js'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { CartIcon } from './Icons.jsx'
+import { BUTTON_ON_MAIN, ICON_BUTTON } from './styles.js'
 import ThemeToggle from './ThemeToggle.jsx'
+import { useActiveSection } from './useActiveSection.js'
 
-// Each id is a page section and a key in the "nav" texts.
+// Each id is a page section and a key in the "nav" texts, in page order (useActiveSection needs that).
 const NAV_IDS = ['home', 'offers', 'products', 'contact']
+
+// A saffron underline (after:) grows from the start side on hover and keyboard focus, and stays
+// under the link of the section on screen, which is saffron too (aria-current, set below).
+// ltr: and rtl: pick the side it grows from: the left in English, the right in Arabic.
+// The link is 44px tall for fingers; -my-2 and -mx-2 stop it from taking more room in the row.
+const NAV_LINK =
+  'relative -mx-2 -my-2 block px-2 py-3 text-on-main/85 hover:text-on-main aria-[current=true]:text-accent after:absolute after:inset-x-2 after:bottom-2 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-accent after:ease-out motion-safe:after:transition-transform motion-safe:after:duration-300 ltr:after:origin-left rtl:after:origin-right hover:after:scale-x-100 focus-visible:after:scale-x-100 aria-[current=true]:after:scale-x-100'
 
 function Header() {
   const { language, t, toggleLanguage, localize } = useLanguage()
   const { count, openCart } = useCart()
   const otherLanguage = language === 'ar' ? 'en' : 'ar'
+  const activeId = useActiveSection(NAV_IDS)
 
   return (
     // z-30 keeps the sticky header above everything on the page.
@@ -47,14 +57,16 @@ function Header() {
           </span>
         </a>
 
-        {/* On phones the menu moves to its own row under the logo. */}
+        {/* On phones the menu moves to its own row under the logo.
+            aria-current tells screen readers which link is the section on screen. */}
         <nav className="order-last w-full md:order-none md:w-auto md:shrink-0">
           <ul className="flex flex-wrap gap-x-5 text-sm">
             {NAV_IDS.map((id) => (
               <li key={id}>
                 <a
                   href={`#${id}`}
-                  className="inline-block py-1 text-on-main/85 hover:text-accent"
+                  aria-current={id === activeId ? 'true' : undefined}
+                  className={NAV_LINK}
                 >
                   {t.nav[id]}
                 </a>
@@ -68,25 +80,26 @@ function Header() {
             type="button"
             lang={otherLanguage}
             onClick={toggleLanguage}
-            className="me-1 rounded-full border border-on-main/40 px-4 py-2 text-sm hover:border-on-main hover:bg-on-main/10"
+            className={`${BUTTON_ON_MAIN} me-1 min-h-11 px-3 text-sm`}
           >
             {t.switchLanguage}
           </button>
 
           <ThemeToggle />
 
+          {/* The cart icon rocks once when the pointer comes over the button. */}
           <button
             type="button"
             onClick={openCart}
             aria-label={`${t.cart.open} ${count}`}
-            className="relative rounded-full p-2 hover:bg-on-main/10"
+            className={`${ICON_BUTTON} relative hover:bg-on-main/10`}
           >
-            <CartIcon className="size-6" />
+            <CartIcon className="size-6 motion-safe:group-hover:animate-wiggle" />
             {/* A new key makes React draw a new badge, so the pop animation plays on every change. */}
             {count > 0 && (
               <span
                 key={count}
-                className="absolute -end-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-on-accent motion-safe:animate-pop"
+                className="absolute -end-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-on-accent motion-safe:animate-pop"
               >
                 {count}
               </span>

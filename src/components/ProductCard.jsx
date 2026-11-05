@@ -32,8 +32,12 @@ function ProductCard({ product, onOpen }) {
         )}
       </div>
 
+      {/* A small confirmation: it slides in when the product is added, and again on each change. */}
       {quantity > 0 && (
-        <span className="absolute end-2 top-2 rounded-full bg-surface px-2 py-1 text-xs font-bold text-main-ink shadow">
+        <span
+          key={quantity}
+          className="absolute end-2 top-2 rounded-full bg-surface px-2 py-1 text-xs font-bold text-main-ink shadow motion-safe:animate-appear"
+        >
           {t.cart.inCart} {quantity}
         </span>
       )}

@@ -4,6 +4,7 @@ import {
   products,
   recordLayoutShifts,
   texts,
+  tokenColor,
   totalLayoutShift,
   waitForFonts,
 } from './helpers.js'
@@ -12,18 +13,6 @@ const t = texts.ar
 const THEMES = ['light', 'dark']
 const inStockProduct = products.find((product) => product.inStock)
 const featuredProduct = products.find((product) => product.featured)
-
-// A color token from src/index.css (for example "main"), as the browser writes colors: "rgb(20, 40, 75)".
-function tokenColor(page, name) {
-  return page.evaluate((token) => {
-    const probe = document.createElement('div')
-    probe.style.color = `var(--color-${token})`
-    document.body.append(probe)
-    const color = getComputedStyle(probe).color
-    probe.remove()
-    return color
-  }, name)
-}
 
 function addButton(page, product) {
   return page
@@ -173,6 +162,24 @@ for (const theme of THEMES) {
       await expect(
         page.getByRole('dialog', { name: t.cart.title }),
       ).toBeVisible()
+      expect(await findLowContrastText(page)).toEqual([])
+    })
+
+    test('the drifting background shapes never bring page text below AA contrast', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 360, height: 800 })
+      await page.goto('./')
+      // The worst moment: the middle of the navy shape and of the saffron shape both right
+      // behind the text. The checker reads background colors, so the two shape colors from
+      // src/index.css are painted as the backgrounds of <main> and of its off-white sections.
+      await page.addStyleTag({
+        content: `
+          main { background-color: var(--shape-main); }
+          main > section:not(.surface-main) { background-color: var(--shape-accent); }
+        `,
+      })
+
       expect(await findLowContrastText(page)).toEqual([])
     })
   })

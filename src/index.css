@@ -107,16 +107,47 @@
 
 /* Tailwind v4 reads design tokens from @theme. Overriding --font-sans
    makes IBM Plex Sans Arabic the default font for the whole site.
-   --animate-pop creates the class animate-pop (used by the cart count in Header.jsx). */
+   Each --animate-* creates a class: animate-pop (the cart count in Header.jsx), animate-roll
+   (numbers that change), animate-appear (small confirmations) and animate-wiggle (the cart icon). */
 @theme {
   --font-sans:
     'IBM Plex Sans Arabic', 'IBM Plex Sans Arabic Fallback', ui-sans-serif,
     system-ui, sans-serif;
   --animate-pop: pop 300ms ease-out;
+  --animate-roll: roll 250ms ease-out;
+  --animate-appear: appear 200ms ease-out;
+  --animate-wiggle: wiggle 400ms ease-in-out;
 
   @keyframes pop {
     50% {
       scale: 1.3;
+    }
+  }
+
+  /* A new number rolls up into place. */
+  @keyframes roll {
+    from {
+      opacity: 0;
+      translate: 0 0.6em;
+    }
+  }
+
+  /* Slides down a little and grows into place. */
+  @keyframes appear {
+    from {
+      opacity: 0;
+      translate: 0 -0.25rem;
+      scale: 0.9;
+    }
+  }
+
+  /* Rocks from side to side once. */
+  @keyframes wiggle {
+    25% {
+      rotate: -12deg;
+    }
+    75% {
+      rotate: 12deg;
     }
   }
 
@@ -163,6 +194,66 @@
   --focus-color: var(--color-accent);
 }
 
+/* A soft light that sweeps across a saffron button while the pointer is over it, from the
+   start side to the end side (BUTTON_ACCENT in styles.js). The light is a ::before layer that
+   waits just outside the button (overflow: hidden hides it there) and slides across on hover.
+   isolation and z-index: -1 keep it above the button's color but under its text and icon.
+   :dir(rtl) is true in Arabic, where the start side is on the right. */
+@utility shine {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(
+      110deg,
+      transparent 35%,
+      rgb(255 255 255 / 0.5) 50%,
+      transparent 65%
+    );
+    translate: -100%;
+  }
+  &:dir(rtl)::before {
+    translate: 100%;
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    &:hover:not(:disabled)::before {
+      translate: 100%;
+      transition: translate 400ms ease-out;
+    }
+    &:dir(rtl):hover:not(:disabled)::before {
+      translate: -100%;
+    }
+  }
+}
+
+/* The moving background: large soft round shapes that drift slowly behind the page
+   (PageBackdrop.jsx). Each one is a radial gradient that fades out to its edge, so it looks
+   blurred without a blur filter (blur is slow to animate on phones). Their colors are
+   --shape-main and --shape-accent, set for each theme below. */
+@utility shape-main {
+  border-radius: 9999px;
+  background-image: radial-gradient(
+    closest-side,
+    var(--shape-main),
+    transparent
+  );
+}
+
+@utility shape-accent {
+  border-radius: 9999px;
+  background-image: radial-gradient(
+    closest-side,
+    var(--shape-accent),
+    transparent
+  );
+}
+
 /* Stop the page behind an open dialog from scrolling. */
 body:has(dialog[open]) {
   overflow: hidden;
@@ -170,9 +261,13 @@ body:has(dialog[open]) {
 
 /* @layer base puts these rules under Tailwind's classes, so a class on an element still wins. */
 @layer base {
-  /* Tells the browser which colors to use for its own parts, like scrollbars and form controls. */
+  /* Tells the browser which colors to use for its own parts, like scrollbars and form controls.
+     --shape-main and --shape-accent are the colors in the middle of the drifting background
+     shapes: a light tint of navy and of saffron, so all text on top stays AA (e2e/design.spec.js). */
   :root {
     color-scheme: light;
+    --shape-main: color-mix(in oklab, var(--color-main) 8%, transparent);
+    --shape-accent: color-mix(in oklab, var(--color-accent) 16%, transparent);
   }
 
   /* Dark mode keeps the same 60-30-10 split: a near-black navy page, a lighter navy for
@@ -191,6 +286,9 @@ body:has(dialog[open]) {
     --color-main-ink: #a9c1ee;
     --color-main-soft: #1a2540;
     --color-accent-hover: #ffc444;
+    /* On the near-black page, the navy shape needs much more color to show. */
+    --shape-main: color-mix(in oklab, var(--color-main) 70%, transparent);
+    --shape-accent: color-mix(in oklab, var(--color-accent) 8%, transparent);
   }
 
   /* A clear outline around whatever has keyboard focus: navy on light backgrounds,
@@ -203,6 +301,11 @@ body:has(dialog[open]) {
   /* The browser's default placeholder grey is too light to read (AA contrast). */
   ::placeholder {
     color: var(--color-muted);
+  }
+
+  /* The product search has its own clear button (Products.jsx), so the browser's is hidden. */
+  ::-webkit-search-cancel-button {
+    appearance: none;
   }
 
   /* Hover colors fade instead of jumping. */
@@ -292,5 +395,30 @@ body:has(dialog[open]) {
   from {
     opacity: 0;
     translate: 0 1.5rem;
+  }
+}
+
+/* The drifting of the background shapes (PageBackdrop.jsx and the hero glows in Hero.jsx).
+   Halfway through a loop a shape has moved by --drift-x and --drift-y and grown a little,
+   then it comes back, so the loop never jumps. --drift-time is how long one loop takes.
+   Only translate and scale change, which phones can animate smoothly without redrawing,
+   and nothing around the shapes moves (no layout shift).
+   PageBackdrop.jsx sets data-tab-hidden on <html> while the tab is in the background,
+   and the shapes stop there. People who ask for less motion get still shapes. */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .drift {
+      animation: drift var(--drift-time, 30s) ease-in-out infinite;
+    }
+    :root[data-tab-hidden] .drift {
+      animation-play-state: paused;
+    }
+  }
+}
+
+@keyframes drift {
+  50% {
+    translate: var(--drift-x, 0) var(--drift-y, 0);
+    scale: 1.15;
   }
 }

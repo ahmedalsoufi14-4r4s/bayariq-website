@@ -1,6 +1,10 @@
 import { useLayoutEffect, useState } from 'react'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { MoonIcon, SunIcon } from './Icons.jsx'
+import { ICON_BUTTON } from './styles.js'
+
+// On hover the sun turns a little and the moon tilts.
+const ICON_MOTION = 'size-6 transition duration-300 ease-out'
 
 // Same key as in the script in index.html.
 const STORAGE_KEY = 'bayariq-theme'
@@ -36,12 +40,16 @@ function ThemeToggle() {
       onClick={toggleTheme}
       aria-pressed={isDark}
       aria-label={t.darkMode}
-      className="rounded-full p-2 hover:bg-on-main/10"
+      className={`${ICON_BUTTON} hover:bg-on-main/10`}
     >
       {isDark ? (
-        <SunIcon className="size-6" />
+        <SunIcon
+          className={`${ICON_MOTION} motion-safe:group-hover:rotate-45`}
+        />
       ) : (
-        <MoonIcon className="size-6" />
+        <MoonIcon
+          className={`${ICON_MOTION} motion-safe:group-hover:-rotate-12`}
+        />
       )}
     </button>
   )

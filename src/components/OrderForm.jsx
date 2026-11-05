@@ -9,8 +9,9 @@ import { fillIn } from '../lib/text.js'
 import { ChatIcon } from './Icons.jsx'
 import { BUTTON_ACCENT } from './styles.js'
 
+// The border darkens on hover; on focus it turns navy and a soft ring fades in around it.
 const INPUT =
-  'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2 transition focus:border-main-ink'
+  'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15'
 
 function OrderForm() {
   const { t, language, localize } = useLanguage()
@@ -89,7 +90,10 @@ function OrderForm() {
         <legend>{t.order.branch}</legend>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
           {store.branches.map((item) => (
-            <label key={item.id} className="flex items-center gap-2">
+            <label
+              key={item.id}
+              className="flex cursor-pointer items-center gap-2"
+            >
               <input
                 type="radio"
                 name="branch"
@@ -135,7 +139,10 @@ function OrderForm() {
           <legend>{t.order.method}</legend>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
             {['pickup', 'delivery'].map((option) => (
-              <label key={option} className="flex items-center gap-2">
+              <label
+                key={option}
+                className="flex cursor-pointer items-center gap-2"
+              >
                 <input
                   type="radio"
                   name="method"
