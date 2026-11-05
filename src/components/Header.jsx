@@ -42,12 +42,13 @@ function Header() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:flex-nowrap md:gap-x-6">
         {/* NEEDS-AHMED: replace the bag mark and the text logo with the store's real logo image.
             On phones, basis-0 grow gives the logo only the space left next to the buttons,
-            so the cart button never drops to another row. */}
+            so the cart button never drops to another row.
+            Under the pointer the bag mark tilts and grows a little (group-hover:). */}
         <a
           href="#home"
-          className="flex min-w-0 grow basis-0 items-center gap-2 font-bold min-[360px]:h-12 md:h-auto md:grow-0 md:basis-auto md:text-lg"
+          className="group flex min-w-0 grow basis-0 items-center gap-2 font-bold min-[360px]:h-12 md:h-auto md:grow-0 md:basis-auto md:text-lg"
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent transition duration-300 ease-out motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
             <CartIcon className="size-5" />
           </span>
           {/* line-clamp-2 shows at most two lines and ends the text with "…" if it needs more.

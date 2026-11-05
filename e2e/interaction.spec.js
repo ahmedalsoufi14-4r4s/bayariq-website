@@ -1,8 +1,45 @@
 import { expect, test } from '@playwright/test'
-import { categories, openSite, products, texts, tokenColor } from './helpers.js'
+import {
+  categories,
+  openSite,
+  products,
+  store,
+  texts,
+  tokenColor,
+} from './helpers.js'
 
 const t = texts.ar
 const inStockProduct = products.find((product) => product.inStock)
+
+// Waits until a card has finished fading in (see reveal.js, on the card or on its list item),
+// so it does not rise away from under the mouse or the finger.
+function waitUntilStill(card) {
+  return expect
+    .poll(() =>
+      card.evaluate((element) =>
+        [element, element.parentElement].every(
+          (node) => node.getAnimations().length === 0,
+        ),
+      ),
+    )
+    .toBe(true)
+}
+
+// How visible the glow around a card is: "0" (hidden) to "1".
+function glowOpacity(card) {
+  return card.evaluate(
+    (element) => getComputedStyle(element, '::before').opacity,
+  )
+}
+
+// The mouse cursor shown 12px inside the card's top-left corner.
+async function cursorInCorner(page, card) {
+  const box = await card.boundingBox()
+  return page.evaluate(
+    ({ x, y }) => getComputedStyle(document.elementFromPoint(x, y)).cursor,
+    { x: box.x + 12, y: box.y + 12 },
+  )
+}
 
 function filterRow(page, language = 'ar') {
   return page.getByRole('group', {
@@ -31,17 +68,6 @@ function underlineScale(link) {
   return link.evaluate((element) =>
     parseFloat(getComputedStyle(element, '::after').scale),
   )
-}
-
-// Playwright cannot send the tab to the background, so the page is told it is hidden.
-function setTabHidden(page, isHidden) {
-  return page.evaluate((hidden) => {
-    Object.defineProperty(document, 'hidden', {
-      value: hidden,
-      configurable: true,
-    })
-    document.dispatchEvent(new Event('visibilitychange'))
-  }, isHidden)
 }
 
 for (const width of [360, 1280]) {
@@ -159,12 +185,15 @@ test.describe('with motion allowed', () => {
       )
       .toBe(true)
 
-    // The last category is off screen at 360px: the row scrolls, and the pill slides there.
+    // The last category is off screen at 360px: the row scrolls, and the pill slides there
+    // (a 300 ms transition, not a jump).
     const last = row.getByRole('button', { name: categories.at(-1).name_ar })
     await last.click()
-    expect(
-      await pill.evaluate((element) => element.getAnimations().length),
-    ).toBeGreaterThan(0)
+    await expect(pill).toHaveCSS(
+      'transition-property',
+      'translate, width, height',
+    )
+    await expect(pill).toHaveCSS('transition-duration', '0.3s')
     await expect.poll(() => pillIsUnder(pill, last)).toBe(true)
 
     // In English the buttons change size and order; the pill follows the chosen one.
@@ -216,46 +245,143 @@ test.describe('with motion allowed', () => {
     await expect.poll(light).toBe('-100%')
   })
 
-  test('the background shapes drift in slow loops and stop while the tab is hidden', async ({
+  test('every card and box on the page lifts, tilts and glows under the pointer, and its icon moves', async ({
     page,
   }) => {
     await page.goto('./')
-    const shapes = await page.locator('.drift').all()
-    // Two behind the page and two glows in the hero.
-    expect(shapes).toHaveLength(4)
+    // Why shop with us, the offers (or the "no offers" box), the products and the branches.
+    for (const area of [
+      page.getByRole('region', { name: t.highlights.title }),
+      page.locator('#offers'),
+      page.locator('#products'),
+      page.locator('#contact'),
+    ]) {
+      await expect(area.locator('.card')).not.toHaveCount(0)
+    }
 
-    for (const shape of shapes) {
-      await expect(shape).toHaveCSS('animation-name', 'drift')
-      await expect(shape).toHaveCSS('animation-play-state', 'running')
-      const seconds = parseFloat(
-        await shape.evaluate(
-          (element) => getComputedStyle(element).animationDuration,
-        ),
+    for (const card of await page.locator('main .card').all()) {
+      const isProduct = await card.evaluate((element) =>
+        Boolean(element.closest('#products')),
       )
-      expect(seconds).toBeGreaterThanOrEqual(20)
-      expect(seconds).toBeLessThanOrEqual(40)
-    }
+      await card.scrollIntoViewIfNeeded()
+      await waitUntilStill(card)
+      await card.hover()
 
-    await setTabHidden(page, true)
-    for (const shape of shapes) {
-      await expect(shape).toHaveCSS('animation-play-state', 'paused')
+      await expect(card).toHaveCSS('translate', '0px -6px')
+      await expect(card).toHaveCSS('rotate', '-0.75deg')
+      await expect.poll(() => glowOpacity(card)).toBe('1')
+      if (isProduct) {
+        // A product card is clickable: its picture zooms, and the pointer is a hand.
+        await expect(
+          card.locator('[class*="group-hover:scale-105"]'),
+        ).toHaveCSS('scale', '1.05')
+        expect(await cursorInCorner(page, card)).toBe('pointer')
+      } else {
+        // The others are not: their icon moves, and the pointer stays an arrow, without underline.
+        await expect(
+          card.locator('[class*="card-active:"]').first(),
+        ).not.toHaveCSS('animation-name', 'none')
+        expect(await cursorInCorner(page, card)).toBe('auto')
+        await expect(card).toHaveCSS('text-decoration-line', 'none')
+      }
     }
-    await setTabHidden(page, false)
-    for (const shape of shapes) {
-      await expect(shape).toHaveCSS('animation-play-state', 'running')
-    }
+  })
+
+  test('the logo and the hero tiles react to the pointer too', async ({
+    page,
+  }) => {
+    await page.goto('./')
+    const logo = page
+      .locator('header')
+      .getByRole('link', { name: store.name_ar, exact: true })
+    await logo.hover()
+    await expect(logo.locator('span').first()).toHaveCSS('rotate', '-6deg')
+
+    // The tiles bob all the time, so the mouse goes to the middle of one without waiting
+    // for it to stand still.
+    const tile = page.locator('#home .tile-bob').first()
+    const box = await tile.boundingBox()
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+    await expect(tile).toHaveCSS('scale', '1.1')
+    await expect(tile.locator('svg')).toHaveCSS('animation-name', 'spin-once')
   })
 })
 
-test('visitors who ask for less motion get a still background and a pill that jumps', async ({
+test.describe('on a phone', () => {
+  test.use({
+    hasTouch: true,
+    reducedMotion: 'no-preference',
+    viewport: { width: 360, height: 800 },
+  })
+
+  test('a tap makes a card lift, glow and move its icon for a moment', async ({
+    page,
+  }) => {
+    await page.clock.install()
+    await page.goto('./')
+    const card = page
+      .getByRole('region', { name: t.highlights.title })
+      .locator('.card')
+      .first()
+    await card.scrollIntoViewIfNeeded()
+    await waitUntilStill(card)
+
+    // From here the page's timers wait for the test, so "a moment" (700 ms in tapReaction.js)
+    // lasts until the test moves the clock on, however busy the computer is.
+    // CSS animations don't use these timers, so they still run.
+    await page.clock.pauseAt(Date.now() + 1000)
+    await card.tap()
+    await expect(card).toHaveAttribute('data-tapped', '')
+    await expect(card).toHaveCSS('translate', '0px -6px')
+    await expect.poll(() => glowOpacity(card)).toBe('1')
+    await expect(card.locator('[class*="card-active:"]')).not.toHaveCSS(
+      'animation-name',
+      'none',
+    )
+
+    // A moment later it settles back.
+    await page.clock.runFor(800)
+    await expect(card).not.toHaveAttribute('data-tapped')
+    await expect(card).toHaveCSS('translate', 'none')
+  })
+})
+
+test('radio choices in the order form light up under the pointer', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: t.cart.open }).click()
+  const choice = page
+    .getByRole('dialog', { name: t.cart.title })
+    .locator('label')
+    .filter({ has: page.getByRole('radio') })
+    .first()
+
+  await choice.hover()
+  await expect(choice).toHaveCSS(
+    'background-color',
+    await tokenColor(page, 'main-soft'),
+  )
+})
+
+test('visitors who ask for less motion get still cards that only glow, and a pill that jumps', async ({
   page,
 }) => {
   // playwright.config.js asks for reduced motion in every test.
   await page.goto('./')
+  const card = page
+    .getByRole('region', { name: t.highlights.title })
+    .locator('.card')
+    .first()
 
-  for (const shape of await page.locator('.drift').all()) {
-    await expect(shape).toHaveCSS('animation-name', 'none')
-  }
+  await card.hover()
+  await expect.poll(() => glowOpacity(card)).toBe('1')
+  await expect(card).toHaveCSS('translate', 'none')
+  await expect(card).toHaveCSS('rotate', 'none')
+  await expect(card.locator('[class*="card-active:"]')).toHaveCSS(
+    'animation-name',
+    'none',
+  )
   await expect(filterPill(filterRow(page))).toHaveCSS(
     'transition-duration',
     '0s',

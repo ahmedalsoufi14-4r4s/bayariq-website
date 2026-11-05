@@ -18,7 +18,7 @@ The website of a neighborhood supermarket with four branches in Jeddah: Al Hamda
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
 - A card for each branch with its own name, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
 - Off-white, deep navy and saffron in a 60-30-10 split, defined once as color tokens in `src/index.css`, with a dark mode that keeps the same split.
-- The page feels alive: soft navy and saffron shapes drift slowly behind it, cards fade in as they scroll into view, every button, link and input reacts to hover, press and focus, a saffron pill slides to the chosen category, and the menu highlights the section on screen. Dialogs slide and fade. All motion is off for people who ask their device for less. Keyboard friendly, AA contrast checked on every piece of text.
+- The page feels alive: soft navy and saffron circles float behind it, layered waves move along the edges of the navy bands, and cards fade in as they scroll into view. Every card, button, link and input reacts to the mouse (and cards to a tap on phones), a saffron pill slides to the chosen category, and the menu highlights the section on screen. Dialogs slide and fade. All motion is off for people who ask their device for less. Keyboard friendly, AA contrast checked on every piece of text.
 - Fast on phones: on the live site, Lighthouse mobile gives about 95 for Performance (89 to 98 across runs) and 100 for Accessibility, Best Practices and SEO.
 
 ## Tech

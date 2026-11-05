@@ -10,6 +10,7 @@ const ICON = 'size-5 text-main-ink'
 
 // One branch in the "Our branches" section: its name on a navy top, then hours, address, buttons and map.
 // Details that are still NEEDS-AHMED show "coming soon" or stay hidden.
+// Under the pointer (or on a tap) the big pin hops and the clock spins (card-active: in index.css).
 function BranchCard({ branch }) {
   const { t, localize } = useLanguage()
   const label = fillIn(t.contact.branch, {
@@ -18,23 +19,27 @@ function BranchCard({ branch }) {
   const titleId = `branch-${branch.id}-title`
 
   return (
+    // The navy top has its own rounded corners, because the card cannot clip it
+    // (overflow-hidden would cut off the card's glow).
     <article
       aria-labelledby={titleId}
-      className={`flex h-full flex-col overflow-hidden ${CARD}`}
+      className={`flex h-full flex-col ${CARD}`}
     >
-      <div className="surface-main relative overflow-hidden px-5 py-4">
+      <div className="surface-main relative overflow-hidden rounded-t-2xl px-5 py-4">
         {/* Each branch shows its own name, for example "بيارق التوفيق" in Al Harazat. */}
         <p className="text-sm text-on-main/75">{localize(branch, 'name')}</p>
         <h3 id={titleId} className="text-xl font-bold">
           {label}
         </h3>
-        <MapPinIcon className="absolute -end-2 -bottom-5 size-24 text-on-main/10" />
+        <MapPinIcon className="absolute -end-2 -bottom-5 size-24 text-on-main/10 motion-safe:card-active:animate-hop" />
       </div>
 
       <div className="flex flex-1 flex-col gap-5 p-5">
         <div>
           <h4 className="flex items-center gap-2 font-bold">
-            <ClockIcon className={ICON} />
+            <ClockIcon
+              className={`${ICON} motion-safe:card-active:animate-spin-once`}
+            />
             {t.contact.hours}
           </h4>
           {isPlaceholder(branch.hours) ? (

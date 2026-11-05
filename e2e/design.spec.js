@@ -30,8 +30,11 @@ function productCard(page, product) {
 // For each piece of text it paints the backgrounds behind it and then the text color on a
 // one-pixel canvas, so see-through colors (like text-on-main/80) are measured as they look.
 // Disabled buttons are left out, because AA does not cover them.
-function findLowContrastText(page) {
-  return page.evaluate(() => {
+// backdrops adds colors that float between a solid background and the text, like the moving
+// circles: { body: [colors], '#home': [colors] } paints them right after the page's or the
+// hero's own background, for all the text in front of it.
+function findLowContrastText(page, backdrops = {}) {
+  return page.evaluate((backdropsBySelector) => {
     const canvas = document.createElement('canvas')
     canvas.width = 1
     canvas.height = 1
@@ -52,7 +55,14 @@ function findLowContrastText(page) {
       for (let node = element; node; node = node.parentElement) {
         const color = getComputedStyle(node).backgroundColor
         layers.unshift(color)
-        if (paint([color])[3] === 255) break
+        if (paint([color])[3] === 255) {
+          for (const [selector, colors] of Object.entries(
+            backdropsBySelector,
+          )) {
+            if (node.matches(selector)) layers.splice(1, 0, ...colors)
+          }
+          break
+        }
       }
       return layers
     }
@@ -98,7 +108,22 @@ function findLowContrastText(page) {
       }
     }
     return failures
-  })
+  }, backdrops)
+}
+
+// The color in the middle of each moving circle that locator finds (--circle-color, see
+// src/components/Circle.jsx), written the way the browser writes colors, so the checker can paint it.
+function circleColors(locator) {
+  return locator.evaluateAll((circles) =>
+    circles.map((circle) => {
+      const probe = document.createElement('div')
+      probe.style.backgroundColor = 'var(--circle-color)'
+      circle.append(probe)
+      const color = getComputedStyle(probe).backgroundColor
+      probe.remove()
+      return color
+    }),
+  )
 }
 
 for (const theme of THEMES) {
@@ -165,22 +190,24 @@ for (const theme of THEMES) {
       expect(await findLowContrastText(page)).toEqual([])
     })
 
-    test('the drifting background shapes never bring page text below AA contrast', async ({
+    test('the moving circles never bring text below AA, even with all of them behind it at once', async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 })
       await page.goto('./')
-      // The worst moment: the middle of the navy shape and of the saffron shape both right
-      // behind the text. The checker reads background colors, so the two shape colors from
-      // src/index.css are painted as the backgrounds of <main> and of its off-white sections.
-      await page.addStyleTag({
-        content: `
-          main { background-color: var(--shape-main); }
-          main > section:not(.surface-main) { background-color: var(--shape-accent); }
-        `,
-      })
+      const heroCircles = page.locator('#home .circle')
+      const pageCircles = page.locator('.circle:not(#home .circle)')
+      await expect(heroCircles).not.toHaveCount(0)
+      await expect(pageCircles).not.toHaveCount(0)
 
-      expect(await findLowContrastText(page)).toEqual([])
+      // The worst moment that could ever happen: the strongest middle part of every circle
+      // right behind the same text, on the page and in the hero.
+      expect(
+        await findLowContrastText(page, {
+          body: await circleColors(pageCircles),
+          '#home': await circleColors(heroCircles),
+        }),
+      ).toEqual([])
     })
   })
 }
@@ -278,7 +305,7 @@ test.describe('with motion allowed', () => {
     await button.hover()
     await expect(productCard(page, inStockProduct)).toHaveCSS(
       'translate',
-      '0px -4px',
+      '0px -6px',
     )
     await expect(button).toHaveCSS('translate', '0px -2px')
     await page.mouse.down()

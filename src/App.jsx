@@ -11,7 +11,7 @@ import StoreInfo from './sections/StoreInfo.jsx'
 
 // Page layout. The cart drawer stays hidden until the cart button opens it.
 // The page colors for light and dark mode are set on <body> in index.html,
-// and PageBackdrop adds the slowly drifting shapes behind everything.
+// and PageBackdrop adds the floating circles behind everything.
 function App() {
   return (
     <div className="flex min-h-dvh flex-col">

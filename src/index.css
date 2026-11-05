@@ -108,7 +108,8 @@
 /* Tailwind v4 reads design tokens from @theme. Overriding --font-sans
    makes IBM Plex Sans Arabic the default font for the whole site.
    Each --animate-* creates a class: animate-pop (the cart count in Header.jsx), animate-roll
-   (numbers that change), animate-appear (small confirmations) and animate-wiggle (the cart icon). */
+   (numbers that change), animate-appear (small confirmations), and animate-wiggle, animate-hop
+   and animate-spin-once (icons that move once on hover or tap). */
 @theme {
   --font-sans:
     'IBM Plex Sans Arabic', 'IBM Plex Sans Arabic Fallback', ui-sans-serif,
@@ -117,6 +118,8 @@
   --animate-roll: roll 250ms ease-out;
   --animate-appear: appear 200ms ease-out;
   --animate-wiggle: wiggle 400ms ease-in-out;
+  --animate-hop: hop 400ms ease-out;
+  --animate-spin-once: spin-once 400ms ease-in-out;
 
   @keyframes pop {
     50% {
@@ -148,6 +151,23 @@
     }
     75% {
       rotate: 12deg;
+    }
+  }
+
+  /* Jumps up and lands with a small bounce. */
+  @keyframes hop {
+    40% {
+      translate: 0 -0.5rem;
+    }
+    70% {
+      translate: 0 0.125rem;
+    }
+  }
+
+  /* Turns around once. */
+  @keyframes spin-once {
+    to {
+      rotate: 360deg;
     }
   }
 
@@ -186,12 +206,28 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* A navy area (the 30%): navy background and light text. Keyboard focus inside it gets a
-   saffron outline, because the usual navy outline would not show on navy.
+   saffron outline, because the usual navy outline would not show on navy, and cards inside it
+   glow white instead of navy (see .card below).
    @utility turns this into a Tailwind class, used like any other: className="surface-main". */
 @utility surface-main {
   background-color: var(--color-main);
   color: var(--color-on-main);
   --focus-color: var(--color-accent);
+  --card-glow: var(--color-on-main);
+}
+
+/* card-active: while the pointer is over a card (see .card below), or for a moment after a tap
+   on it. For icons inside cards, for example motion-safe:card-active:animate-hop.
+   (hover: hover) means a device with a mouse or touchpad. */
+@custom-variant card-active {
+  @media (hover: hover) {
+    &:where(.card:hover *) {
+      @slot;
+    }
+  }
+  &:where(.card[data-tapped] *) {
+    @slot;
+  }
 }
 
 /* A soft light that sweeps across a saffron button while the pointer is over it, from the
@@ -232,28 +268,6 @@
   }
 }
 
-/* The moving background: large soft round shapes that drift slowly behind the page
-   (PageBackdrop.jsx). Each one is a radial gradient that fades out to its edge, so it looks
-   blurred without a blur filter (blur is slow to animate on phones). Their colors are
-   --shape-main and --shape-accent, set for each theme below. */
-@utility shape-main {
-  border-radius: 9999px;
-  background-image: radial-gradient(
-    closest-side,
-    var(--shape-main),
-    transparent
-  );
-}
-
-@utility shape-accent {
-  border-radius: 9999px;
-  background-image: radial-gradient(
-    closest-side,
-    var(--shape-accent),
-    transparent
-  );
-}
-
 /* Stop the page behind an open dialog from scrolling. */
 body:has(dialog[open]) {
   overflow: hidden;
@@ -262,12 +276,29 @@ body:has(dialog[open]) {
 /* @layer base puts these rules under Tailwind's classes, so a class on an element still wins. */
 @layer base {
   /* Tells the browser which colors to use for its own parts, like scrollbars and form controls.
-     --shape-main and --shape-accent are the colors in the middle of the drifting background
-     shapes: a light tint of navy and of saffron, so all text on top stays AA (e2e/design.spec.js). */
+     --circle-* are the colors in the middle of the floating background circles: on the page
+     (--circle-main, --circle-accent) and in the hero (--hero-circle-*). They are light tints,
+     so all text stays AA even with every circle behind it at once (e2e/design.spec.js).
+     --wave-middle and --wave-back are the two lighter navy waves behind the solid one at the
+     edge of each navy band (WaveDivider.jsx): see-through navy that the page shows through.
+     --card-glow is the color of the glow around a card on hover (see .card). */
   :root {
     color-scheme: light;
-    --shape-main: color-mix(in oklab, var(--color-main) 8%, transparent);
-    --shape-accent: color-mix(in oklab, var(--color-accent) 16%, transparent);
+    --wave-middle: color-mix(in oklab, var(--color-main) 70%, transparent);
+    --wave-back: color-mix(in oklab, var(--color-main) 40%, transparent);
+    --circle-main: color-mix(in oklab, var(--color-main) 10%, transparent);
+    --circle-accent: color-mix(in oklab, var(--color-accent) 24%, transparent);
+    --hero-circle-accent: color-mix(
+      in oklab,
+      var(--color-accent) 18%,
+      transparent
+    );
+    --hero-circle-light: color-mix(
+      in oklab,
+      var(--color-on-main) 14%,
+      transparent
+    );
+    --card-glow: var(--color-main-ink);
   }
 
   /* Dark mode keeps the same 60-30-10 split: a near-black navy page, a lighter navy for
@@ -286,9 +317,28 @@ body:has(dialog[open]) {
     --color-main-ink: #a9c1ee;
     --color-main-soft: #1a2540;
     --color-accent-hover: #ffc444;
-    /* On the near-black page, the navy shape needs much more color to show. */
-    --shape-main: color-mix(in oklab, var(--color-main) 70%, transparent);
-    --shape-accent: color-mix(in oklab, var(--color-accent) 8%, transparent);
+    /* On the near-black page, see-through navy would look darker than the band, so the
+       waves behind it are a lighter navy: the band's navy mixed with the light blue of
+       --color-main-ink. The navy circles need much more color to show, and the light text
+       needs softer saffron and white behind it. */
+    --wave-middle: color-mix(
+      in oklab,
+      var(--color-main) 70%,
+      var(--color-main-ink)
+    );
+    --wave-back: color-mix(in oklab, var(--color-main-ink) 22%, transparent);
+    --circle-main: color-mix(in oklab, var(--color-main) 75%, transparent);
+    --circle-accent: color-mix(in oklab, var(--color-accent) 9%, transparent);
+    --hero-circle-accent: color-mix(
+      in oklab,
+      var(--color-accent) 14%,
+      transparent
+    );
+    --hero-circle-light: color-mix(
+      in oklab,
+      var(--color-on-main) 10%,
+      transparent
+    );
   }
 
   /* A clear outline around whatever has keyboard focus: navy on light backgrounds,
@@ -313,6 +363,12 @@ body:has(dialog[open]) {
   button {
     transition-property: color, background-color, border-color;
     transition-duration: 150ms;
+  }
+
+  /* Buttons show the hand cursor like links (Tailwind leaves them with the arrow), so
+     everything clickable looks clickable. Cards that are not clickable keep the arrow. */
+  button:not(:disabled) {
+    cursor: pointer;
   }
 
   /* Movement only for people who have not asked their device for less motion. */
@@ -398,27 +454,197 @@ body:has(dialog[open]) {
   }
 }
 
-/* The drifting of the background shapes (PageBackdrop.jsx and the hero glows in Hero.jsx).
-   Halfway through a loop a shape has moved by --drift-x and --drift-y and grown a little,
-   then it comes back, so the loop never jumps. --drift-time is how long one loop takes.
-   Only translate and scale change, which phones can animate smoothly without redrawing,
-   and nothing around the shapes moves (no layout shift).
-   PageBackdrop.jsx sets data-tab-hidden on <html> while the tab is in the background,
-   and the shapes stop there. People who ask for less motion get still shapes. */
+/* Cards react to the pointer, even the ones that are not links or buttons (CARD in styles.js,
+   and EmptyState.jsx): the card lifts and tilts a little, a soft glow fades in around it, and
+   its icon moves (card-active: above). Phones have no pointer that hovers, so a tap does the
+   same: tapReaction.js sets data-tapped on the card for a moment.
+   The glow is a shadow drawn once on a ::before layer that only fades in (animating the card's
+   own box-shadow would redraw it on every frame), and the card only moves with translate and
+   rotate, so phones animate it smoothly. Its color is --card-glow: navy on the page (light blue
+   in dark mode) and white inside a navy band. People who ask for less motion still see the
+   glow, but nothing moves. */
 @layer components {
-  @media (prefers-reduced-motion: no-preference) {
-    .drift {
-      animation: drift var(--drift-time, 30s) ease-in-out infinite;
+  .card {
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--card-glow) 40%, transparent),
+      0 1rem 2.5rem -0.75rem
+        color-mix(in oklab, var(--card-glow) 45%, transparent);
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+    pointer-events: none;
+  }
+  /* An invisible strip just under the card that still counts as the card. Without it, a
+     pointer resting on the card's bottom edge would be left behind when the card lifts, the
+     card would drop back under it, lift again, and flicker. */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 100% 0 -0.5rem;
+  }
+  .card[data-tapped]::before {
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .card:hover::before {
+      opacity: 1;
     }
-    :root[data-tab-hidden] .drift {
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      transition:
+        translate 300ms ease-out,
+        rotate 300ms ease-out;
+    }
+    .card[data-tapped] {
+      translate: 0 -0.375rem;
+      rotate: -0.75deg;
+    }
+    @media (hover: hover) {
+      .card:hover {
+        translate: 0 -0.375rem;
+        rotate: -0.75deg;
+      }
+    }
+  }
+}
+
+/* The moving background. Everything here moves only with translate, transform and scale,
+   which phones can animate without redrawing, and never moves anything around it (no layout
+   shift). PageBackdrop.jsx sets data-tab-hidden on <html> while the tab is in the background,
+   and everything stops there. People who ask for less motion get a still background. */
+@layer components {
+  /* Soft circles (Circle.jsx) that float on their own paths behind the page and in the hero.
+     A circle is a radial gradient: its color (--circle-color) in the middle, fading out to its
+     edge, so it looks soft without a blur filter (blur is slow to animate on phones).
+     float-x swings it sideways with translate, and float-y up and down with transform. They
+     are separate CSS properties, so each one has its own distance (--x, --y) and speed
+     (--x-time, --y-time), and together they trace a curving path around the circle's place.
+     Each swing goes there and back (alternate), so one loop takes twice its time.
+     The negative delay starts them halfway, already moving when the page opens.
+     circle-grow also makes a circle slowly grow and shrink. */
+  .circle {
+    position: absolute;
+    border-radius: 9999px;
+    background-image: radial-gradient(
+      closest-side,
+      var(--circle-color) 35%,
+      transparent
+    );
+  }
+
+  /* The waves at the edges of the navy bands (WaveDivider.jsx). A layer is twice as wide as the
+     screen and draws the same wave twice, so sliding it left by half its width (one screen)
+     brings back exactly the picture it started from, and the loop never jumps. --wave-time is
+     how long one slide takes. wave-swell stretches the layer up and down from the band's edge
+     (transform-origin: bottom), like a swell on the sea. left: 0 rather than a start side:
+     the slide goes left in both languages. */
+  .wave-layer {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 200%;
+    transform-origin: bottom;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .circle {
+      animation:
+        float-x var(--x-time) ease-in-out calc(var(--x-time) * -0.5) infinite
+          alternate,
+        float-y var(--y-time) ease-in-out calc(var(--y-time) * -0.5) infinite
+          alternate;
+    }
+    .circle-grow {
+      animation:
+        float-x var(--x-time) ease-in-out calc(var(--x-time) * -0.5) infinite
+          alternate,
+        float-y var(--y-time) ease-in-out calc(var(--y-time) * -0.5) infinite
+          alternate,
+        circle-grow calc(var(--y-time) * 1.5) ease-in-out infinite alternate;
+    }
+
+    .wave-layer {
+      animation:
+        wave-slide var(--wave-time) linear infinite
+          var(--wave-direction, normal),
+        wave-swell var(--swell-time) ease-in-out infinite alternate;
+    }
+
+    /* The star pattern in the hero slides by one star (48px) per loop. The pattern repeats
+       every 48px, so the loop never jumps. */
+    .stars-pan {
+      animation: stars-pan 8s linear infinite;
+    }
+
+    /* The tiles in the hero bob gently up and down, each one a little after the one before. */
+    .tile-bob {
+      animation: tile-bob 2.5s ease-in-out infinite alternate;
+    }
+
+    :root[data-tab-hidden] :is(.circle, .wave-layer, .stars-pan, .tile-bob) {
       animation-play-state: paused;
     }
   }
 }
 
-@keyframes drift {
-  50% {
-    translate: var(--drift-x, 0) var(--drift-y, 0);
-    scale: 1.15;
+@keyframes float-x {
+  from {
+    translate: calc(var(--x) / -2) 0;
+  }
+  to {
+    translate: calc(var(--x) / 2) 0;
+  }
+}
+
+@keyframes float-y {
+  from {
+    transform: translateY(calc(var(--y) / -2));
+  }
+  to {
+    transform: translateY(calc(var(--y) / 2));
+  }
+}
+
+@keyframes circle-grow {
+  from {
+    scale: 0.8;
+  }
+  to {
+    scale: 1.25;
+  }
+}
+
+@keyframes wave-slide {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@keyframes wave-swell {
+  from {
+    scale: 1 0.8;
+  }
+  to {
+    scale: 1 1.15;
+  }
+}
+
+@keyframes stars-pan {
+  to {
+    translate: 48px 48px;
+  }
+}
+
+@keyframes tile-bob {
+  to {
+    transform: translateY(-0.75rem);
   }
 }

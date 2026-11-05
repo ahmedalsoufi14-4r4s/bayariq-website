@@ -14,10 +14,12 @@ function ProductCard({ product, onOpen }) {
   return (
     // isolate keeps the z-10 below inside this card, so the button can never cover the sticky header.
     // group lets the picture react when the pointer is anywhere on the card (group-hover: in ProductImage.jsx).
-    <article
-      className={`group relative isolate flex h-full flex-col overflow-hidden ${CARD} hover:ring-main-ink/40 motion-safe:hover:-translate-y-1`}
-    >
-      <ProductImage product={product} />
+    // The card lifts and glows like every card (CARD). The picture is clipped by its own box,
+    // so its zoom stays inside the card's rounded top corners.
+    <article className={`group isolate flex h-full flex-col ${CARD}`}>
+      <div className="overflow-hidden rounded-t-2xl">
+        <ProductImage product={product} />
+      </div>
 
       <div className="absolute start-2 top-2 flex flex-wrap gap-1 text-xs">
         {product.featured && (

@@ -13,6 +13,11 @@ import { BUTTON_ACCENT } from './styles.js'
 const INPUT =
   'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15'
 
+// A radio choice: the whole row can be clicked, and it gets a soft highlight under the pointer.
+// -mx-2 and px-2 give the highlight some room without moving the text.
+const RADIO_LABEL =
+  'flex cursor-pointer items-center gap-2 -mx-2 rounded-lg px-2 py-1 hover:bg-main-soft'
+
 function OrderForm() {
   const { t, language, localize } = useLanguage()
   const { lines, extraItems, setExtraItems } = useCart()
@@ -90,10 +95,7 @@ function OrderForm() {
         <legend>{t.order.branch}</legend>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
           {store.branches.map((item) => (
-            <label
-              key={item.id}
-              className="flex cursor-pointer items-center gap-2"
-            >
+            <label key={item.id} className={RADIO_LABEL}>
               <input
                 type="radio"
                 name="branch"
@@ -139,10 +141,7 @@ function OrderForm() {
           <legend>{t.order.method}</legend>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
             {['pickup', 'delivery'].map((option) => (
-              <label
-                key={option}
-                className="flex cursor-pointer items-center gap-2"
-              >
+              <label key={option} className={RADIO_LABEL}>
                 <input
                   type="radio"
                   name="method"

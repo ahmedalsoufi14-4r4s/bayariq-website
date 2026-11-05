@@ -6,12 +6,25 @@ import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { fillIn } from '../lib/text.js'
 
-// Each id is a key in the "highlights" texts.
+// Each id is a key in the "highlights" texts. motion is what the icon does while the card
+// is under the pointer or tapped (card-active: in index.css).
 // NEEDS-AHMED: the family should confirm these points, especially "prices".
 const HIGHLIGHTS = [
-  { id: 'prices', Icon: TagIcon },
-  { id: 'whatsapp', Icon: ChatIcon },
-  { id: 'nearby', Icon: MapPinIcon },
+  {
+    id: 'prices',
+    Icon: TagIcon,
+    motion: 'motion-safe:card-active:animate-spin-once',
+  },
+  {
+    id: 'whatsapp',
+    Icon: ChatIcon,
+    motion: 'motion-safe:card-active:animate-wiggle',
+  },
+  {
+    id: 'nearby',
+    Icon: MapPinIcon,
+    motion: 'motion-safe:card-active:animate-hop',
+  },
 ]
 
 function Highlights() {
@@ -31,9 +44,11 @@ function Highlights() {
         {t.highlights.title}
       </SectionHeading>
       <ul className="mt-8 grid gap-4 sm:grid-cols-3">
-        {HIGHLIGHTS.map(({ id, Icon }) => (
+        {HIGHLIGHTS.map(({ id, Icon, motion }) => (
           <li key={id} ref={reveal} className={`reveal ${CARD} p-6`}>
-            <span className="flex size-12 items-center justify-center rounded-xl bg-main-soft text-main-ink">
+            <span
+              className={`flex size-12 items-center justify-center rounded-xl bg-main-soft text-main-ink ${motion}`}
+            >
               <Icon className="size-6" />
             </span>
             <h3 className="mt-4 text-lg font-bold">{t.highlights[id].title}</h3>

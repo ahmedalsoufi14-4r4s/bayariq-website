@@ -74,7 +74,9 @@ function Products() {
 
       {/* aria-live makes screen readers read the new count after each change.
           A new key makes React draw a new number, so it rolls in on every change. */}
-      <p aria-live="polite" className="mt-4 text-sm text-muted">
+      {/* text-ink, not text-muted: this line sits right on the page, over the moving
+          circles, and the darker text stays AA wherever they are (e2e/design.spec.js). */}
+      <p aria-live="polite" className="mt-4 text-sm text-ink">
         {t.products.results}{' '}
         <span
           key={visibleProducts.length}

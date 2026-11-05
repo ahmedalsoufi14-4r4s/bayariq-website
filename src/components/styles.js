@@ -27,6 +27,7 @@ export const BUTTON_ON_MAIN = `${BUTTON} border border-on-main/50 hover:border-o
 export const ICON_BUTTON =
   'group flex size-11 shrink-0 items-center justify-center rounded-full transition duration-150 ease-out motion-safe:active:scale-90'
 
-// A white card on the off-white page, with a soft shadow that deepens on hover.
-export const CARD =
-  'rounded-2xl bg-surface shadow-sm ring-1 ring-line transition duration-300 ease-out hover:shadow-lg hover:shadow-main/10'
+// A white card on the off-white page. card (index.css) makes it react to the pointer and to a
+// tap: it lifts, tilts a little and glows. Give its icon a card-active: motion, for example
+// motion-safe:card-active:animate-hop. Don't add overflow-hidden: it would cut off the glow.
+export const CARD = 'card rounded-2xl bg-surface shadow-sm ring-1 ring-line'
