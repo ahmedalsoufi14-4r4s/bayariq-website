@@ -108,8 +108,9 @@
 /* Tailwind v4 reads design tokens from @theme. Overriding --font-sans
    makes IBM Plex Sans Arabic the default font for the whole site.
    Each --animate-* creates a class: animate-pop (the cart count in Header.jsx), animate-roll
-   (numbers that change), animate-appear (small confirmations), and animate-wiggle, animate-hop
-   and animate-spin-once (icons that move once on hover or tap). */
+   (numbers that change), animate-appear (small confirmations), animate-wiggle, animate-hop
+   and animate-spin-once (icons that move once on hover or tap), and animate-pop-in and
+   animate-typing (the chat's messages and typing dots, ChatMessage.jsx). */
 @theme {
   --font-sans:
     'IBM Plex Sans Arabic', 'IBM Plex Sans Arabic Fallback', ui-sans-serif,
@@ -120,6 +121,8 @@
   --animate-wiggle: wiggle 400ms ease-in-out;
   --animate-hop: hop 400ms ease-out;
   --animate-spin-once: spin-once 400ms ease-in-out;
+  --animate-pop-in: pop-in 250ms ease-out;
+  --animate-typing: typing 900ms ease-in-out infinite;
 
   @keyframes pop {
     50% {
@@ -168,6 +171,28 @@
   @keyframes spin-once {
     to {
       rotate: 360deg;
+    }
+  }
+
+  /* A chat message grows in from a little below. */
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      translate: 0 0.5rem;
+      scale: 0.9;
+    }
+  }
+
+  /* A typing dot hops up and lights up, then rests until its next turn. */
+  @keyframes typing {
+    0%,
+    60%,
+    100% {
+      opacity: 0.4;
+    }
+    30% {
+      opacity: 1;
+      translate: 0 -0.25rem;
     }
   }
 
@@ -268,8 +293,10 @@
   }
 }
 
-/* Stop the page behind an open dialog from scrolling. */
-body:has(dialog[open]) {
+/* Stop the page behind an open dialog from scrolling. :modal only matches the dialogs opened
+   with showModal() (the cart and the product details), so the page still scrolls while the
+   chat panel is open (ChatBot.jsx opens it with show()). */
+body:has(dialog:modal) {
   overflow: hidden;
 }
 
@@ -425,6 +452,33 @@ body:has(dialog[open]) {
       }
       [dir='rtl'] .drawer[open] {
         translate: -100%;
+      }
+    }
+
+    /* The chat panel (ChatBot.jsx) slides up and grows out of its round button in the
+       bottom corner: the bottom right in English and the bottom left in Arabic.
+       It has no backdrop, because show() opens it without blocking the page. */
+    dialog.chat-panel {
+      transform-origin: bottom right;
+      transition:
+        opacity 200ms,
+        translate 300ms,
+        scale 300ms,
+        display 300ms allow-discrete;
+      transition-timing-function: ease-out;
+    }
+    [dir='rtl'] dialog.chat-panel {
+      transform-origin: bottom left;
+    }
+    dialog.chat-panel:not([open]) {
+      translate: 0 1.5rem;
+      scale: 0.9;
+      transition-timing-function: ease-in;
+    }
+    @starting-style {
+      dialog.chat-panel[open] {
+        translate: 0 1.5rem;
+        scale: 0.9;
       }
     }
   }
