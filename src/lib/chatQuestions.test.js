@@ -7,17 +7,41 @@ import {
 } from './chatQuestions.js'
 
 const branches = [
-  { id: 'al-hamdaniyah', district_ar: 'الحمدانية', district_en: 'Al Hamdaniyah' },
+  {
+    id: 'al-hamdaniyah',
+    district_ar: 'الحمدانية',
+    district_en: 'Al Hamdaniyah',
+  },
   { id: 'kilo-14', district_ar: 'كيلو 14', district_en: 'Kilo 14' },
   { id: 'al-mahamid', district_ar: 'المحاميد', district_en: 'Al Mahamid' },
   { id: 'al-harazat', district_ar: 'الحرازات', district_en: 'Al Harazat' },
 ]
 
 const products = [
-  { id: 'milk', name_ar: 'حليب طازج', name_en: 'Fresh milk', category: 'dairy' },
-  { id: 'bread', name_ar: 'خبز عربي', name_en: 'Arabic bread', category: 'bakery' },
-  { id: 'rice', name_ar: 'أرز بسمتي', name_en: 'Basmati rice', category: 'pantry' },
-  { id: 'coffee', name_ar: 'قهوة عربية', name_en: 'Arabic coffee', category: 'pantry' },
+  {
+    id: 'milk',
+    name_ar: 'حليب طازج',
+    name_en: 'Fresh milk',
+    category: 'dairy',
+  },
+  {
+    id: 'bread',
+    name_ar: 'خبز عربي',
+    name_en: 'Arabic bread',
+    category: 'bakery',
+  },
+  {
+    id: 'rice',
+    name_ar: 'أرز بسمتي',
+    name_en: 'Basmati rice',
+    category: 'pantry',
+  },
+  {
+    id: 'coffee',
+    name_ar: 'قهوة عربية',
+    name_en: 'Arabic coffee',
+    category: 'pantry',
+  },
 ]
 
 function ask(text) {
@@ -92,7 +116,10 @@ describe('matchQuestion: branches', () => {
   })
 
   it('takes a district on its own as a question about where that branch is', () => {
-    expect(ask('الحرازات')).toEqual({ topic: 'branches', branchId: 'al-harazat' })
+    expect(ask('الحرازات')).toEqual({
+      topic: 'branches',
+      branchId: 'al-harazat',
+    })
   })
 
   it('leaves the branch out when the question names none', () => {
@@ -132,7 +159,10 @@ describe('matchQuestion: products', () => {
   })
 
   it('still searches when the product is not on the list, so the answer can say so', () => {
-    expect(ask('هل عندكم بيبسي؟')).toEqual({ topic: 'products', query: 'بيبسي' })
+    expect(ask('هل عندكم بيبسي؟')).toEqual({
+      topic: 'products',
+      query: 'بيبسي',
+    })
     expect(ask('Is there any pepsi?')).toEqual({
       topic: 'products',
       query: 'pepsi',

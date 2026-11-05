@@ -17,6 +17,7 @@ The website of a neighborhood supermarket with four branches in Jeddah: Al Hamda
 - Offers with a "valid until" date. Expired offers hide themselves.
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
 - A card for each branch with its own name, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
+- A quick-answer chat helper behind the saffron button in the corner: opening hours, branches and locations, delivery, how to order, current offers, contacting a branch, and "do you have X?" with an Add to cart button. Tap a chip or type a question in Arabic or English. No AI and no server: every answer comes from the data files, and missing details are answered with "coming soon".
 - Off-white, deep navy and saffron in a 60-30-10 split, defined once as color tokens in `src/index.css`, with a dark mode that keeps the same split.
 - The page feels alive: soft navy and saffron circles float behind it, layered waves move along the edges of the navy bands, and cards fade in as they scroll into view. Every card, button, link and input reacts to the mouse (and cards to a tap on phones), a saffron pill slides to the chosen category, and the menu highlights the section on screen. Dialogs slide and fade. All motion is off for people who ask their device for less. Keyboard friendly, AA contrast checked on every piece of text.
 - Fast on phones: on the live site, Lighthouse mobile gives about 95 for Performance (89 to 98 across runs) and 100 for Accessibility, Best Practices and SEO.
@@ -40,7 +41,7 @@ npm run dev        # http://localhost:5173/bayariq-website/
 | `npm run build`        | Builds the site into `dist/`.                                                                        |
 | `npm run lint`         | Checks the code with ESLint.                                                                         |
 | `npm run format:check` | Checks the formatting with Prettier (`npm run format` fixes it).                                     |
-| `npm test`             | Runs the unit tests (cart, WhatsApp message, Arabic search, offers, JSON-LD).                        |
+| `npm test`             | Runs the unit tests (cart, WhatsApp message, Arabic search, offers, JSON-LD, chat helper).           |
 | `npm run check`        | Builds the site and runs the Playwright checks in Arabic and English at 360 px and 1280 px.          |
 | `npm run images`       | Remakes the share image, the iPhone icon and the README screenshots (after a logo or design change). |
 
@@ -67,7 +68,7 @@ Values tagged `NEEDS-AHMED` are still missing. The site hides them or shows "Ù‚Ø
 ```text
 src/
   sections/    page sections (hero, offers, products, store info)
-  components/  smaller parts (header, cards, dialogs, cart drawer, order form)
+  components/  smaller parts (header, cards, dialogs, cart drawer, order form, chat helper)
   cart/        cart state, saved in the browser
   i18n/        language switch and all texts
   lib/         pure functions with unit tests

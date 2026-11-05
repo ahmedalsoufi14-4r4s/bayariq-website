@@ -10,7 +10,7 @@
 - React + Vite, JavaScript (no TypeScript), Tailwind CSS.
 - No backend, database or payments. All content lives in JSON files in `src/data/`.
 - Hosting: GitHub Pages through GitHub Actions. Set Vite `base` to the repo name. Use HashRouter if routes are ever needed.
-- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch rules, Arabic search, JSON-LD).
+- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch rules, Arabic search, JSON-LD, chatbot matching and answers).
 - Browser checks: Playwright (Chromium), tests in `e2e/`.
 - Ask before adding any dependency not listed here. Prefer none.
 
@@ -36,6 +36,14 @@
 - Order form: branch (required), name, district, pickup or delivery (delivery only when the chosen branch delivers), preferred time, notes.
 - "Send order" builds a clear message in the current language with items, quantities, an estimated total (priced items only) and the customer details and the chosen branch, then opens `https://wa.me/<that branch's number>?text=<encoded message>`. "Send order" stays disabled until the chosen branch has a real WhatsApp number.
 - Keep the message builder and the branch rules pure functions in `src/lib/` with unit tests.
+
+## Quick-answer chatbot
+- No AI, no server, no new dependencies. Every answer comes only from `store.json`, `offers.json` and `products.json`, never invented. A NEEDS-AHMED detail is answered with a polite "coming soon"; a branch with a real WhatsApp number gets a button to message that branch.
+- A saffron chat button in the bottom corner (end side) opens a non-modal `<dialog>` (`show()`, not `showModal()`), so the page still scrolls and the cart still works. It sits below the sticky header and never covers the cart button; the cart drawer and dialogs open above it (top layer). The footer has extra bottom padding so the button never hides its text.
+- Topic chips: opening hours, branches and locations, delivery, how to order, current offers, contact a branch. Branch topics ask which branch first (one chip per branch), unless the question names one. Final answers end with an "other questions" chip; greetings, thanks and unmatched questions show the topic chips again.
+- Typed questions match simple Arabic and English keywords after the product search's `normalizeText` (plus Arabic digits). "Do you have X?" uses the product search (`filterProducts`) and shows matches with Add to cart; a product not on the list points to the cart's box for unlisted items.
+- Pure logic: `src/lib/chatQuestions.js` (`matchQuestion`: what was asked) and `src/lib/chatAnswers.js` (`buildAnswer`: the answer), with unit tests, so an AI can replace them later. Messages store the question, and the answer is built at render time, so the whole conversation follows the language switch.
+- Motion: the panel slides up from the button, messages pop in, typing dots play before each answer; with reduced motion nothing moves and answers show at once. Messages are in a `role="log"` live region; the whole bot works with the keyboard; Escape closes it and focus returns to the chat button.
 
 ## Quality bar
 - Mobile first. Must look right from 360 px wide up to desktop.

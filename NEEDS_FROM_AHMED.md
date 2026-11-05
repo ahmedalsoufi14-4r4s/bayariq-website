@@ -1,6 +1,6 @@
 # What the site needs from Ahmed
 
-Every item below is tagged `NEEDS-AHMED` in the code or data. Until an item is filled in, the site hides it or shows "قريبًا / Coming soon", so nothing fake ever appears on the page.
+Every item below is tagged `NEEDS-AHMED` in the code or data. Until an item is filled in, the site hides it or shows "قريبًا / Coming soon", so nothing fake ever appears on the page. The chat helper answers from the same files, so each detail you fill in also appears in its answers (and a branch's WhatsApp number adds a "message this branch" button there).
 
 ## Store details
 
@@ -46,6 +46,8 @@ Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](htt
   Recommended: keep it. It names both store names and all four districts, so people find the site whichever they search for.
 - **Font weights** → the site loads only regular and bold IBM Plex Sans Arabic, because each extra weight made the page clearly slower on phones (Lighthouse 85 → 95).
   Recommended: keep it.
+- **Chat helper's name and greeting** → `chat` in `src/i18n/ar.json` and `src/i18n/en.json`. It is called "مساعد بيارق" / "Bayariq helper" (one name for both stores) and its greeting gives "هل عندكم حليب؟" as an example question.
+  Recommended: keep both. If milk is not on the real product list, change the example to a product that is.
 - **Own domain (optional)** → if the store buys one (for example `bayariq.sa`), change `website` in `src/data/store.json`, the four full URLs in `index.html`, and `base` in `vite.config.js`, then set the domain in GitHub → Settings → Pages.
   Recommended: not for version 1. Launch on the free GitHub address and decide later.
 - **Are products, prices and offers the same in every branch?** The site has one product list and one offers list for all four branches.

@@ -188,6 +188,19 @@ for (const theme of THEMES) {
         page.getByRole('dialog', { name: t.cart.title }),
       ).toBeVisible()
       expect(await findLowContrastText(page)).toEqual([])
+      await page.keyboard.press('Escape')
+
+      // The chat panel with a product answer: bubbles, chips, a product row and its buttons.
+      await page.getByRole('button', { name: t.chat.open }).click()
+      const chat = page.getByRole('dialog', { name: t.chat.title })
+      await chat
+        .getByRole('textbox', { name: t.chat.inputLabel })
+        .fill(inStockProduct.name_ar)
+      await chat.getByRole('button', { name: t.chat.send }).click()
+      await expect(
+        chat.getByText(t.chat.products, { exact: true }),
+      ).toBeVisible()
+      expect(await findLowContrastText(page)).toEqual([])
     })
 
     test('the moving circles never bring text below AA, even with all of them behind it at once', async ({

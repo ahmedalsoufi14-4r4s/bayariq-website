@@ -39,6 +39,7 @@ function ChatBot() {
   const panelRef = useRef(null)
   const buttonRef = useRef(null)
   const logRef = useRef(null)
+  const inputRef = useRef(null)
 
   // show() opens the <dialog> without blocking the page, unlike showModal() for the cart:
   // the visitor can still scroll, add products and open the cart while the chat is open.
@@ -84,6 +85,9 @@ function ChatBot() {
     if (text === '') return
     ask(matchQuestion(text, { branches: store.branches, products }), text)
     setDraft('')
+    // The send button turns off once the box is empty. If it was clicked, it had the focus,
+    // which would then be lost, so focus goes back to the box for the next question.
+    inputRef.current.focus()
   }
 
   // The close button, Escape and the round button all close the panel, and focus goes back
@@ -172,6 +176,7 @@ function ChatBot() {
               {t.chat.inputLabel}
             </label>
             <input
+              ref={inputRef}
               id="chat-input"
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
