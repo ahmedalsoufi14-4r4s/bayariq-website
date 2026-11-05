@@ -65,6 +65,7 @@ function ProductCard({ product, onOpen }) {
         {/* relative z-10 lifts this button above the card-wide details button. */}
         <button
           type="button"
+          data-tour="add"
           onClick={() => add(product)}
           disabled={!product.inStock}
           aria-label={`${t.cart.add}: ${name}`}

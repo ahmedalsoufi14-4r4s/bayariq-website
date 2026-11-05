@@ -35,6 +35,15 @@ export function ChatIcon({ className }) {
   )
 }
 
+// Three lines, the usual sign for a menu.
+export function MenuIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </Icon>
+  )
+}
+
 // A paper plane pointing right. In Arabic, flip it to point left (rtl:-scale-x-100).
 export function SendIcon({ className }) {
   return (

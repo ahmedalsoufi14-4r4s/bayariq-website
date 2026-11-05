@@ -3,6 +3,7 @@ import products from '../data/products.json'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { matchQuestion } from '../lib/chatQuestions.js'
+import { useTour } from '../tour/TourContext.js'
 import ChatMessage from './ChatMessage.jsx'
 import { ChatIcon, CloseIcon, SendIcon } from './Icons.jsx'
 import { BUTTON_MAIN, ICON_BUTTON } from './styles.js'
@@ -31,6 +32,7 @@ function prefersReducedMotion() {
 // small chat panel above it. Every answer comes from the data files (src/lib/chatAnswers.js).
 function ChatBot() {
   const { t } = useLanguage()
+  const { startTour, isRunning: isTourRunning } = useTour()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([GREETING])
   // The id of the answer whose typing dots are showing, or null.
@@ -40,15 +42,18 @@ function ChatBot() {
   const buttonRef = useRef(null)
   const logRef = useRef(null)
   const inputRef = useRef(null)
+  // The panel steps aside while the first-visit tour runs, so it never covers what the tour
+  // points at, and comes back afterwards if it was open.
+  const isPanelOpen = isOpen && !isTourRunning
 
   // show() opens the <dialog> without blocking the page, unlike showModal() for the cart:
   // the visitor can still scroll, add products and open the cart while the chat is open.
   // It also moves keyboard focus into the panel.
   useEffect(() => {
     const panel = panelRef.current
-    if (isOpen && !panel.open) panel.show()
-    if (!isOpen && panel.open) panel.close()
-  }, [isOpen])
+    if (isPanelOpen && !panel.open) panel.show()
+    if (!isPanelOpen && panel.open) panel.close()
+  }, [isPanelOpen])
 
   // The typing dots show for a moment, then the answer takes their place.
   useEffect(() => {
@@ -63,12 +68,19 @@ function ChatBot() {
   useEffect(() => {
     const log = logRef.current
     log.scrollTop = log.lastElementChild.offsetTop - LOG_PADDING_PX
-  }, [messages, typingId, isOpen])
+  }, [messages, typingId, isPanelOpen])
 
   // Adds the visitor's question and the helper's answer to it. typedText is what the visitor
   // typed; a tapped chip has none, and its label shows instead (ChatMessage.jsx).
   // Messages are never removed, so their count gives each new one its own id.
   function ask(question, typedText) {
+    // The "take the tour again" chip closes the chat and starts the tour instead.
+    // Focus comes back to the chat button when the tour ends.
+    if (question.topic === 'tour') {
+      close()
+      startTour(buttonRef.current)
+      return
+    }
     const id = messages.length
     setMessages([
       ...messages,
@@ -202,14 +214,15 @@ function ChatBot() {
       <button
         ref={buttonRef}
         type="button"
+        data-tour="chat"
         onClick={toggle}
         aria-label={t.chat.open}
-        aria-expanded={isOpen}
+        aria-expanded={isPanelOpen}
         aria-controls="chat-panel"
         aria-haspopup="dialog"
         className={CHAT_BUTTON}
       >
-        {isOpen ? (
+        {isPanelOpen ? (
           <CloseIcon className="size-7 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
         ) : (
           <ChatIcon className="size-7 motion-safe:group-hover:animate-wiggle" />

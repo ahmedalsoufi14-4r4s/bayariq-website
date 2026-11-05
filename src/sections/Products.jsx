@@ -41,36 +41,39 @@ function Products() {
     >
       <SectionHeading id="products-title">{t.products.title}</SectionHeading>
 
-      <div className="relative mt-6">
-        <label htmlFor="product-search" className="sr-only">
-          {t.products.searchLabel}
-        </label>
-        {/* On focus the border turns navy and a soft ring fades in around it.
+      {/* The search box and the category buttons, shown together in the first-visit tour. */}
+      <div data-tour="browse">
+        <div className="relative mt-6">
+          <label htmlFor="product-search" className="sr-only">
+            {t.products.searchLabel}
+          </label>
+          {/* On focus the border turns navy and a soft ring fades in around it.
             peer marks the input, so the icon after it can react to its focus (peer-focus:). */}
-        <input
-          ref={searchRef}
-          id="product-search"
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t.products.searchPlaceholder}
-          className="peer w-full rounded-full border border-line bg-surface py-3 ps-11 pe-14 shadow-sm transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15"
-        />
-        <SearchIcon className="pointer-events-none absolute start-4 top-1/2 size-5 -translate-y-1/2 text-muted transition duration-200 ease-out peer-focus:text-main-ink motion-safe:peer-focus:scale-110" />
-        {/* inset-y-0 and my-auto center the button without translate, which animate-appear uses. */}
-        {query !== '' && (
-          <button
-            type="button"
-            onClick={clearSearch}
-            aria-label={t.products.clearSearch}
-            className={`${ICON_BUTTON} absolute inset-y-0 end-1 my-auto text-muted hover:bg-main-soft hover:text-ink motion-safe:animate-appear`}
-          >
-            <CloseIcon className="size-5 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
-          </button>
-        )}
-      </div>
+          <input
+            ref={searchRef}
+            id="product-search"
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t.products.searchPlaceholder}
+            className="peer w-full rounded-full border border-line bg-surface py-3 ps-11 pe-14 shadow-sm transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15"
+          />
+          <SearchIcon className="pointer-events-none absolute start-4 top-1/2 size-5 -translate-y-1/2 text-muted transition duration-200 ease-out peer-focus:text-main-ink motion-safe:peer-focus:scale-110" />
+          {/* inset-y-0 and my-auto center the button without translate, which animate-appear uses. */}
+          {query !== '' && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              aria-label={t.products.clearSearch}
+              className={`${ICON_BUTTON} absolute inset-y-0 end-1 my-auto text-muted hover:bg-main-soft hover:text-ink motion-safe:animate-appear`}
+            >
+              <CloseIcon className="size-5 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
+            </button>
+          )}
+        </div>
 
-      <CategoryFilter selected={category} onSelect={setCategory} />
+        <CategoryFilter selected={category} onSelect={setCategory} />
+      </div>
 
       {/* aria-live makes screen readers read the new count after each change.
           A new key makes React draw a new number, so it rolls in on every change. */}

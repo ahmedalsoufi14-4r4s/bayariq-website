@@ -1,0 +1,9 @@
+[
+  { "id": "menu", "target": "[data-tour='menu']", "icon": "menu" },
+  { "id": "settings", "target": "[data-tour='settings']", "icon": "moon" },
+  { "id": "browse", "target": "[data-tour='browse']", "icon": "search" },
+  { "id": "add", "target": "[data-tour='add']:not(:disabled)", "icon": "plus" },
+  { "id": "cart", "target": "[data-tour='cart']", "icon": "cart" },
+  { "id": "branches", "target": "[data-tour='branch']", "icon": "pin" },
+  { "id": "chat", "target": "[data-tour='chat']", "icon": "chat" }
+]

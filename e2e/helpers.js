@@ -11,6 +11,7 @@ export const store = readJson('../src/data/store.json')
 export const categories = readJson('../src/data/categories.json')
 export const products = readJson('../src/data/products.json')
 export const offers = readJson('../src/data/offers.json')
+export const tourSteps = readJson('../src/data/tour.json')
 export const texts = {
   ar: readJson('../src/i18n/ar.json'),
   en: readJson('../src/i18n/en.json'),
@@ -95,4 +96,89 @@ export async function totalLayoutShift(page) {
     for (const source of shift.sources) console.log(`  ${source}`)
   }
   return shifts.reduce((sum, shift) => sum + shift.value, 0)
+}
+
+// Finds visible text that fails WCAG AA: 4.5:1, or 3:1 for large text (24 px, or 18.66 px bold).
+// For each piece of text it paints the backgrounds behind it and then the text color on a
+// one-pixel canvas, so see-through colors (like text-on-main/80) are measured as they look.
+// Disabled buttons are left out, because AA does not cover them.
+// backdrops adds colors that float between a solid background and the text, like the moving
+// circles: { body: [colors], '#home': [colors] } paints them right after the page's or the
+// hero's own background, for all the text in front of it.
+export function findLowContrastText(page, backdrops = {}) {
+  return page.evaluate((backdropsBySelector) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1
+    canvas.height = 1
+    const context = canvas.getContext('2d', { willReadFrequently: true })
+
+    function paint(colors) {
+      context.clearRect(0, 0, 1, 1)
+      for (const color of colors) {
+        context.fillStyle = color
+        context.fillRect(0, 0, 1, 1)
+      }
+      return [...context.getImageData(0, 0, 1, 1).data]
+    }
+
+    // The backgrounds behind an element: from the nearest solid one up to the element itself.
+    function backgroundLayers(element) {
+      const layers = []
+      for (let node = element; node; node = node.parentElement) {
+        const color = getComputedStyle(node).backgroundColor
+        layers.unshift(color)
+        if (paint([color])[3] === 255) {
+          for (const [selector, colors] of Object.entries(
+            backdropsBySelector,
+          )) {
+            if (node.matches(selector)) layers.splice(1, 0, ...colors)
+          }
+          break
+        }
+      }
+      return layers
+    }
+
+    function luminance([red, green, blue]) {
+      const [r, g, b] = [red, green, blue].map((value) => {
+        const channel = value / 255
+        return channel <= 0.04045
+          ? channel / 12.92
+          : ((channel + 0.055) / 1.055) ** 2.4
+      })
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    const failures = []
+    for (const element of document.body.querySelectorAll('*')) {
+      const hasText = [...element.childNodes].some(
+        (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim(),
+      )
+      if (!hasText || element.closest(':disabled')) continue
+      const box = element.getBoundingClientRect()
+      const isVisible =
+        box.width > 1 &&
+        box.height > 1 &&
+        element.checkVisibility({
+          opacityProperty: true,
+          visibilityProperty: true,
+        })
+      if (!isVisible) continue
+
+      const style = getComputedStyle(element)
+      const layers = backgroundLayers(element)
+      const background = luminance(paint(layers))
+      const text = luminance(paint([...layers, style.color]))
+      const ratio =
+        (Math.max(background, text) + 0.05) /
+        (Math.min(background, text) + 0.05)
+      const size = parseFloat(style.fontSize)
+      const isLarge =
+        size >= 24 || (size >= 18.66 && Number(style.fontWeight) >= 700)
+      if (ratio < (isLarge ? 3 : 4.5)) {
+        failures.push(`${element.textContent.trim()} (${ratio.toFixed(2)}:1)`)
+      }
+    }
+    return failures
+  }, backdrops)
 }

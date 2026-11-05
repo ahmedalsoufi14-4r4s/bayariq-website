@@ -173,6 +173,45 @@
     "moreProducts": "There are more results in the product list.",
     "noProducts": "I couldn't find that product on our list. You can write it in the cart under “{extraItems}” when you send your order."
   },
+  "tour": {
+    "label": "Quick tour of the site",
+    "counter": "{current} / {total}",
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip the tour",
+    "done": "Start shopping",
+    "again": "Take the tour again",
+    "steps": {
+      "menu": {
+        "title": "The menu",
+        "text": "Jump to our offers, products and branches."
+      },
+      "settings": {
+        "title": "Language and dark mode",
+        "text": "Switch between Arabic and English, and turn on dark mode if you like."
+      },
+      "browse": {
+        "title": "Search and browse",
+        "text": "Pick a category, or type a product's name in the search box."
+      },
+      "add": {
+        "title": "Add to cart",
+        "text": "Press “Add to cart” on a product, and press it again for more."
+      },
+      "cart": {
+        "title": "Your cart and order",
+        "text": "Open the cart, choose your branch, then send your order to it on WhatsApp."
+      },
+      "branches": {
+        "title": "Our branches",
+        "text": "Each branch has a card with its opening hours, address, map and ways to reach it."
+      },
+      "chat": {
+        "title": "Ask our helper",
+        "text": "Tap here, then pick a question or type your own, like: Do you have milk?"
+      }
+    }
+  },
   "footer": {
     "rights": "All rights reserved."
   },

@@ -13,8 +13,12 @@ import { fillIn } from './text.js'
 // At most this many products in one answer. The products section shows them all.
 export const MAX_PRODUCTS = 5
 
-// The chips under the greeting and under a reply that did not understand: one per topic.
-const TOPIC_CHIPS = TOPICS.map((topic) => ({ topic }))
+// The chips under the greeting and under a reply that did not understand: one per topic,
+// then "take the tour again", which the chat panel handles itself (ChatBot.jsx).
+export const TOPIC_CHIPS = [
+  ...TOPICS.map((topic) => ({ topic })),
+  { topic: 'tour' },
+]
 
 // The chip under every final answer: it brings the topic chips back.
 const MORE_QUESTIONS = [{ topic: 'menu' }]
@@ -237,5 +241,6 @@ export function getQuestionLabel(question, { store, t, language }) {
   const branch = store.branches.find((item) => item.id === question.branchId)
   if (branch) return branchLabel(branch, t, language)
   if (question.topic === 'menu') return t.chat.moreQuestions
+  if (question.topic === 'tour') return t.tour.again
   return t.chat.topics[question.topic]
 }

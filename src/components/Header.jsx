@@ -60,7 +60,11 @@ function Header() {
 
         {/* On phones the menu moves to its own row under the logo.
             aria-current tells screen readers which link is the section on screen. */}
-        <nav className="order-last w-full md:order-none md:w-auto md:shrink-0">
+        {/* data-tour marks the elements the first-visit tour points to (src/data/tour.json). */}
+        <nav
+          data-tour="menu"
+          className="order-last w-full md:order-none md:w-auto md:shrink-0"
+        >
           <ul className="flex flex-wrap gap-x-5 text-sm">
             {NAV_IDS.map((id) => (
               <li key={id}>
@@ -77,20 +81,23 @@ function Header() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <button
-            type="button"
-            lang={otherLanguage}
-            onClick={toggleLanguage}
-            className={`${BUTTON_ON_MAIN} me-1 min-h-11 px-3 text-sm`}
-          >
-            {t.switchLanguage}
-          </button>
+          <div data-tour="settings" className="flex items-center gap-1">
+            <button
+              type="button"
+              lang={otherLanguage}
+              onClick={toggleLanguage}
+              className={`${BUTTON_ON_MAIN} me-1 min-h-11 px-3 text-sm`}
+            >
+              {t.switchLanguage}
+            </button>
 
-          <ThemeToggle />
+            <ThemeToggle />
+          </div>
 
           {/* The cart icon rocks once when the pointer comes over the button. */}
           <button
             type="button"
+            data-tour="cart"
             onClick={openCart}
             aria-label={`${t.cart.open} ${count}`}
             className={`${ICON_BUTTON} relative hover:bg-on-main/10`}

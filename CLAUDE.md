@@ -10,7 +10,7 @@
 - React + Vite, JavaScript (no TypeScript), Tailwind CSS.
 - No backend, database or payments. All content lives in JSON files in `src/data/`.
 - Hosting: GitHub Pages through GitHub Actions. Set Vite `base` to the repo name. Use HashRouter if routes are ever needed.
-- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch rules, Arabic search, JSON-LD, chatbot matching and answers).
+- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch rules, Arabic search, JSON-LD, chatbot matching and answers, tour placement).
 - Browser checks: Playwright (Chromium), tests in `e2e/`.
 - Ask before adding any dependency not listed here. Prefer none.
 
@@ -44,6 +44,13 @@
 - Typed questions match simple Arabic and English keywords after the product search's `normalizeText` (plus Arabic digits). "Do you have X?" uses the product search (`filterProducts`) and shows matches with Add to cart; a product not on the list points to the cart's box for unlisted items.
 - Pure logic: `src/lib/chatQuestions.js` (`matchQuestion`: what was asked) and `src/lib/chatAnswers.js` (`buildAnswer`: the answer), with unit tests, so an AI can replace them later. Messages store the question, and the answer is built at render time, so the whole conversation follows the language switch.
 - Motion: the panel slides up from the button, messages pop in, typing dots play before each answer; with reduced motion nothing moves and answers show at once. Messages are in a `role="log"` live region; the whole bot works with the keyboard; Escape closes it and focus returns to the chat button.
+
+## First-visit tour
+- Built by hand, no dependency. The steps (order, CSS selector of the element, icon) are in `src/data/tour.json`; all text is under `tour` in `ar.json` and `en.json`. Elements the tour points at carry `data-tour="…"`. A step whose element is missing (for example no product in stock) is left out.
+- `src/tour/TourProvider.jsx` starts it once per browser (localStorage key `bayariq-tour-seen`, saved as soon as it starts, after the web font has loaded) and gives `startTour()` to the "take the tour again" chip in the chat and the footer link. `src/components/TourGuide.jsx` draws it; the placement math is in `src/lib/tourPosition.js` with unit tests.
+- It is a `showModal()` dialog: above everything, announced by screen readers (each step is read from an `aria-live` region), focus on "Next", Escape skips. Afterwards the page scrolls back to where it was and focus returns to what started it. The chat panel steps aside while it runs.
+- The spotlight is a box whose very wide shadow dims the page; it and the tooltip glide between steps (translate, width, height, like the category pill), the tooltip is a card and the spotlight's ring glows on hover and tap. The tooltip stays on screen at 360 px (under, above, or at the bottom), and everything is instant with reduced motion.
+- Every Playwright test starts with the tour marked as seen (`storageState` in `playwright.config.js`); `e2e/tour.spec.js` starts empty to test the tour.
 
 ## Quality bar
 - Mobile first. Must look right from 360 px wide up to desktop.

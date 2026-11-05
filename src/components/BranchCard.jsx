@@ -22,6 +22,7 @@ function BranchCard({ branch }) {
     // The navy top has its own rounded corners, because the card cannot clip it
     // (overflow-hidden would cut off the card's glow).
     <article
+      data-tour="branch"
       aria-labelledby={titleId}
       className={`flex h-full flex-col ${CARD}`}
     >

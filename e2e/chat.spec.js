@@ -112,9 +112,10 @@ test('the saffron chat button opens the panel with a greeting and one chip per t
   ).toBeFocused()
   await expect(chatLog(page)).toHaveAttribute('aria-relevant', 'additions')
   await expect(answerText(page, t.chat.greeting)).toBeVisible()
-  await expect(newestChips(page)).toHaveText(
-    TOPICS.map((topic) => t.chat.topics[topic]),
-  )
+  await expect(newestChips(page)).toHaveText([
+    ...TOPICS.map((topic) => t.chat.topics[topic]),
+    t.tour.again,
+  ])
 })
 
 test('the panel closes with its close button, with Escape and with the chat button, and focus goes back to the chat button', async ({
@@ -172,7 +173,7 @@ test('each topic chip shows the visitor’s choice and its answer', async ({
   // "Other questions" brings the topic chips back.
   await chip(page, t.chat.moreQuestions).click()
   await expect(answerText(page, t.chat.menu)).toBeVisible()
-  await expect(newestChips(page)).toHaveCount(TOPICS.length)
+  await expect(newestChips(page)).toHaveCount(TOPICS.length + 1)
 })
 
 for (const topic of BRANCH_TOPICS) {
@@ -230,7 +231,7 @@ test('typed questions are answered in Arabic, and in English after the language 
   // Nothing matches: a kind reply and the topic chips again.
   await askTyped(page, 'qwerty')
   await expect(answerText(page, t.chat.unknown)).toBeVisible()
-  await expect(newestChips(page)).toHaveCount(TOPICS.length)
+  await expect(newestChips(page)).toHaveCount(TOPICS.length + 1)
 
   // In Arabic the panel sits on the left (the end side), in English on the right.
   const arabicBox = await chatPanel(page).boundingBox()

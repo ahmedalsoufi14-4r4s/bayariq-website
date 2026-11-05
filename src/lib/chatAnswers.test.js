@@ -326,11 +326,11 @@ describe('buildAnswer: questions about the whole store', () => {
 
 describe('buildAnswer: greetings and short replies', () => {
   it.each(['greeting', 'menu', 'thanks', 'unknown'])(
-    '%s shows one chip per topic',
+    '%s shows one chip per topic, and "take the tour again"',
     (topic) => {
       expect(answer({ topic })).toEqual({
         text: ar.chat[topic],
-        chips: TOPICS.map((item) => ({ topic: item })),
+        chips: [...TOPICS.map((item) => ({ topic: item })), { topic: 'tour' }],
       })
     },
   )
@@ -351,6 +351,7 @@ describe('getQuestionLabel', () => {
     expect(getQuestionLabel({ topic: 'menu' }, context())).toBe(
       ar.chat.moreQuestions,
     )
+    expect(getQuestionLabel({ topic: 'tour' }, context())).toBe(ar.tour.again)
     expect(getQuestionLabel({ topic: 'offers' }, context('en'))).toBe(
       en.chat.topics.offers,
     )
