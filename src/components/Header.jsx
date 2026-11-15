@@ -40,8 +40,12 @@ function Header() {
           (or push the row onto two rows) and then jump back. Here its height never depends on
           the font: on phones the name always takes a two-line box, and from md up the row never
           wraps and the name stays on one line. Below 360px (narrower than the site is designed
-          for) the name keeps its natural height instead, so it is never cut off. */}
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:flex-nowrap md:gap-x-6">
+          for) the name keeps its natural height instead, so it is never cut off.
+          At 360px each line of the name must fit next to the buttons: "Aswaq Bayariq" and
+          "الخير الاقتصادية" are the longest. So on phones the name is 15px and the gap before the
+          buttons 12px (gap-x-3), which leaves about 10px to spare, because Linux and some phones
+          draw text a few pixels wider than Windows (e2e/brand.spec.js checks it). */}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3 md:flex-nowrap md:gap-x-6">
         {/* The store's mark (LogoMark.jsx) on a white plate, so its green leaf shows on the
             green header, next to the store name.
             On phones, basis-0 grow gives the logo only the space left next to the buttons,
@@ -49,7 +53,7 @@ function Header() {
             Under the pointer the mark tilts and grows a little (group-hover:). */}
         <a
           href="#home"
-          className="group flex min-w-0 grow basis-0 items-center gap-2 font-bold min-[360px]:h-12 md:h-auto md:grow-0 md:basis-auto md:text-lg"
+          className="group flex min-w-0 grow basis-0 items-center gap-2 text-[15px] font-bold min-[360px]:h-12 md:h-auto md:grow-0 md:basis-auto md:text-lg"
         >
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-logo-paper p-0.5 shadow-sm shadow-black/20 transition duration-300 ease-out motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
             <LogoMark className="size-full" />

@@ -1,6 +1,13 @@
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
-import { openSite, products, store, texts, tokenColor } from './helpers.js'
+import {
+  openSite,
+  products,
+  store,
+  texts,
+  tokenColor,
+  waitForFonts,
+} from './helpers.js'
 
 const t = texts.ar
 const inStockProduct = products.find((product) => product.inStock)
@@ -137,14 +144,19 @@ for (const language of ['ar', 'en']) {
       .locator('span')
       .last()
     // line-clamp cuts the text with "…" when it needs more lines than it may show: then the
-    // text inside is taller than the box.
-    await expect
-      .poll(() =>
-        name.evaluate(
-          (element) => element.scrollHeight <= element.clientHeight,
-        ),
-      )
-      .toBe(true)
+    // text inside is taller than the box. Linux (where the GitHub checks run) and some phones
+    // draw text a few pixels wider than Windows, so the name must fit in both its own box and
+    // a box 6px narrower. maxWidth narrows it for the check, and is then taken off again.
+    await waitForFonts(page)
+    const fits = await name.evaluate((element) => {
+      const fitsNow = () => element.scrollHeight <= element.clientHeight
+      const inOwnBox = fitsNow()
+      element.style.maxWidth = `${element.clientWidth - 6}px`
+      const inNarrowerBox = fitsNow()
+      element.style.maxWidth = ''
+      return { inOwnBox, inNarrowerBox }
+    })
+    expect(fits).toEqual({ inOwnBox: true, inNarrowerBox: true })
   })
 }
 
