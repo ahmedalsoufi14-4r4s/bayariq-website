@@ -99,8 +99,13 @@ function ProductDialog({ product, onClose }) {
             <PlusIcon className="size-5" />
             {t.cart.add}
           </button>
+          {/* A small confirmation, like on the product card: a new key makes React draw a
+              new line, so it slides in again on every change. */}
           {getQuantity(product.id) > 0 && (
-            <p className="mt-2 text-center text-sm font-bold text-main-ink">
+            <p
+              key={getQuantity(product.id)}
+              className="mt-2 text-center text-sm font-bold text-main-ink motion-safe:animate-appear"
+            >
               {t.cart.inCart} {getQuantity(product.id)}
             </p>
           )}

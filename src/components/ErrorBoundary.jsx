@@ -1,21 +1,34 @@
 import { Component } from 'react'
 import { useLanguage } from '../i18n/LanguageContext.js'
-import { BUTTON_MAIN } from './styles.js'
+import { AlertIcon } from './Icons.jsx'
+import PageBackdrop from './PageBackdrop.jsx'
+import { BUTTON_MAIN, CARD } from './styles.js'
 
+// The message sits in a card over the same moving circles as the page, so even this screen
+// feels like the site: the card lifts, tilts and glows under the pointer or a tap, and its
+// icon wiggles (card-active: in index.css).
 function ErrorMessage() {
   const { t } = useLanguage()
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-4 p-6 text-center">
-      <h1 className="text-2xl font-bold">{t.error.title}</h1>
-      <p className="text-muted">{t.error.text}</p>
-      <button
-        type="button"
-        onClick={() => window.location.reload()}
-        className={`${BUTTON_MAIN} px-5 py-3`}
+    <main className="flex min-h-dvh items-center justify-center p-6">
+      <PageBackdrop />
+      <div
+        className={`${CARD} flex max-w-md flex-col items-center gap-4 p-8 text-center`}
       >
-        {t.error.reload}
-      </button>
+        <span className="flex size-14 items-center justify-center rounded-full bg-main-soft text-main-ink motion-safe:card-active:animate-wiggle">
+          <AlertIcon className="size-8" />
+        </span>
+        <h1 className="text-2xl font-bold">{t.error.title}</h1>
+        <p className="text-muted">{t.error.text}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className={`${BUTTON_MAIN} px-5 py-3`}
+        >
+          {t.error.reload}
+        </button>
+      </div>
     </main>
   )
 }

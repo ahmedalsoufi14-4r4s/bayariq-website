@@ -69,7 +69,7 @@ function ProductCard({ product, onOpen }) {
           onClick={() => add(product)}
           disabled={!product.inStock}
           aria-label={`${t.cart.add}: ${name}`}
-          className={`${BUTTON_ACCENT} relative z-10 mt-2 px-3 py-2 text-sm`}
+          className={`${BUTTON_ACCENT} relative z-10 mt-2 min-h-11 px-3 text-sm`}
         >
           <PlusIcon className="size-4" />
           {t.cart.add}

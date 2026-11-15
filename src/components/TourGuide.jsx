@@ -11,7 +11,7 @@ import {
   PlusIcon,
   SearchIcon,
 } from './Icons.jsx'
-import { BUTTON_ACCENT, BUTTON_OUTLINE, CARD } from './styles.js'
+import { BUTTON_ACCENT, BUTTON_OUTLINE, CARD, TEXT_BUTTON } from './styles.js'
 
 // The room around the highlighted element.
 const SPOTLIGHT_PADDING = 8
@@ -186,7 +186,7 @@ function TourGuide({ steps, onEnd }) {
             <button
               type="button"
               onClick={close}
-              className="me-auto min-h-11 rounded-full px-2 text-sm text-muted underline hover:bg-main-soft hover:text-ink"
+              className={`${TEXT_BUTTON} me-auto px-2 hover:bg-main-soft`}
             >
               {t.tour.skip}
             </button>

@@ -138,7 +138,7 @@ test('the search box shows a clear button while it has text', async ({
   )
 })
 
-test('at 360px the header, menu, filter and cart buttons are at least 44px for fingers', async ({
+test('at 360px the header, menu, filter, product, cart and order-form controls are at least 44px for fingers', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 800 })
@@ -155,9 +155,21 @@ test('at 360px the header, menu, filter and cart buttons are at least 44px for f
     ...(await page.locator('header').getByRole('button').all()),
     ...(await page.getByRole('navigation').getByRole('link').all()),
     ...(await filterRow(page).getByRole('button').all()),
+    ...(await page
+      .locator('#products')
+      .getByRole('button', { name: t.cart.add })
+      .all()),
     drawer.getByRole('button', { name: t.cart.close }),
     drawer.getByRole('button', { name: t.cart.increase }),
     drawer.getByRole('button', { name: t.cart.decrease }),
+    drawer.getByRole('button', { name: t.cart.remove }),
+    drawer.getByRole('button', { name: t.cart.clear }),
+    // The order form: each branch choice (the whole row can be tapped) and each text field.
+    ...(await drawer
+      .locator('label')
+      .filter({ has: page.getByRole('radio') })
+      .all()),
+    ...(await drawer.getByRole('textbox').all()),
   ]
   for (const target of targets) {
     const { width, height } = await target.boundingBox()
@@ -206,7 +218,7 @@ test.describe('with motion allowed', () => {
     await expect.poll(() => pillIsUnder(filterPill(rowEn), lastEn)).toBe(true)
   })
 
-  test('icon buttons move their icon on hover: the moon tilts, the cart rocks, close turns', async ({
+  test('icon buttons move their icon on hover: the moon tilts, the cart rocks, close, plus and minus turn', async ({
     page,
   }) => {
     await page.goto('./')
@@ -221,12 +233,97 @@ test.describe('with motion allowed', () => {
       'wiggle',
     )
 
+    await page
+      .locator('#products')
+      .getByRole('button', { name: `${t.cart.add}: ${inStockProduct.name_ar}` })
+      .click()
     await cartButton.click()
-    const close = page
-      .getByRole('dialog', { name: t.cart.title })
-      .getByRole('button', { name: t.cart.close })
+    const drawer = page.getByRole('dialog', { name: t.cart.title })
+    // Wait until the drawer has slid in, so its buttons stay under the mouse.
+    await expect
+      .poll(() => drawer.evaluate((element) => element.getAnimations().length))
+      .toBe(0)
+    const close = drawer.getByRole('button', { name: t.cart.close })
     await close.hover()
     await expect(close.locator('svg')).toHaveCSS('rotate', '90deg')
+
+    const plus = drawer.getByRole('button', { name: t.cart.increase })
+    await plus.hover()
+    await expect(plus.locator('svg')).toHaveCSS('rotate', '90deg')
+    const minus = drawer.getByRole('button', { name: t.cart.decrease })
+    await minus.hover()
+    await expect(minus.locator('svg')).toHaveCSS('rotate', '180deg')
+  })
+
+  test('a category button’s icon rocks under the pointer', async ({ page }) => {
+    await page.goto('./')
+    const button = filterRow(page).getByRole('button', {
+      name: categories[0].name_ar,
+    })
+    await button.hover()
+    await expect(button.locator('svg')).toHaveCSS('animation-name', 'wiggle')
+  })
+
+  test('text buttons, branch choices and the footer link shrink a little while pressed', async ({
+    page,
+  }) => {
+    await page.goto('./')
+    const [first, second] = products.filter((product) => product.inStock)
+    for (const product of [first, second]) {
+      await page
+        .locator('#products')
+        .getByRole('button', { name: `${t.cart.add}: ${product.name_ar}` })
+        .click()
+    }
+    await page.getByRole('button', { name: t.cart.open }).click()
+    const drawer = page.getByRole('dialog', { name: t.cart.title })
+    await expect
+      .poll(() => drawer.evaluate((element) => element.getAnimations().length))
+      .toBe(0)
+
+    // Each one is pressed, checked while held, then let go, which clicks it. The order keeps
+    // the clicks harmless: a branch is chosen, one of the two products is removed, and only
+    // then is the cart emptied.
+    const pressed = [
+      [
+        drawer
+          .locator('label')
+          .filter({ has: page.getByRole('radio') })
+          .first(),
+        '0.98',
+      ],
+      [
+        drawer.getByRole('button', {
+          name: `${t.cart.remove} ${first.name_ar}`,
+        }),
+        '0.95',
+      ],
+      [drawer.getByRole('button', { name: t.cart.clear }), '0.95'],
+    ]
+    for (const [target, scale] of pressed) {
+      await target.hover()
+      await page.mouse.down()
+      await expect(target).toHaveCSS('scale', scale)
+      // A branch choice also lights up while pressed, so a tap on a phone shows.
+      if (scale === '0.98') {
+        await expect(target).toHaveCSS(
+          'background-color',
+          await tokenColor(page, 'main-soft'),
+        )
+      }
+      await page.mouse.up()
+    }
+    await page.keyboard.press('Escape')
+
+    // The footer link starts the tour when clicked, so the mouse leaves before it is let go.
+    const footerLink = page
+      .locator('footer')
+      .getByRole('button', { name: t.tour.again })
+    await footerLink.hover()
+    await page.mouse.down()
+    await expect(footerLink).toHaveCSS('scale', '0.95')
+    await page.mouse.move(0, 0)
+    await page.mouse.up()
   })
 
   test('a saffron button sweeps a soft light across from the start side on hover', async ({

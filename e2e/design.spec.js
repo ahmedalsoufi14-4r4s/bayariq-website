@@ -258,6 +258,30 @@ test.describe('with motion allowed', () => {
     await expect(dialog).toHaveCSS('opacity', '1')
   })
 
+  test('in the product dialog, "in the cart" slides in after each Add to cart', async ({
+    page,
+  }) => {
+    await page.goto('./')
+    await page
+      .locator('#products')
+      .getByRole('button', { name: inStockProduct.name_ar, exact: true })
+      .click()
+    const dialog = page.getByRole('dialog', { name: inStockProduct.name_ar })
+    const add = dialog.getByRole('button', { name: t.cart.add })
+
+    await add.click()
+    await expect(dialog.getByText(`${t.cart.inCart} 1`)).toHaveCSS(
+      'animation-name',
+      'appear',
+    )
+    // A new number is a new line, so it slides in again.
+    await add.click()
+    await expect(dialog.getByText(`${t.cart.inCart} 2`)).toHaveCSS(
+      'animation-name',
+      'appear',
+    )
+  })
+
   test('the animations never shift the layout', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 })
     await page.goto('./')

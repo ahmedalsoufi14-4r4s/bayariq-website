@@ -297,6 +297,15 @@ test.describe('with motion allowed', () => {
         ),
       )
       .toBe('1')
+
+    // "Skip" shrinks a little while pressed. The mouse leaves before it is let go, so the
+    // press is not a click.
+    const skip = tour(page).getByRole('button', { name: t.tour.skip })
+    await skip.hover()
+    await page.mouse.down()
+    await expect(skip).toHaveCSS('scale', '0.95')
+    await page.mouse.move(0, 0)
+    await page.mouse.up()
   })
 })
 
@@ -316,39 +325,4 @@ for (const theme of ['light', 'dark']) {
   })
 }
 
-// Screenshots for a visual check (screenshots/ is git-ignored).
-test('screenshot: the tour in Arabic at 360px', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 800 })
-  await openSite(page, 'ar')
-  const index = steps.findIndex((step) => step.id === 'add')
-  for (const step of steps.keys()) {
-    if (step === index) break
-    await nextButton(page, step).click()
-  }
-  await expect(counter(page, index + 1)).toBeVisible()
-  await page.screenshot({ path: 'screenshots/tour-ar-360.png' })
-})
-
-test('screenshot: the tour in English at 1280px', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 800 })
-  await openSite(page, 'en')
-  await nextButton(page, 0, 'en').click()
-  await nextButton(page, 1, 'en').click()
-  await expect(counter(page, 3, 'en')).toBeVisible()
-  await page.screenshot({ path: 'screenshots/tour-en-1280.png' })
-})
-
-test.describe('dark mode screenshot', () => {
-  test.use({ colorScheme: 'dark' })
-
-  test('screenshot: the last step in dark mode at 360px', async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 800 })
-    await page.goto('./')
-    for (const index of steps.keys()) {
-      if (index === steps.length - 1) break
-      await nextButton(page, index).click()
-    }
-    await expect(counter(page, steps.length)).toBeVisible()
-    await page.screenshot({ path: 'screenshots/tour-dark-360.png' })
-  })
-})
+// The screenshots of a tour step are taken in e2e/screenshots.spec.js.

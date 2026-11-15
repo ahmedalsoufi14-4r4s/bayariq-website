@@ -358,6 +358,9 @@ test('at 360px every control in the chat is at least 44px for fingers', async ({
   await askTyped(page, products[0].name_ar)
   const panel = chatPanel(page)
   await expect(answerText(page, t.chat.products)).toBeVisible()
+  // Some text in the box, so its clear button shows and is measured too.
+  await panel.getByRole('textbox', { name: t.chat.inputLabel }).fill('حليب')
+  await expect(panel.getByRole('button', { name: t.chat.clear })).toBeVisible()
 
   const targets = [
     chatButton(page),
@@ -371,6 +374,24 @@ test('at 360px every control in the chat is at least 44px for fingers', async ({
     )
     expect(Math.min(width, height), name).toBeGreaterThanOrEqual(44)
   }
+})
+
+test('the question box shows a clear button while it has text', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await openChat(page)
+  const panel = chatPanel(page)
+  const box = panel.getByRole('textbox', { name: t.chat.inputLabel })
+  const clear = panel.getByRole('button', { name: t.chat.clear })
+  await expect(clear).toHaveCount(0)
+
+  await box.fill('حليب')
+  await clear.click()
+  // The button goes with the text, so focus goes back to the box.
+  await expect(box).toHaveValue('')
+  await expect(box).toBeFocused()
+  await expect(clear).toHaveCount(0)
 })
 
 test('the whole chat works with the keyboard', async ({ page }) => {
@@ -447,6 +468,54 @@ test.describe('with motion allowed', () => {
       await tokenColor(page, 'main-soft'),
     )
   })
+
+  test('messages and found products react like cards, and the send arrow nudges forward', async ({
+    page,
+  }) => {
+    await page.goto('./')
+    await openChat(page)
+    const panel = chatPanel(page)
+    await askTyped(page, products[0].name_ar)
+    await expect(answerText(page, t.chat.products)).toBeVisible()
+    // Wait until the panel and the messages have finished moving in.
+    await expect
+      .poll(() =>
+        panel.evaluate(
+          (element) => element.getAnimations({ subtree: true }).length,
+        ),
+      )
+      .toBe(0)
+
+    // The helper's greeting, the visitor's question and the found product all lift and
+    // glow; the product's category icon hops.
+    const greeting = chatLog(page).locator('.card').first()
+    const question = chatLog(page).locator('p.card').last()
+    const product = chatLog(page).locator('li.card').first()
+    for (const card of [greeting, question, product]) {
+      await card.hover()
+      await expect(card).toHaveCSS('translate', '0px -6px')
+      await expect
+        .poll(() =>
+          card.evaluate(
+            (element) => getComputedStyle(element, '::before').opacity,
+          ),
+        )
+        .toBe('1')
+    }
+    await expect(product.locator('span').first()).toHaveCSS(
+      'animation-name',
+      'hop',
+    )
+
+    // The send button's paper plane nudges toward the end side (left in Arabic), but only
+    // while the button is on.
+    const send = panel.getByRole('button', { name: t.chat.send })
+    await send.hover()
+    await expect(send.locator('svg')).toHaveCSS('translate', 'none')
+    await panel.getByRole('textbox', { name: t.chat.inputLabel }).fill('حليب')
+    await send.hover()
+    await expect(send.locator('svg')).toHaveCSS('translate', '-4px')
+  })
 })
 
 test('visitors who ask for less motion get a still panel and answers at once, with no typing dots', async ({
@@ -471,34 +540,4 @@ test('visitors who ask for less motion get a still panel and answers at once, wi
   await expect(firstChip).toHaveCSS('translate', 'none')
 })
 
-// Screenshots for a visual check of the open chat (screenshots/ is git-ignored).
-test('screenshot: the chat in Arabic at 360px', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 800 })
-  await openSite(page, 'ar')
-  await openChat(page)
-  await askTyped(page, `هل عندكم ${products[0].name_ar}؟`)
-  await expect(answerText(page, t.chat.products)).toBeVisible()
-  await page.screenshot({ path: 'screenshots/chat-ar-360.png' })
-})
-
-test('screenshot: the chat in English at 1280px', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 800 })
-  await openSite(page, 'en')
-  await openChat(page, 'en')
-  await chip(page, texts.en.chat.topics.hours, 'en').click()
-  await expect(newestChips(page, 'en')).toHaveCount(store.branches.length)
-  await page.screenshot({ path: 'screenshots/chat-en-1280.png' })
-})
-
-test.describe('dark mode screenshot', () => {
-  test.use({ colorScheme: 'dark' })
-
-  test('screenshot: the chat in dark mode at 360px', async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 800 })
-    await openSite(page, 'ar')
-    await openChat(page)
-    await chip(page, t.chat.topics.order).click()
-    await expect(answerText(page, t.chat.orderIntro)).toBeVisible()
-    await page.screenshot({ path: 'screenshots/chat-dark-360.png' })
-  })
-})
+// The screenshots of the open chat are taken in e2e/screenshots.spec.js.

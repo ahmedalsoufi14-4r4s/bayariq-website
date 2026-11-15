@@ -58,18 +58,54 @@
 - Lighthouse 90+ on mobile for Performance, Accessibility, Best Practices and SEO.
 - SEO: Arabic title and description, Open Graph image, favicon, JSON-LD (a schema.org Organization with one GroceryStore per branch).
 
-## Design style (60-30-10)
-- Colors: 60% a main neutral (page backgrounds), 30% a second main color (header, footer, section bands, cards), 10% one strong contrasting accent, used only for the most important things: Add to cart, Send order, badges, active states and key highlights. Only these three, plus grays and status colors.
-- Define them once as Tailwind @theme tokens (canvas, main, accent, with dark-mode versions) and use only the tokens in components, so the palette can be swapped in one place when the logo arrives.
-- Replace the current green with a modern palette that suits a Saudi supermarket, for example off-white + deep navy + saffron yellow. Explain your choice in two lines with hex values. Dark mode keeps the same split. All text must pass AA contrast; if the accent fails as text, use it only as a background.
-- Motion: sections and cards fade and rise in on scroll (IntersectionObserver), with a small stagger in the product grid. Buttons and cards react to hover and press, the cart badge animates when items are added, and dialogs and the drawer transition smoothly. 150 to 400 ms, eased, never blocking, and all of it off with prefers-reduced-motion.
-- Everything reacts: every button, link, chip, input and card has visible hover, press and keyboard-focus states (and disabled where relevant). Saffron buttons get a soft shine on hover; icon buttons a round highlight and a small icon motion; the active filter a sliding pill; menu links an underline that grows from the start side, and the link of the section in view stays highlighted (scrollspy). Inputs animate their focus ring, and the search box shows a clear button. Changed numbers roll, small confirmations slide in. Tap targets at least 44 px. Nothing on the page stays still under the cursor.
-- Cards: every card and box reacts on hover, and on tap on phones. Clickable cards lift and zoom their picture, and buttons and links show the hand cursor. Cards that are not clickable also react: they lift and tilt slightly, glow, and their icon animates (bounce, wiggle or spin), but they keep the normal cursor and no underline, so they don't look like links.
-- Moving background: visibly moving all the time, easy to notice within 2 to 3 seconds without touching the page. At the edges of the navy bands, 2 or 3 layered waves in navy and a lighter navy, each sliding sideways at its own speed in seamless loops (6 to 12 s) with a gentle up-and-down swell. Behind the page, 4 to 6 soft navy and saffron circles of different sizes, each floating on its own path across a wide area (10 to 20 s per loop), some growing and shrinking. The hero moves a bit more than the rest of the page.
-- All of this motion: only transform and opacity (pre-blurred radial gradients, no animated blur or box-shadow), smooth on phones, paused while the tab is hidden, off with prefers-reduced-motion, and all text stays AA at every point (even with every circle behind it at once).
-- Graphics: a hero with depth (soft gradient shapes or a subtle pattern in the main and accent colors), one consistent icon style for categories and highlights instead of mixed emoji, and shapes or dividers that add depth between sections. Use inline SVG and CSS.
-- Prefer CSS only. If a motion library is really needed, only `motion` (Motion for React) is allowed.
-- Keep Lighthouse 90+ on mobile, with no layout shift from animations.
+## Design style (modern-ui-style: 60-30-10, everything reacts, live background)
+The site should feel alive: everything reacts to the pointer or a tap, and the background visibly moves on its own all the time. Motion you have to look for counts as "not moving": it must be easy to notice within 2 to 3 seconds.
+
+Colors (60-30-10)
+- 60% canvas, off-white `#f8f6f1`: the page and large surfaces (cards and dialogs sit on it in white). 30% main, deep navy `#14284b`: structure and identity, so the header, hero, offers band, footer, navigation, the tops of the branch cards, the chat header and secondary buttons. 10% accent, saffron `#f4b41a`: only what must catch the eye, so Add to cart, Send order, Browse products, the chat button, active states (filter pill, current menu link), badges and small highlights. 50-40-10 is fine where navy carries more of the layout.
+- Why this palette: navy feels calm and trustworthy, like a family store people rely on, and saffron is warm (spices, dates, the Saudi sun) and stands out against both. Keep it until the logo arrives, then take the 30% and 10% colors from the logo.
+- Grays made from the neutral (ink, muted, line) are allowed for text and borders and don't count as extra colors. Status colors (error red, success green) only for status, used sparingly. No other colors.
+- Define the tokens once as Tailwind @theme tokens in `src/index.css`: canvas, main and accent, each with an on-color for text (`ink`, `on-main`, `on-accent`), plus dark-mode versions. Components use only the tokens, never raw hex, so the palette is swapped in one place. Never name a color token after a size word (base, xs, sm, md, lg, xl): `text-base` would become that color instead of the font size and can make text invisible.
+- Dark mode keeps the split: a dark navy neutral for the 60%, a lighter navy for the 30%, the same saffron for the 10%.
+- All text meets WCAG AA (4.5:1 body text, 3:1 large text). Saffron fails as text on off-white, so on light backgrounds it is only a fill with navy text on it; as text it only goes on navy.
+- On a screenshot, saffron is the rarest of the three colors. If it is everywhere, it stops standing out.
+
+Interaction: everything reacts
+- Every button, link, tab, chip, icon button, input, card, menu item, info box and empty-state box reacts to hover and tap. Nothing on the page stays still under the cursor. Interactive elements also have visible press, keyboard-focus and (where relevant) disabled states.
+- Buttons: hover lifts slightly with a deeper shadow and brighter color; press scales to about 0.96; saffron buttons get a shine sweep on hover; icon buttons get a round highlight and a small icon motion (the sun turns, the cart rocks, close turns, plus turns, send nudges forward).
+- Tabs and filter chips: the active one has a sliding indicator (the saffron pill) that moves between items.
+- Navigation: an underline that grows from the start side (RTL aware), and the link of the section in view stays highlighted while scrolling (scrollspy).
+- Inputs: focus ring and border animate in; icons inside respond on focus; a clear button appears when the search box or the chat's question box has text (the order form's short fields don't get one).
+- Clickable cards (products): lift, the picture zooms slightly, hand cursor.
+- Non-clickable cards and boxes (highlights, offers, branch cards, chat messages, the tour card, empty states, the error message): they still move on hover, with a small lift and tilt and a glow, and their icon animates (bounce, wiggle or spin), but they keep the normal cursor and no underline, so they don't look like links.
+- Feedback for actions: badges pop, numbers roll when they change, small confirmations slide in.
+- Touch: the same reactions show on tap (`tapReaction.js` for cards), and tap targets are at least 44 px.
+
+Motion
+- Interactions take 150 to 400 ms: ease-out when entering, ease-in when leaving.
+- Entrance: sections and cards fade and rise in as they scroll into view (IntersectionObserver), with a small stagger in lists. Smooth dialog, drawer and chat transitions, and a skeleton (a softly pulsing box) while photos load.
+- Never block input and never cause layout shift (elements keep the same size before and after the web font loads).
+- Respect prefers-reduced-motion: no movement, instant state changes. When motion seems missing on Ahmed's own computer, first check Windows Settings > Accessibility > Visual effects > Animation effects, because turning it off triggers reduced motion.
+- Prefer CSS and IntersectionObserver. If a library is really needed, only `motion` (Motion for React).
+
+Live background (always moving)
+- It moves on its own all the time, without scrolling or touching, and the motion is obvious within 2 to 3 seconds.
+- Waves at the edges of the navy bands: 2 or 3 layered waves in navy and a lighter navy, each sliding sideways at its own speed in seamless loops (6 to 12 s), with a gentle up-and-down swell.
+- Circles: 4 to 6 soft navy and saffron circles of different sizes, each floating on its own path across a wide area (10 to 20 s per loop), some slowly growing and shrinking. The hero moves a bit more than the rest of the page.
+- Animate only transform and opacity, with pre-blurred radial gradients and wide SVG waves (no animated blur or box-shadow), so it stays smooth on phones. Pause it while the tab is hidden, and turn it off with prefers-reduced-motion.
+- Text on top of it stays AA at every point of the animation (even with every circle behind it at once).
+
+Graphics
+- A hero with depth: soft glows and a faint eight-pointed star pattern in navy and saffron.
+- One consistent outline icon set (`src/components/Icons.jsx`), tinted navy, with saffron for the active item. No emoji.
+- Consistent rounded corners, soft layered shadows, generous spacing, and waves between the navy bands.
+- Shapes and illustrations as inline SVG and CSS, so they stay sharp and light.
+
+Checks before finishing (any design change)
+- Screenshots at 360 px and 1280 px, in light and dark mode, including the chat open and one tour step (`e2e/screenshots.spec.js`). Is the 60-30-10 split visible, and is saffron rare and on the right things?
+- Every kind of element reacts on hover and tap, including non-clickable cards and empty states; the waves and circles visibly move within 3 seconds, and stop with reduced motion.
+- AA contrast for every visible text, including dialogs, the drawer, the chat and the tour, in both themes; Lighthouse mobile stays 90+ (or no worse than before); no layout shift.
+- State the palette in two lines with hex values and why it fits the site.
 
 ## How to work (keep token use low)
 - Do only the step Ahmed asks for. Do not start the next step.

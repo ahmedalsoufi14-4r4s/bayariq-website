@@ -132,6 +132,7 @@
     "inputLabel": "Type your question",
     "inputPlaceholder": "Type your question here",
     "send": "Send question",
+    "clear": "Clear question",
     "greeting": "Hello! I'm the Bayariq helper, and I answer from our store info. Pick a question or type your own, like: Do you have milk?",
     "topics": {
       "hours": "Opening hours",

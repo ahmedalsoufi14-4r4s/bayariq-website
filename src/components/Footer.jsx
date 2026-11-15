@@ -17,11 +17,12 @@ function Footer() {
           <p>
             © {year} {localize(store, 'name')}. {t.footer.rights}
           </p>
-          {/* Starts the first-visit tour again. Focus comes back to this link afterwards. */}
+          {/* Starts the first-visit tour again. Focus comes back to this link afterwards.
+              It shrinks a little while pressed, like every button. */}
           <button
             type="button"
             onClick={(event) => startTour(event.currentTarget)}
-            className="min-h-11 underline underline-offset-4 hover:text-on-main hover:decoration-accent"
+            className="min-h-11 underline underline-offset-4 transition duration-150 ease-out hover:text-on-main hover:decoration-accent motion-safe:active:scale-95"
           >
             {t.tour.again}
           </button>

@@ -1,4 +1,5 @@
 import { useCart } from '../cart/CartContext.js'
+import categories from '../data/categories.json'
 import offers from '../data/offers.json'
 import products from '../data/products.json'
 import store from '../data/store.json'
@@ -7,12 +8,13 @@ import { buildAnswer, getQuestionLabel } from '../lib/chatAnswers.js'
 import { formatPrice } from '../lib/price.js'
 import {
   CartIcon,
+  CategoryIcon,
   ChatIcon,
   MapPinIcon,
   PhoneIcon,
   PlusIcon,
 } from './Icons.jsx'
-import { BUTTON_ACCENT, BUTTON_MAIN, BUTTON_OUTLINE } from './styles.js'
+import { BUTTON_ACCENT, BUTTON_MAIN, BUTTON_OUTLINE, CARD } from './styles.js'
 
 // Messages grow in from a little below (pop-in in index.css).
 const POP_IN = 'motion-safe:animate-pop-in'
@@ -44,16 +46,22 @@ function TypingDots() {
   )
 }
 
-// A product the helper found, with its own Add to cart button (like on the product cards).
+// A product the helper found, with its category icon and its own Add to cart button (like on
+// the product cards). It is a card, so it lifts and glows under the pointer or a tap, and
+// its icon hops.
 function ChatProduct({ product }) {
   const { t, localize } = useLanguage()
   const { add, getQuantity } = useCart()
   const name = localize(product, 'name')
   const quantity = getQuantity(product.id)
+  const category = categories.find((item) => item.id === product.category)
 
   return (
-    <li className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-2xl bg-surface p-3 shadow-sm ring-1 ring-line">
-      <div>
+    <li className={`${CARD} flex flex-wrap items-center gap-x-3 gap-y-2 p-3`}>
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-main-soft text-main-ink motion-safe:card-active:animate-hop">
+        <CategoryIcon name={category?.icon} className="size-6" />
+      </span>
+      <div className="flex-1">
         <p className="font-bold">{name}</p>
         <p className="text-sm text-muted">
           {localize(product, 'unit')} ·{' '}
@@ -87,7 +95,8 @@ function ChatProduct({ product }) {
 }
 
 // One message in the chat. The visitor's sit on the end side in navy, the helper's on the
-// start side in white. The answer is built here, on every render, from the question
+// start side in white. Both are cards (card in index.css): they lift, tilt and glow a little
+// under the pointer or a tap, like every box on the page. The answer is built here, on every render, from the question
 // (chatAnswers.js), so the whole conversation follows the language switch.
 // The hidden "أنت:" / "مساعد بيارق:" tells screen reader users who is speaking.
 function ChatMessage({ message, isTyping, onAsk }) {
@@ -98,7 +107,7 @@ function ChatMessage({ message, isTyping, onAsk }) {
   if (message.from === 'visitor') {
     return (
       <div className={`flex justify-end ${POP_IN}`}>
-        <p className="max-w-[85%] rounded-2xl rounded-ee-sm bg-main px-4 py-2 text-on-main">
+        <p className="card max-w-[85%] rounded-2xl rounded-ee-sm bg-main px-4 py-2 text-on-main">
           <span className="sr-only">{t.chat.you}: </span>
           {message.text ?? getQuestionLabel(message.question, context)}
         </p>
@@ -113,7 +122,7 @@ function ChatMessage({ message, isTyping, onAsk }) {
 
   return (
     <div className={`flex flex-col items-start gap-2 ${POP_IN}`}>
-      <div className="max-w-[90%] rounded-2xl rounded-es-sm bg-surface px-4 py-3 shadow-sm ring-1 ring-line">
+      <div className={`${CARD} max-w-[90%] rounded-es-sm px-4 py-3`}>
         <span className="sr-only">{t.chat.title}: </span>
         <p>{answer.text}</p>
         {answer.list && (

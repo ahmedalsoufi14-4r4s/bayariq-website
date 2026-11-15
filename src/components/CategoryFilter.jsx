@@ -8,7 +8,8 @@ import { CategoryIcon } from './Icons.jsx'
 // (see CategoryFilter below). The button itself turns saffron a moment later (delay-150),
 // once the pill has arrived, so it is saffron even if the pill could not be placed.
 // The other buttons have no background, so the pill shows through them as it passes.
-// relative draws the buttons above the pill.
+// relative draws the buttons above the pill. group lets the category icon rock under the
+// pointer (group-hover: below).
 function FilterButton({ isSelected, onClick, children }) {
   const colors = isSelected
     ? 'border-accent bg-accent text-on-accent motion-safe:delay-150'
@@ -19,7 +20,7 @@ function FilterButton({ isSelected, onClick, children }) {
       type="button"
       aria-pressed={isSelected}
       onClick={onClick}
-      className={`relative flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm transition duration-150 ease-out motion-safe:active:scale-97 ${colors}`}
+      className={`group relative flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm transition duration-150 ease-out motion-safe:active:scale-97 ${colors}`}
     >
       {children}
     </button>
@@ -91,7 +92,10 @@ function CategoryFilter({ selected, onSelect }) {
           isSelected={selected === category.id}
           onClick={() => onSelect(category.id)}
         >
-          <CategoryIcon name={category.icon} className="size-5" />
+          <CategoryIcon
+            name={category.icon}
+            className="size-5 motion-safe:group-hover:animate-wiggle"
+          />
           {localize(category, 'name')}
         </FilterButton>
       ))}

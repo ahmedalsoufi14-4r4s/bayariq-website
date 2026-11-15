@@ -7,10 +7,13 @@ import { formatPrice } from '../lib/price.js'
 import EmptyState from './EmptyState.jsx'
 import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from './Icons.jsx'
 import OrderForm from './OrderForm.jsx'
-import { BUTTON_MAIN, ICON_BUTTON } from './styles.js'
+import { BUTTON_MAIN, ICON_BUTTON, TEXT_BUTTON } from './styles.js'
 
+// The round + and − buttons. Under the pointer the plus turns a quarter and the minus spins
+// half a turn (group-hover:).
 const STEP_BUTTON =
-  'flex size-11 items-center justify-center rounded-full border border-line transition hover:border-main-ink hover:bg-main-soft motion-safe:active:scale-90'
+  'group flex size-11 items-center justify-center rounded-full border border-line transition hover:border-main-ink hover:bg-main-soft motion-safe:active:scale-90'
+const STEP_ICON = 'size-4 transition duration-300 ease-out'
 
 // A new key makes React draw a new number, so it rolls in each time it changes.
 const ROLL = 'motion-safe:animate-roll'
@@ -108,7 +111,7 @@ function CartDrawer() {
                       type="button"
                       onClick={() => remove(product)}
                       aria-label={`${t.cart.remove} ${name}`}
-                      className="mt-1 text-sm text-muted underline hover:text-ink"
+                      className={TEXT_BUTTON}
                     >
                       {t.cart.remove}
                     </button>
@@ -121,7 +124,9 @@ function CartDrawer() {
                       aria-label={`${t.cart.decrease} ${name}`}
                       className={STEP_BUTTON}
                     >
-                      <MinusIcon className="size-4" />
+                      <MinusIcon
+                        className={`${STEP_ICON} motion-safe:group-hover:rotate-180`}
+                      />
                     </button>
                     <span key={quantity} className={`w-6 text-center ${ROLL}`}>
                       {quantity}
@@ -132,7 +137,9 @@ function CartDrawer() {
                       aria-label={`${t.cart.increase} ${name}`}
                       className={STEP_BUTTON}
                     >
-                      <PlusIcon className="size-4" />
+                      <PlusIcon
+                        className={`${STEP_ICON} motion-safe:group-hover:rotate-90`}
+                      />
                     </button>
                   </div>
                 </li>
@@ -157,7 +164,7 @@ function CartDrawer() {
           <button
             type="button"
             onClick={clear}
-            className="mt-3 text-sm text-muted underline hover:text-ink"
+            className={`${TEXT_BUTTON} mt-1`}
           >
             {t.cart.clear}
           </button>

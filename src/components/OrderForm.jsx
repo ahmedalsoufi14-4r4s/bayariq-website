@@ -10,13 +10,15 @@ import { ChatIcon } from './Icons.jsx'
 import { BUTTON_ACCENT } from './styles.js'
 
 // The border darkens on hover; on focus it turns navy and a soft ring fades in around it.
+// py-2.5 makes the one-line fields 46px tall, easy to tap.
 const INPUT =
-  'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15'
+  'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2.5 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15'
 
-// A radio choice: the whole row can be clicked, and it gets a soft highlight under the pointer.
-// -mx-2 and px-2 give the highlight some room without moving the text.
+// A radio choice: the whole row can be clicked, and it is 44px tall for fingers. It gets a soft
+// highlight under the pointer, and while pressed (active:) it lights up and shrinks a little,
+// so a tap on a phone shows too. -mx-2 and px-2 give the highlight some room without moving the text.
 const RADIO_LABEL =
-  'flex cursor-pointer items-center gap-2 -mx-2 rounded-lg px-2 py-1 hover:bg-main-soft'
+  'flex min-h-11 cursor-pointer items-center gap-2 -mx-2 rounded-lg px-2 transition duration-150 ease-out hover:bg-main-soft active:bg-main-soft motion-safe:active:scale-98'
 
 function OrderForm() {
   const { t, language, localize } = useLanguage()

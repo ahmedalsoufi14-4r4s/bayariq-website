@@ -27,6 +27,12 @@ export const BUTTON_ON_MAIN = `${BUTTON} border border-on-main/50 hover:border-o
 export const ICON_BUTTON =
   'group flex size-11 shrink-0 items-center justify-center rounded-full transition duration-150 ease-out motion-safe:active:scale-90'
 
+// A quiet text button on a light background (Remove, Empty cart, Skip the tour): underlined
+// grey text that darkens on hover and shrinks a little while pressed. min-h-11 and min-w-11
+// make it at least 44px for fingers, even for a short word like "إزالة".
+export const TEXT_BUTTON =
+  'inline-flex min-h-11 min-w-11 items-center rounded-full text-sm text-muted underline underline-offset-4 transition duration-150 ease-out hover:text-ink motion-safe:active:scale-95'
+
 // A white card on the off-white page. card (index.css) makes it react to the pointer and to a
 // tap: it lifts, tilts a little and glows. Give its icon a card-active: motion, for example
 // motion-safe:card-active:animate-hop. Don't add overflow-hidden: it would cut off the glow.

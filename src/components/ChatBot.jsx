@@ -24,6 +24,11 @@ const GREETING = { id: 0, from: 'bot', question: { topic: 'greeting' } }
 const CHAT_BUTTON =
   'shine group pointer-events-auto flex size-14 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent shadow-lg shadow-main/30 transition duration-150 ease-out hover:bg-accent-hover hover:shadow-xl focus-visible:ring-2 focus-visible:ring-on-main motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-90'
 
+// The paper plane points to the end side (rtl: turns it around in Arabic) and nudges forward
+// under the pointer, but not while the send button is off (group-enabled:).
+const SEND_ICON =
+  'size-5 transition duration-300 ease-out rtl:-scale-x-100 motion-safe:group-enabled:group-hover:ltr:translate-x-1 motion-safe:group-enabled:group-hover:rtl:-translate-x-1'
+
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
@@ -99,6 +104,12 @@ function ChatBot() {
     setDraft('')
     // The send button turns off once the box is empty. If it was clicked, it had the focus,
     // which would then be lost, so focus goes back to the box for the next question.
+    inputRef.current.focus()
+  }
+
+  // The clear button disappears with the text, so focus goes back to the box.
+  function clearDraft() {
+    setDraft('')
     inputRef.current.focus()
   }
 
@@ -187,23 +198,36 @@ function ChatBot() {
             <label htmlFor="chat-input" className="sr-only">
               {t.chat.inputLabel}
             </label>
-            <input
-              ref={inputRef}
-              id="chat-input"
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder={t.chat.inputPlaceholder}
-              autoComplete="off"
-              enterKeyHint="send"
-              className="min-h-11 min-w-0 flex-1 rounded-full border border-line bg-canvas px-4 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15"
-            />
+            {/* Like the product search, a clear button shows while the box has text. */}
+            <div className="relative min-w-0 flex-1">
+              <input
+                ref={inputRef}
+                id="chat-input"
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                placeholder={t.chat.inputPlaceholder}
+                autoComplete="off"
+                enterKeyHint="send"
+                className="min-h-11 w-full rounded-full border border-line bg-canvas ps-4 pe-11 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15"
+              />
+              {draft !== '' && (
+                <button
+                  type="button"
+                  onClick={clearDraft}
+                  aria-label={t.chat.clear}
+                  className={`${ICON_BUTTON} absolute inset-y-0 end-0 my-auto text-muted hover:bg-main-soft hover:text-ink motion-safe:animate-appear`}
+                >
+                  <CloseIcon className="size-5 transition duration-300 ease-out motion-safe:group-hover:rotate-90" />
+                </button>
+              )}
+            </div>
             <button
               type="submit"
               disabled={draft.trim() === ''}
               aria-label={t.chat.send}
-              className={`${BUTTON_MAIN} size-11 shrink-0`}
+              className={`${BUTTON_MAIN} group size-11 shrink-0`}
             >
-              <SendIcon className="size-5 rtl:-scale-x-100" />
+              <SendIcon className={SEND_ICON} />
             </button>
           </form>
         </div>

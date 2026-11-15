@@ -75,7 +75,7 @@ function BranchCard({ branch }) {
               href={branch.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-block text-main-ink underline hover:no-underline"
+              className="mt-1 inline-flex min-h-11 items-center text-main-ink underline transition duration-150 ease-out hover:no-underline motion-safe:active:scale-95"
             >
               {t.contact.openInMaps}
             </a>
