@@ -17,12 +17,13 @@ const LOG_PADDING_PX = 16
 // The conversation starts with the helper's greeting and the topic chips.
 const GREETING = { id: 0, from: 'bot', question: { topic: 'greeting' } }
 
-// The round saffron button in the corner. Like the other saffron buttons (BUTTON_ACCENT in
+// The round red button in the corner. Like the other red buttons (BUTTON_ACCENT in
 // styles.js) it lifts and shines under the pointer and shrinks a little when pressed, with a
-// bigger shadow because it floats above the page. Its keyboard focus shows a white ring inside
-// the usual navy outline, so it stays visible over the navy bands too.
+// bigger shadow because it floats above the page. A white ring sets it apart from the green
+// bands it floats over (red and green are almost equally light); with keyboard focus the ring
+// grows, inside the usual green outline.
 const CHAT_BUTTON =
-  'shine group pointer-events-auto flex size-14 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent shadow-lg shadow-main/30 transition duration-150 ease-out hover:bg-accent-hover hover:shadow-xl focus-visible:ring-2 focus-visible:ring-on-main motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-90'
+  'shine group pointer-events-auto flex size-14 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent shadow-lg shadow-main/30 transition duration-150 ease-out hover:bg-accent-hover hover:shadow-xl ring-2 ring-on-main focus-visible:ring-4 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-90'
 
 // The paper plane points to the end side (rtl: turns it around in Arabic) and nudges forward
 // under the pointer, but not while the send button is off (group-enabled:).
@@ -157,7 +158,7 @@ function ChatBot() {
               <h2 id="chat-title" className="font-bold">
                 {t.chat.title}
               </h2>
-              <p className="text-sm text-on-main/80">{t.chat.subtitle}</p>
+              <p className="text-sm text-on-main">{t.chat.subtitle}</p>
             </div>
             <button
               type="button"

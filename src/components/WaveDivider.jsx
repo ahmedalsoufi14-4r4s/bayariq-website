@@ -1,5 +1,5 @@
-// The moving edge of a navy band: three layered waves, a solid navy one in front that joins the
-// band and two lighter navy ones behind it (--wave-middle and --wave-back in index.css). Each one
+// The moving edge of a green band: three layered waves, a solid green one in front that joins the
+// band and two lighter green ones behind it (--wave-middle and --wave-back in index.css). Each one
 // slides sideways at its own speed and slowly swells up and down (.wave-layer in index.css), so
 // the band's edge moves like the sea.
 // Put it right above a band, or right below one with flip (turned over). It overlaps the band

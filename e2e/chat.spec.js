@@ -92,7 +92,7 @@ function drawnOnTop(page, box, selector) {
   )
 }
 
-test('the saffron chat button opens the panel with a greeting and one chip per topic', async ({
+test('the red chat button opens the panel with a greeting and one chip per topic', async ({
   page,
 }) => {
   await page.goto('./')

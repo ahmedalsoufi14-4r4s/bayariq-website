@@ -19,7 +19,7 @@ import { BUTTON_ACCENT, BUTTON_MAIN, BUTTON_OUTLINE, CARD } from './styles.js'
 // Messages grow in from a little below (pop-in in index.css).
 const POP_IN = 'motion-safe:animate-pop-in'
 
-// A quick question to tap: navy text and outline on white. Like the other buttons it lifts
+// A quick question to tap: green text and outline on white. Like the other buttons it lifts
 // under the pointer and shrinks a little while pressed. min-h-11 makes it 44px for fingers.
 const CHIP =
   'min-h-11 rounded-full border border-main-ink/30 bg-surface px-4 text-sm text-main-ink transition duration-150 ease-out hover:border-main-ink hover:bg-main-soft motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-95'
@@ -94,7 +94,7 @@ function ChatProduct({ product }) {
   )
 }
 
-// One message in the chat. The visitor's sit on the end side in navy, the helper's on the
+// One message in the chat. The visitor's sit on the end side in green, the helper's on the
 // start side in white. Both are cards (card in index.css): they lift, tilt and glow a little
 // under the pointer or a tap, like every box on the page. The answer is built here, on every render, from the question
 // (chatAnswers.js), so the whole conversation follows the language switch.

@@ -17,10 +17,10 @@ The website of a neighborhood supermarket with four branches in Jeddah: Al Hamda
 - Offers with a "valid until" date. Expired offers hide themselves.
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
 - A card for each branch with its own name, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
-- A quick-answer chat helper behind the saffron button in the corner: opening hours, branches and locations, delivery, how to order, current offers, contacting a branch, and "do you have X?" with an Add to cart button. Tap a chip or type a question in Arabic or English. No AI and no server: every answer comes from the data files, and missing details are answered with "coming soon".
+- A quick-answer chat helper behind the red button in the corner: opening hours, branches and locations, delivery, how to order, current offers, contacting a branch, and "do you have X?" with an Add to cart button. Tap a chip or type a question in Arabic or English. No AI and no server: every answer comes from the data files, and missing details are answered with "coming soon".
 - A short guided tour on the first visit: seven steps with a spotlight and a tooltip (the menu, language and dark mode, search and categories, Add to cart, the cart and WhatsApp order, the branches, the chat helper). It shows once, works with the keyboard and on phones, and "take the tour again" is in the chat helper and the footer.
-- Off-white, deep navy and saffron in a 60-30-10 split, defined once as color tokens in `src/index.css`, with a dark mode that keeps the same split.
-- The page feels alive: soft navy and saffron circles float behind it, layered waves move along the edges of the navy bands, and cards fade in as they scroll into view. Every card, button, link and input reacts to the mouse (and cards to a tap on phones), a saffron pill slides to the chosen category, and the menu highlights the section on screen. Dialogs slide and fade. All motion is off for people who ask their device for less. Keyboard friendly, AA contrast checked on every piece of text.
+- The store's own colors, sampled from its logo, in a 60-30-10 split: white `#ffffff`, the logo green `#048157` and red (`#e00000` for buttons, a touch deeper than the logo's `#fb0000` so white text on it passes AA). Defined once as color tokens in `src/index.css`, with a dark mode that keeps the same split. The logo's bag-and-leaf mark is redrawn as an SVG for the header and the favicon, and the full logo sits in the footer.
+- The page feels alive: soft green and red circles float behind it, layered waves move along the edges of the green bands, and cards fade in as they scroll into view. Every card, button, link and input reacts to the mouse (and cards to a tap on phones), a red pill slides to the chosen category, and the menu highlights the section on screen. Dialogs slide and fade. All motion is off for people who ask their device for less. Keyboard friendly, AA contrast checked on every piece of text.
 - Fast on phones: on the live site, Lighthouse mobile gives about 95 for Performance (89 to 98 across runs) and 100 for Accessibility, Best Practices and SEO.
 
 ## Tech
@@ -36,15 +36,15 @@ npm install
 npm run dev        # http://localhost:5173/bayariq-website/
 ```
 
-| Command                | What it does                                                                                         |
-| ---------------------- | ---------------------------------------------------------------------------------------------------- |
-| `npm run dev`          | Starts the development server.                                                                       |
-| `npm run build`        | Builds the site into `dist/`.                                                                        |
-| `npm run lint`         | Checks the code with ESLint.                                                                         |
-| `npm run format:check` | Checks the formatting with Prettier (`npm run format` fixes it).                                     |
-| `npm test`             | Runs the unit tests (cart, WhatsApp message, Arabic search, offers, JSON-LD, chat helper, tour).     |
-| `npm run check`        | Builds the site and runs the Playwright checks in Arabic and English at 360 px and 1280 px.          |
-| `npm run images`       | Remakes the share image, the iPhone icon and the README screenshots (after a logo or design change). |
+| Command                | What it does                                                                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`          | Starts the development server.                                                                                                                |
+| `npm run build`        | Builds the site into `dist/`.                                                                                                                 |
+| `npm run lint`         | Checks the code with ESLint.                                                                                                                  |
+| `npm run format:check` | Checks the formatting with Prettier (`npm run format` fixes it).                                                                              |
+| `npm test`             | Runs the unit tests (cart, WhatsApp message, Arabic search, offers, JSON-LD, chat helper, tour).                                              |
+| `npm run check`        | Builds the site and runs the Playwright checks in Arabic and English at 360 px and 1280 px.                                                   |
+| `npm run images`       | Remakes the logo files (from `photos/logo.png`), the share image, the iPhone icon and the README screenshots (after a logo or design change). |
 
 The first `npm run check` needs Chromium: `npx playwright install chromium`.
 

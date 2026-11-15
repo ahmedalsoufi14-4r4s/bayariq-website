@@ -4,7 +4,7 @@ import { useState } from 'react'
 // `fallback` shown instead when there is no photo or it fails to load
 // (for example because of a wrong file name in a data file).
 // width and height only give the photo's shape, so the page keeps room for it while it loads.
-// Until the photo has loaded, its place is a light navy box that softly pulses (a skeleton),
+// Until the photo has loaded, its place is a light green box that softly pulses (a skeleton),
 // so the visitor sees that something is coming. animate-pulse only changes opacity.
 function Photo({ src, alt, width, height, className, fallback }) {
   // Remembers which photo failed, so a different photo in the same spot still gets a try.

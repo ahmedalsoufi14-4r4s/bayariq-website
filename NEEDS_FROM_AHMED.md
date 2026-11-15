@@ -39,7 +39,7 @@ What each one does, and how to write it:
 
 Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](https://squoosh.app) (WebP, quality about 75, width about 800 px). `npm run check` fails if a photo is missing, too big or not WebP; a photo that fails to load falls back to the category icon.
 
-- **Logo** (Family) → `public/images/`. Replaces the saffron bag mark and the text logo in `src/components/Header.jsx`, and the bag in `public/favicon.svg`; then `npm run images` remakes the share image and the iPhone icon. SVG is best, PNG or WebP also works. Send the Bayariq Al Tawfiq logo too, if it has its own.
+- **Original logo file** (Family) → `photos/logo.png`. The logo on the site is **temporary**: it comes from a small, blurry copy (`photos/logo.png`), so the full logo in the footer and the share image are a little soft. The header and the favicon already use a clean redrawing of the bag-and-leaf mark (`src/components/LogoMark.jsx` and `public/favicon.svg`). We still need the original high-quality file from whoever designed it: SVG, PDF or AI is best, otherwise a PNG at least 2000 px wide. Put it in `photos/logo.png` and run `npm run images`, then compare the redrawn mark with it. Send the Bayariq Al Tawfiq logo too, if it has its own.
 - **Store photo for the hero** (Family): the front or inside of one branch → `public/images/`. Used in `src/sections/Hero.jsx` in place of the four icon tiles on wide screens.
 - **Real product list** (Family) → `src/data/products.json` (12 sample products now). For each product: Arabic and English name, category, price (or none for "price on request"), unit or size, featured or not, in stock or not. The search, the cart and the chat's "do you have…?" all use this list.
 - **Real categories** (Family) → `src/data/categories.json` (6 sample categories now): the store's sections in Arabic and English. Claude picks or draws a matching icon for each (`carrot`, `milk`, `bread`, `jar`, `cup` and `spray` exist now, in `src/components/Icons.jsx`).
@@ -48,8 +48,7 @@ Photos: WebP, under 200 KB each. A free way to convert them is [squoosh.app](htt
 
 ## Decisions
 
-- **Palette from the logo** (Ahmed) → the color tokens in `src/index.css` (`@theme`, and the dark versions under `:root.dark`), `theme-color` in `index.html` and the two colors in `public/favicon.svg`; then `npm run images`. Until then: off-white `#f8f6f1`, deep navy `#14284b` and saffron `#f4b41a`.
-  Recommended: once the logo arrives, take the navy (30%) and the saffron (10%) from its two main colors and keep the off-white. `npm run check` then confirms every text still passes AA contrast.
+- ✅ **Done: Match the palette to the logo.** White `#ffffff`, the logo green `#048157` and red (`#e00000` for buttons, the exact logo red `#fb0000` for the logo), sampled from `photos/logo.png`, in the color tokens in `src/index.css`. If the original logo file shows slightly different colors, change `--color-main`, `--color-logo-green` and `--color-logo-red` there (and in `public/favicon.svg` and `theme-color` in `index.html`), then run `npm run images` and `npm run check`.
 - **"Why shop with us" points** (Family) → `highlights` in `src/i18n/ar.json` and `en.json`: "أسعار اقتصادية", "اطلب بسهولة" and "فرع قريب منك".
   Recommended: keep all three. "أسعار اقتصادية" matches the store's name ("الاقتصادية"), if the family is comfortable saying it.
 - **Are products, prices and offers the same in every branch?** (Family) The site has one product list and one offers list for all four branches.

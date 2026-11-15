@@ -2,6 +2,7 @@ import { useCart } from '../cart/CartContext.js'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { CartIcon } from './Icons.jsx'
+import LogoMark from './LogoMark.jsx'
 import { BUTTON_ON_MAIN, ICON_BUTTON } from './styles.js'
 import ThemeToggle from './ThemeToggle.jsx'
 import { useActiveSection } from './useActiveSection.js'
@@ -9,12 +10,13 @@ import { useActiveSection } from './useActiveSection.js'
 // Each id is a page section and a key in the "nav" texts, in page order (useActiveSection needs that).
 const NAV_IDS = ['home', 'offers', 'products', 'contact']
 
-// A saffron underline (after:) grows from the start side on hover and keyboard focus, and stays
-// under the link of the section on screen, which is saffron too (aria-current, set below).
+// A white underline (after:) grows from the start side on hover and keyboard focus, and stays
+// under the link of the section on screen (aria-current, set below). It is white, not the red
+// accent, because red barely shows on green (1.03:1), and the text is full white for AA.
 // ltr: and rtl: pick the side it grows from: the left in English, the right in Arabic.
 // The link is 44px tall for fingers; -my-2 and -mx-2 stop it from taking more room in the row.
 const NAV_LINK =
-  'relative -mx-2 -my-2 block px-2 py-3 text-on-main/85 hover:text-on-main aria-[current=true]:text-accent after:absolute after:inset-x-2 after:bottom-2 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-accent after:ease-out motion-safe:after:transition-transform motion-safe:after:duration-300 ltr:after:origin-left rtl:after:origin-right hover:after:scale-x-100 focus-visible:after:scale-x-100 aria-[current=true]:after:scale-x-100'
+  'relative -mx-2 -my-2 block px-2 py-3 text-on-main after:absolute after:inset-x-2 after:bottom-2 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-on-main after:ease-out motion-safe:after:transition-transform motion-safe:after:duration-300 ltr:after:origin-left rtl:after:origin-right hover:after:scale-x-100 focus-visible:after:scale-x-100 aria-[current=true]:after:scale-x-100'
 
 function Header() {
   const { language, t, toggleLanguage, localize } = useLanguage()
@@ -40,16 +42,17 @@ function Header() {
           wraps and the name stays on one line. Below 360px (narrower than the site is designed
           for) the name keeps its natural height instead, so it is never cut off. */}
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:flex-nowrap md:gap-x-6">
-        {/* NEEDS-AHMED: replace the bag mark and the text logo with the store's real logo image.
+        {/* The store's mark (LogoMark.jsx) on a white plate, so its green leaf shows on the
+            green header, next to the store name.
             On phones, basis-0 grow gives the logo only the space left next to the buttons,
             so the cart button never drops to another row.
-            Under the pointer the bag mark tilts and grows a little (group-hover:). */}
+            Under the pointer the mark tilts and grows a little (group-hover:). */}
         <a
           href="#home"
           className="group flex min-w-0 grow basis-0 items-center gap-2 font-bold min-[360px]:h-12 md:h-auto md:grow-0 md:basis-auto md:text-lg"
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent transition duration-300 ease-out motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
-            <CartIcon className="size-5" />
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-logo-paper p-0.5 shadow-sm shadow-black/20 transition duration-300 ease-out motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
+            <LogoMark className="size-full" />
           </span>
           {/* line-clamp-2 shows at most two lines and ends the text with "…" if it needs more.
               min-[360px]: works like md:, but from a width we choose (360px and wider). */}
@@ -103,11 +106,12 @@ function Header() {
             className={`${ICON_BUTTON} relative hover:bg-on-main/10`}
           >
             <CartIcon className="size-6 motion-safe:group-hover:animate-wiggle" />
-            {/* A new key makes React draw a new badge, so the pop animation plays on every change. */}
+            {/* A new key makes React draw a new badge, so the pop animation plays on every change.
+                The white ring sets the red badge apart from the green header. */}
             {count > 0 && (
               <span
                 key={count}
-                className="absolute -end-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-on-accent motion-safe:animate-pop"
+                className="absolute -end-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-on-accent ring-2 ring-on-main motion-safe:animate-pop"
               >
                 {count}
               </span>

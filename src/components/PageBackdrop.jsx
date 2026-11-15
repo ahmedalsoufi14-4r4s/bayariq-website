@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import Circle from './Circle.jsx'
 
-// The page background is never still: soft navy and saffron circles of different sizes float
-// across it, each on its own path (see Circle.jsx). They show on the off-white parts of the
-// page; the navy bands and the cards cover them. One swing takes 6 to 10 s, so one loop takes
+// The page background is never still: soft green and red circles of different sizes float
+// across it, each on its own path (see Circle.jsx). They show on the white parts of the
+// page; the green bands and the cards cover them. One swing takes 6 to 10 s, so one loop takes
 // 12 to 20 s, and the circles cover a wide area (vmax is a share of the screen's longer side).
 const CIRCLES = [
   {

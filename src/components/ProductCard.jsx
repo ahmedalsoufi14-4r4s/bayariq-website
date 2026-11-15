@@ -1,7 +1,7 @@
 import { useCart } from '../cart/CartContext.js'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatPrice } from '../lib/price.js'
-import { PlusIcon } from './Icons.jsx'
+import { NoSymbolIcon, PlusIcon } from './Icons.jsx'
 import ProductImage from './ProductImage.jsx'
 import { BUTTON_ACCENT, CARD } from './styles.js'
 
@@ -27,8 +27,10 @@ function ProductCard({ product, onOpen }) {
             {t.products.featured}
           </span>
         )}
+        {/* A status never relies on color alone: an icon and clear text, for color-blind visitors. */}
         {!product.inStock && (
-          <span className="rounded-full bg-ink px-2 py-1 text-surface">
+          <span className="flex items-center gap-1 rounded-full bg-ink px-2 py-1 text-surface">
+            <NoSymbolIcon className="size-3.5" />
             {t.products.outOfStock}
           </span>
         )}

@@ -4,9 +4,9 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 import { CategoryIcon } from './Icons.jsx'
 
 // aria-pressed tells screen readers which button is the active filter.
-// The active filter is saffron (the accent): a saffron pill slides behind the buttons to it
-// (see CategoryFilter below). The button itself turns saffron a moment later (delay-150),
-// once the pill has arrived, so it is saffron even if the pill could not be placed.
+// The active filter is red (the accent): a red pill slides behind the buttons to it
+// (see CategoryFilter below). The button itself turns red a moment later (delay-150),
+// once the pill has arrived, so it is red even if the pill could not be placed.
 // The other buttons have no background, so the pill shows through them as it passes.
 // relative draws the buttons above the pill. group lets the category icon rock under the
 // pointer (group-hover: below).

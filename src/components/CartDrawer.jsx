@@ -20,7 +20,7 @@ const ROLL = 'motion-safe:animate-roll'
 
 // The cart opens as a full-height panel on the end side (left in Arabic, right in English).
 // Like the product details, it is a <dialog> opened with showModal().
-// The "drawer" class makes it slide in (see index.css). Its title sits on a navy band.
+// The "drawer" class makes it slide in (see index.css). Its title sits on a green band.
 function CartDrawer() {
   const { t, localize } = useLanguage()
   const {

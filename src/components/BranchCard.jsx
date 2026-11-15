@@ -8,7 +8,7 @@ import { CARD } from './styles.js'
 const MUTED = 'mt-2 text-muted'
 const ICON = 'size-5 text-main-ink'
 
-// One branch in the "Our branches" section: its name on a navy top, then hours, address, buttons and map.
+// One branch in the "Our branches" section: its name on a green top, then hours, address, buttons and map.
 // Details that are still NEEDS-AHMED show "coming soon" or stay hidden.
 // Under the pointer (or on a tap) the big pin hops and the clock spins (card-active: in index.css).
 function BranchCard({ branch }) {
@@ -19,7 +19,7 @@ function BranchCard({ branch }) {
   const titleId = `branch-${branch.id}-title`
 
   return (
-    // The navy top has its own rounded corners, because the card cannot clip it
+    // The green top has its own rounded corners, because the card cannot clip it
     // (overflow-hidden would cut off the card's glow).
     <article
       data-tour="branch"
@@ -28,7 +28,7 @@ function BranchCard({ branch }) {
     >
       <div className="surface-main relative overflow-hidden rounded-t-2xl px-5 py-4">
         {/* Each branch shows its own name, for example "بيارق التوفيق" in Al Harazat. */}
-        <p className="text-sm text-on-main/75">{localize(branch, 'name')}</p>
+        <p className="text-sm text-on-main">{localize(branch, 'name')}</p>
         <h3 id={titleId} className="text-xl font-bold">
           {label}
         </h3>

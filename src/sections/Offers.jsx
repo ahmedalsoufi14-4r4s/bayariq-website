@@ -8,7 +8,7 @@ import offers from '../data/offers.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { getActiveOffers } from '../lib/offers.js'
 
-// A navy band between two waves, so the offers stand out from the rest of the page.
+// A green band between two waves, so the offers stand out from the rest of the page.
 // The <> </> (a fragment) returns the waves and the band side by side without an extra element.
 // NEEDS-AHMED: offers.json stays empty (the page says "no offers right now") until real offers arrive.
 function Offers() {

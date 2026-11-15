@@ -39,7 +39,7 @@
 
 ## Quick-answer chatbot
 - No AI, no server, no new dependencies. Every answer comes only from `store.json`, `offers.json` and `products.json`, never invented. A NEEDS-AHMED detail is answered with a polite "coming soon"; a branch with a real WhatsApp number gets a button to message that branch.
-- A saffron chat button in the bottom corner (end side) opens a non-modal `<dialog>` (`show()`, not `showModal()`), so the page still scrolls and the cart still works. It sits below the sticky header and never covers the cart button; the cart drawer and dialogs open above it (top layer). The footer has extra bottom padding so the button never hides its text.
+- A red chat button in the bottom corner (end side) opens a non-modal `<dialog>` (`show()`, not `showModal()`), so the page still scrolls and the cart still works. It sits below the sticky header and never covers the cart button; the cart drawer and dialogs open above it (top layer). The footer has extra bottom padding so the button never hides its text.
 - Topic chips: opening hours, branches and locations, delivery, how to order, current offers, contact a branch. Branch topics ask which branch first (one chip per branch), unless the question names one. Final answers end with an "other questions" chip; greetings, thanks and unmatched questions show the topic chips again.
 - Typed questions match simple Arabic and English keywords after the product search's `normalizeText` (plus Arabic digits). "Do you have X?" uses the product search (`filterProducts`) and shows matches with Add to cart; a product not on the list points to the cart's box for unlisted items.
 - Pure logic: `src/lib/chatQuestions.js` (`matchQuestion`: what was asked) and `src/lib/chatAnswers.js` (`buildAnswer`: the answer), with unit tests, so an AI can replace them later. Messages store the question, and the answer is built at render time, so the whole conversation follows the language switch.
@@ -62,18 +62,19 @@
 The site should feel alive: everything reacts to the pointer or a tap, and the background visibly moves on its own all the time. Motion you have to look for counts as "not moving": it must be easy to notice within 2 to 3 seconds.
 
 Colors (60-30-10)
-- 60% canvas, off-white `#f8f6f1`: the page and large surfaces (cards and dialogs sit on it in white). 30% main, deep navy `#14284b`: structure and identity, so the header, hero, offers band, footer, navigation, the tops of the branch cards, the chat header and secondary buttons. 10% accent, saffron `#f4b41a`: only what must catch the eye, so Add to cart, Send order, Browse products, the chat button, active states (filter pill, current menu link), badges and small highlights. 50-40-10 is fine where navy carries more of the layout.
-- Why this palette: navy feels calm and trustworthy, like a family store people rely on, and saffron is warm (spices, dates, the Saudi sun) and stands out against both. Keep it until the logo arrives, then take the 30% and 10% colors from the logo.
-- Grays made from the neutral (ink, muted, line) are allowed for text and borders and don't count as extra colors. Status colors (error red, success green) only for status, used sparingly. No other colors.
+- The colors come from the store's logo (`photos/logo.png`, sampled). 60% canvas, white `#ffffff`: the page and large surfaces (cards and dialogs are white too, set apart by a border and a soft shadow). 30% main, the logo green `#048157`: structure and identity, so the header, hero, offers band, footer, waves, navigation, the tops of the branch cards, the chat header, card icon tiles and secondary buttons. 10% accent, red: only what must catch the eye, so Add to cart, Send order, Browse products, the chat button, active states (filter pill), badges and small highlights. 50-40-10 is fine where green carries more of the layout.
+- Two reds: the exact logo red `#fb0000` only for the logo itself (the `logo-*` tokens, which never change in dark mode), and a slightly deeper `#e00000` for buttons, badges and text, because white text on the logo red is only 4.1:1. Green text on light backgrounds uses a deeper green, `main-ink` `#03704b` (6.1:1 on white).
+- Why this palette: it is the store's own logo, so the site and the shop signs match. Green says fresh food, and red stands out for the few things that must be clicked.
+- Grays made from the neutral (ink, muted, line, with a hint of the logo green) are allowed for text and borders and don't count as extra colors. Because red and green are the brand colors, no status or warning relies on color: it always has an icon and clear text, and red or green alone never carries meaning (for color-blind visitors). No other colors.
 - Define the tokens once as Tailwind @theme tokens in `src/index.css`: canvas, main and accent, each with an on-color for text (`ink`, `on-main`, `on-accent`), plus dark-mode versions. Components use only the tokens, never raw hex, so the palette is swapped in one place. Never name a color token after a size word (base, xs, sm, md, lg, xl): `text-base` would become that color instead of the font size and can make text invisible.
-- Dark mode keeps the split: a dark navy neutral for the 60%, a lighter navy for the 30%, the same saffron for the 10%.
-- All text meets WCAG AA (4.5:1 body text, 3:1 large text). Saffron fails as text on off-white, so on light backgrounds it is only a fill with navy text on it; as text it only goes on navy.
-- On a screenshot, saffron is the rarest of the three colors. If it is everywhere, it stops standing out.
+- Dark mode keeps the split: a near-black with a hint of green (`#08130e`) for the 60%, a green that is lighter than the page but kept deep (`#0b5a3e`, so white text on it is 8:1 and the bands don't glare) for the 30%, the same red for the 10%. The logo always sits on a white plate, so it looks the same in both modes.
+- All text meets WCAG AA (4.5:1 body text, 3:1 large text). White on the logo green is only 4.9:1, so text on green is always full white (never see-through white), and nothing that lightens the green (white glows, see-through white hovers) goes behind text. Red and green are almost equally light (1.03:1): red on a green band always gets a white ring, and highlights inside green bands (menu underline, keyboard focus, the bar under a title) are white.
+- On a screenshot, red is the rarest of the three colors. If it is everywhere, it stops standing out.
 
 Interaction: everything reacts
 - Every button, link, tab, chip, icon button, input, card, menu item, info box and empty-state box reacts to hover and tap. Nothing on the page stays still under the cursor. Interactive elements also have visible press, keyboard-focus and (where relevant) disabled states.
-- Buttons: hover lifts slightly with a deeper shadow and brighter color; press scales to about 0.96; saffron buttons get a shine sweep on hover; icon buttons get a round highlight and a small icon motion (the sun turns, the cart rocks, close turns, plus turns, send nudges forward).
-- Tabs and filter chips: the active one has a sliding indicator (the saffron pill) that moves between items.
+- Buttons: hover lifts slightly with a deeper shadow and brighter color; press scales to about 0.96; red buttons get a shine sweep on hover; icon buttons get a round highlight and a small icon motion (the sun turns, the cart rocks, close turns, plus turns, send nudges forward).
+- Tabs and filter chips: the active one has a sliding indicator (the red pill) that moves between items.
 - Navigation: an underline that grows from the start side (RTL aware), and the link of the section in view stays highlighted while scrolling (scrollspy).
 - Inputs: focus ring and border animate in; icons inside respond on focus; a clear button appears when the search box or the chat's question box has text (the order form's short fields don't get one).
 - Clickable cards (products): lift, the picture zooms slightly, hand cursor.
@@ -90,19 +91,19 @@ Motion
 
 Live background (always moving)
 - It moves on its own all the time, without scrolling or touching, and the motion is obvious within 2 to 3 seconds.
-- Waves at the edges of the navy bands: 2 or 3 layered waves in navy and a lighter navy, each sliding sideways at its own speed in seamless loops (6 to 12 s), with a gentle up-and-down swell.
-- Circles: 4 to 6 soft navy and saffron circles of different sizes, each floating on its own path across a wide area (10 to 20 s per loop), some slowly growing and shrinking. The hero moves a bit more than the rest of the page.
+- Waves at the edges of the green bands: 2 or 3 layered waves in green and a lighter green, each sliding sideways at its own speed in seamless loops (6 to 12 s), with a gentle up-and-down swell.
+- Circles: 4 to 6 soft green and red circles of different sizes, each floating on its own path across a wide area (10 to 20 s per loop), some slowly growing and shrinking. The hero moves a bit more than the rest of the page.
 - Animate only transform and opacity, with pre-blurred radial gradients and wide SVG waves (no animated blur or box-shadow), so it stays smooth on phones. Pause it while the tab is hidden, and turn it off with prefers-reduced-motion.
 - Text on top of it stays AA at every point of the animation (even with every circle behind it at once).
 
 Graphics
-- A hero with depth: soft glows and a faint eight-pointed star pattern in navy and saffron.
-- One consistent outline icon set (`src/components/Icons.jsx`), tinted navy, with saffron for the active item. No emoji.
-- Consistent rounded corners, soft layered shadows, generous spacing, and waves between the navy bands.
+- A hero with depth: soft glows (a red glow and a dark green shade, which never make the green lighter) and a faint eight-pointed star pattern in a darker green.
+- One consistent outline icon set (`src/components/Icons.jsx`), tinted green, with red for the active item. The store's mark (`LogoMark.jsx`, redrawn from the logo) appears next to the store name in the header, and the full logo in the footer, both on a white plate. No emoji.
+- Consistent rounded corners, soft layered shadows, generous spacing, and waves between the green bands.
 - Shapes and illustrations as inline SVG and CSS, so they stay sharp and light.
 
 Checks before finishing (any design change)
-- Screenshots at 360 px and 1280 px, in light and dark mode, including the chat open and one tour step (`e2e/screenshots.spec.js`). Is the 60-30-10 split visible, and is saffron rare and on the right things?
+- Screenshots at 360 px and 1280 px, in light and dark mode, including the chat open and one tour step (`e2e/screenshots.spec.js`). Is the 60-30-10 split visible, and is red rare and on the right things?
 - Every kind of element reacts on hover and tap, including non-clickable cards and empty states; the waves and circles visibly move within 3 seconds, and stop with reduced motion.
 - AA contrast for every visible text, including dialogs, the drawer, the chat and the tour, in both themes; Lighthouse mobile stays 90+ (or no worse than before); no layout shift.
 - State the palette in two lines with hex values and why it fits the site.

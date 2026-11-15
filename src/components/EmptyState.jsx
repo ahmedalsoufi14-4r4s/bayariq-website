@@ -1,5 +1,5 @@
 // A friendly box for "nothing here" messages, with an optional button or link under the text.
-// It has its own white background, so it reads well on the page, in a dialog and on a navy band.
+// It has its own white background, so it reads well on the page, in a dialog and on a green band.
 // Like the cards, it reacts to the pointer and to a tap (card in index.css), and its icon wiggles.
 function EmptyState({ Icon, text, children }) {
   return (

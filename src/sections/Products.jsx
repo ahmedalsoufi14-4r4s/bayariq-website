@@ -47,7 +47,7 @@ function Products() {
           <label htmlFor="product-search" className="sr-only">
             {t.products.searchLabel}
           </label>
-          {/* On focus the border turns navy and a soft ring fades in around it.
+          {/* On focus the border turns green and a soft ring fades in around it.
             peer marks the input, so the icon after it can react to its focus (peer-focus:). */}
           <input
             ref={searchRef}

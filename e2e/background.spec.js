@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 // Everything that moves in the background: the circles behind the page and in the hero, the
-// layered waves at the edges of the navy bands, and the star pattern and tiles in the hero.
+// layered waves at the edges of the green bands, and the star pattern and tiles in the hero.
 const MOVING = '.circle, .wave-layer, .stars-pan, .tile-bob'
 
 // Where each element is drawn right now: its box, moved and stretched by its animations.
@@ -83,7 +83,7 @@ test.describe('with motion allowed', () => {
       expect(slide).toBeLessThanOrEqual(12)
     }
 
-    // 4 to 6 navy and saffron circles behind the page, some of them growing and shrinking.
+    // 4 to 6 green and red circles behind the page, some of them growing and shrinking.
     const pageCircles = page.locator('.circle:not(#home .circle)')
     const count = await pageCircles.count()
     expect(count).toBeGreaterThanOrEqual(4)

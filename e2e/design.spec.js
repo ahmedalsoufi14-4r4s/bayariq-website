@@ -46,7 +46,7 @@ for (const theme of THEMES) {
   test.describe(`${theme} mode`, () => {
     test.use({ colorScheme: theme })
 
-    test('60-30-10: off-white (or dark) page, navy bands, saffron only on the key actions', async ({
+    test('60-30-10: white (or dark) page, green bands, red only on the key actions', async ({
       page,
     }) => {
       await page.goto('./')
@@ -55,11 +55,14 @@ for (const theme of THEMES) {
       const accent = await tokenColor(page, 'accent')
 
       await expect(page.locator('body')).toHaveCSS('background-color', canvas)
-      for (const navyArea of ['header', '#home', '#offers', 'footer']) {
-        await expect(page.locator(navyArea)).toHaveCSS('background-color', main)
+      for (const greenArea of ['header', '#home', '#offers', 'footer']) {
+        await expect(page.locator(greenArea)).toHaveCSS(
+          'background-color',
+          main,
+        )
       }
 
-      // Saffron: Add to cart, the active filter, the "featured" badge and the cart count.
+      // Red: Add to cart, the active filter, the "featured" badge and the cart count.
       await expect(addButton(page, inStockProduct)).toHaveCSS(
         'background-color',
         accent,

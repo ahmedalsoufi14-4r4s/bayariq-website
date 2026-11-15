@@ -47,7 +47,7 @@ function filterRow(page, language = 'ar') {
   })
 }
 
-// The saffron pill is the only <span> directly inside the filter row.
+// The red pill is the only <span> directly inside the filter row.
 function filterPill(row) {
   return row.locator(':scope > span')
 }
@@ -63,7 +63,7 @@ async function pillIsUnder(pill, button) {
   )
 }
 
-// How far the saffron underline of a menu link has grown: 0 (hidden) to 1 (full width).
+// How far the white underline of a menu link has grown: 0 (hidden) to 1 (full width).
 function underlineScale(link) {
   return link.evaluate((element) =>
     parseFloat(getComputedStyle(element, '::after').scale),
@@ -78,7 +78,7 @@ for (const width of [360, 1280]) {
     await page.goto('./')
     const nav = page.getByRole('navigation')
     const link = (id) => nav.getByRole('link', { name: t.nav[id] })
-    const accent = await tokenColor(page, 'accent')
+    const onMain = await tokenColor(page, 'on-main')
 
     await expect(link('home')).toHaveAttribute('aria-current', 'true')
 
@@ -88,8 +88,14 @@ for (const width of [360, 1280]) {
         .evaluate((section) => section.scrollIntoView())
       await expect(link(id)).toHaveAttribute('aria-current', 'true')
       await expect(nav.locator('[aria-current]')).toHaveCount(1)
-      await expect(link(id)).toHaveCSS('color', accent)
+      // A full white underline marks it: a shape, not only a color, and white, because the
+      // red accent barely shows on the green header.
       expect(await underlineScale(link(id))).toBe(1)
+      expect(
+        await link(id).evaluate(
+          (element) => getComputedStyle(element, '::after').backgroundColor,
+        ),
+      ).toBe(onMain)
     }
 
     // "Why shop with us" has no menu link, so "Home" stays highlighted there.
@@ -121,7 +127,7 @@ test('the search box shows a clear button while it has text', async ({
 
   await expect(clear).toHaveCount(0)
   await search.focus()
-  // On focus the border turns navy, a soft ring appears and the icon turns navy.
+  // On focus the border turns green, a soft ring appears and the icon turns green.
   const mainInk = await tokenColor(page, 'main-ink')
   await expect(search).toHaveCSS('border-color', mainInk)
   await expect(search).toHaveCSS('box-shadow', /0px 0px 0px 4px/)
@@ -183,7 +189,7 @@ test('at 360px the header, menu, filter, product, cart and order-form controls a
 test.describe('with motion allowed', () => {
   test.use({ reducedMotion: 'no-preference' })
 
-  test('a saffron pill slides to the chosen category, in Arabic and in English', async ({
+  test('a red pill slides to the chosen category, in Arabic and in English', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 360, height: 800 })
@@ -326,7 +332,7 @@ test.describe('with motion allowed', () => {
     await page.mouse.up()
   })
 
-  test('a saffron button sweeps a soft light across from the start side on hover', async ({
+  test('a red button sweeps a soft light across from the start side on hover', async ({
     page,
   }) => {
     await page.goto('./')

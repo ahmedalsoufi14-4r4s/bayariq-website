@@ -135,7 +135,16 @@ export function ClockIcon({ className }) {
   )
 }
 
-// An exclamation mark in a circle, for the error message.
+// A circle with a line through it, for "out of stock".
+export function NoSymbolIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+    </Icon>
+  )
+}
+
+// An exclamation mark in a circle, for the error message and warnings.
 export function AlertIcon({ className }) {
   return (
     <Icon className={className}>

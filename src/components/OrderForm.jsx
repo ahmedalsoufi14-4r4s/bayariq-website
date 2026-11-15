@@ -6,10 +6,10 @@ import { getSendHintKey } from '../lib/branches.js'
 import { buildOrderMessage, buildWhatsAppUrl } from '../lib/orderMessage.js'
 import { isPlaceholder } from '../lib/placeholder.js'
 import { fillIn } from '../lib/text.js'
-import { ChatIcon } from './Icons.jsx'
+import { AlertIcon, ChatIcon } from './Icons.jsx'
 import { BUTTON_ACCENT } from './styles.js'
 
-// The border darkens on hover; on focus it turns navy and a soft ring fades in around it.
+// The border darkens on hover; on focus it turns green and a soft ring fades in around it.
 // py-2.5 makes the one-line fields 46px tall, easy to tap.
 const INPUT =
   'mt-1 w-full rounded-xl border border-line bg-canvas px-3 py-2.5 transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15'
@@ -201,8 +201,13 @@ function OrderForm() {
         <ChatIcon className="size-5" />
         {t.order.send}
       </button>
+      {/* Why the button is off. A warning never relies on color alone: an icon and clear text. */}
       {sendHintKey && (
-        <p id="send-hint" className="text-center text-sm text-muted">
+        <p
+          id="send-hint"
+          className="flex items-start justify-center gap-1.5 text-center text-sm text-muted"
+        >
+          <AlertIcon className="mt-0.5 size-4 shrink-0" />
           {t.order[sendHintKey]}
         </p>
       )}

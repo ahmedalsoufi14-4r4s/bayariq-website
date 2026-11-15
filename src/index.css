@@ -204,41 +204,53 @@
   --color-*: initial;
   --color-black: #000;
 
-  /* 60%: the off-white page. Cards and dialogs sit on it in white. */
-  --color-canvas: #f8f6f1;
+  /* 60%: the white page. Cards and dialogs are white too, set apart by a thin border and a
+     soft shadow. Grays (ink, muted, line) have a hint of the logo green. */
+  --color-canvas: #ffffff;
   --color-surface: #ffffff;
-  --color-ink: #10192d; /* body text */
-  --color-muted: #4e586b; /* secondary text */
-  --color-line: #dcdfe6; /* borders */
+  --color-ink: #102019; /* body text */
+  --color-muted: #4a5a52; /* secondary text */
+  --color-line: #d5e0da; /* borders */
 
-  /* 30%: deep navy for the header, hero, offers band, footer and the tops of the branch cards. */
-  --color-main: #14284b;
-  --color-main-hover: #0c1a35;
-  --color-on-main: #ffffff; /* text on navy */
-  --color-main-ink: #14284b; /* navy text and icons on light backgrounds */
-  --color-main-soft: #e8edf6; /* light navy tint for icon tiles and photo placeholders */
+  /* 30%: the logo green for the header, hero, offers band, footer, waves and the tops of the
+     branch cards. White text on it is 4.9:1, just above AA, so text on green is always full
+     white (never see-through white), and nothing that lightens it goes behind text. */
+  --color-main: #048157;
+  --color-main-hover: #036a47;
+  --color-on-main: #ffffff; /* text on green */
+  --color-main-ink: #03704b; /* a deeper green for text and icons on light backgrounds (6.1:1 on white) */
+  --color-main-soft: #e6f2ec; /* light green tint for icon tiles and photo placeholders */
 
-  /* 10%: saffron, only for Add to cart, Send order, badges and active states.
-     It is too light to read as text on off-white (1.7:1), so on light backgrounds it is
-     only ever a background with navy text on it. As text it only goes on navy. */
-  --color-accent: #f4b41a;
-  --color-accent-hover: #e5a50a;
-  --color-on-accent: #14284b;
+  /* 10%: red, only for Add to cart, Send order, badges and active states. The logo red
+     (#fb0000) gives white text only 4.1:1, so buttons and badges use this slightly deeper
+     red (5.0:1 with white text). Red and green are almost equally light (1.03:1), so red on a
+     green band always gets a white ring, and color-blind visitors can still tell them apart. */
+  --color-accent: #e00000;
+  --color-accent-hover: #c40000;
+  --color-on-accent: #ffffff;
+
+  /* The exact logo colors, only for the logo itself (LogoMark.jsx, the favicon). They stay the
+     same in dark mode, on a white plate (logo-paper), so the logo always looks like the logo. */
+  --color-logo-green: #048157;
+  --color-logo-red: #fb0000;
+  --color-logo-paper: #ffffff;
 }
 
 /* dark: classes apply when <html> has the "dark" class.
    index.html sets it before the page shows, and ThemeToggle.jsx changes it. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* A navy area (the 30%): navy background and light text. Keyboard focus inside it gets a
-   saffron outline, because the usual navy outline would not show on navy, and cards inside it
-   glow white instead of navy (see .card below).
+/* A green area (the 30%): green background and white text. Inside it, keyboard focus gets a
+   white outline, because the usual green outline would not show on green, cards glow white
+   instead of green (see .card below), and small highlights like the bar under a section title
+   are white (--highlight), because red barely shows on green.
    @utility turns this into a Tailwind class, used like any other: className="surface-main". */
 @utility surface-main {
   background-color: var(--color-main);
   color: var(--color-on-main);
-  --focus-color: var(--color-accent);
+  --focus-color: var(--color-on-main);
   --card-glow: var(--color-on-main);
+  --highlight: var(--color-on-main);
 }
 
 /* card-active: while the pointer is over a card (see .card below), or for a moment after a tap
@@ -255,7 +267,7 @@
   }
 }
 
-/* A soft light that sweeps across a saffron button while the pointer is over it, from the
+/* A soft light that sweeps across a red button while the pointer is over it, from the
    start side to the end side (BUTTON_ACCENT in styles.js). The light is a ::before layer that
    waits just outside the button (overflow: hidden hides it there) and slides across on hover.
    isolation and z-index: -1 keep it above the button's color but under its text and icon.
@@ -304,74 +316,77 @@ body:has(dialog:modal) {
 @layer base {
   /* Tells the browser which colors to use for its own parts, like scrollbars and form controls.
      --circle-* are the colors in the middle of the floating background circles: on the page
-     (--circle-main, --circle-accent) and in the hero (--hero-circle-*). They are light tints,
-     so all text stays AA even with every circle behind it at once (e2e/design.spec.js).
-     --wave-middle and --wave-back are the two lighter navy waves behind the solid one at the
-     edge of each navy band (WaveDivider.jsx): see-through navy that the page shows through.
+     (--circle-main, --circle-accent) and in the hero (--hero-circle-*). On the white page they
+     are light tints. In the green hero they may never make the green lighter, because white
+     text on green is only just above AA: the red glow and the dark green shade both make it a
+     little darker. The red glow stays faint, because red over green turns brown. So all text
+     stays AA even with every circle behind it at once (e2e/design.spec.js).
+     --wave-middle and --wave-back are the two lighter green waves behind the solid one at the
+     edge of each green band (WaveDivider.jsx): see-through green that the page shows through.
      --card-glow is the color of the glow around a card on hover (see .card). */
   :root {
     color-scheme: light;
     --wave-middle: color-mix(in oklab, var(--color-main) 70%, transparent);
     --wave-back: color-mix(in oklab, var(--color-main) 40%, transparent);
-    --circle-main: color-mix(in oklab, var(--color-main) 10%, transparent);
-    --circle-accent: color-mix(in oklab, var(--color-accent) 24%, transparent);
+    --circle-main: color-mix(in oklab, var(--color-main) 14%, transparent);
+    --circle-accent: color-mix(in oklab, var(--color-accent) 12%, transparent);
     --hero-circle-accent: color-mix(
       in oklab,
-      var(--color-accent) 18%,
+      var(--color-accent) 16%,
       transparent
     );
-    --hero-circle-light: color-mix(
+    --hero-circle-shade: color-mix(
       in oklab,
-      var(--color-on-main) 14%,
+      var(--color-black) 30%,
       transparent
     );
     --card-glow: var(--color-main-ink);
     --tour-dim: color-mix(in oklab, var(--color-black) 60%, transparent);
   }
 
-  /* Dark mode keeps the same 60-30-10 split: a near-black navy page, a lighter navy for
-     the 30%, and the same saffron. Tailwind's color classes read these variables,
+  /* Dark mode keeps the same 60-30-10 split: a near-black page with a hint of green, a green
+     that is lighter than the page for the 30% (kept deep, so white text on it is 8:1 and the
+     bands don't glare), and the same red. Tailwind's color classes read these variables,
      so bg-canvas, text-ink and the others switch on their own, with no dark: classes. */
   :root.dark {
     color-scheme: dark;
-    --color-canvas: #0b1222;
-    --color-surface: #131c31;
-    --color-ink: #e9edf4;
-    --color-muted: #a3adc0;
-    --color-line: #2a3652;
-    --color-main: #1b2f56;
-    --color-main-hover: #233b68;
-    --color-on-main: #f4f6fa;
-    --color-main-ink: #a9c1ee;
-    --color-main-soft: #1a2540;
-    --color-accent-hover: #ffc444;
-    /* On the near-black page, see-through navy would look darker than the band, so the
-       waves behind it are a lighter navy: the band's navy mixed with the light blue of
-       --color-main-ink. The navy circles need much more color to show, and the light text
-       needs softer saffron and white behind it. */
+    --color-canvas: #08130e;
+    --color-surface: #0f1d17;
+    --color-ink: #e7f0eb;
+    --color-muted: #a2b4ab;
+    --color-line: #24362d;
+    --color-main: #0b5a3e;
+    --color-main-hover: #0d6b49;
+    --color-on-main: #f3f8f5;
+    --color-main-ink: #7fd6ab;
+    --color-main-soft: #163528;
+    /* On the near-black page, see-through green would look darker than the band, so the
+       waves behind it are a lighter green: the band's green mixed with the light green of
+       --color-main-ink. The green circles need more color to show on the dark page, but
+       not so much that the light grey text loses contrast. */
     --wave-middle: color-mix(
       in oklab,
       var(--color-main) 70%,
       var(--color-main-ink)
     );
     --wave-back: color-mix(in oklab, var(--color-main-ink) 22%, transparent);
-    --circle-main: color-mix(in oklab, var(--color-main) 75%, transparent);
-    --circle-accent: color-mix(in oklab, var(--color-accent) 9%, transparent);
+    --circle-main: color-mix(in oklab, var(--color-main) 55%, transparent);
+    --circle-accent: color-mix(in oklab, var(--color-accent) 12%, transparent);
     --hero-circle-accent: color-mix(
       in oklab,
       var(--color-accent) 14%,
       transparent
     );
-    --hero-circle-light: color-mix(
+    --hero-circle-shade: color-mix(
       in oklab,
-      var(--color-on-main) 10%,
+      var(--color-black) 35%,
       transparent
     );
     --tour-dim: color-mix(in oklab, var(--color-black) 70%, transparent);
   }
 
-  /* A clear outline around whatever has keyboard focus: navy on light backgrounds,
-     light blue in dark mode, saffron inside navy areas (see surface-main above). */
+  /* A clear outline around whatever has keyboard focus: green on light backgrounds,
+     light green in dark mode, white inside green areas (see surface-main above). */
   :focus-visible {
     outline: 2px solid var(--focus-color, var(--color-main-ink));
     outline-offset: 2px;
@@ -526,8 +541,8 @@ body:has(dialog:modal) {
    same: tapReaction.js sets data-tapped on the card for a moment.
    The glow is a shadow drawn once on a ::before layer that only fades in (animating the card's
    own box-shadow would redraw it on every frame), and the card only moves with translate and
-   rotate, so phones animate it smoothly. Its color is --card-glow: navy on the page (light blue
-   in dark mode) and white inside a navy band. People who ask for less motion still see the
+   rotate, so phones animate it smoothly. Its color is --card-glow: green on the page (light green
+   in dark mode) and white inside a green band. People who ask for less motion still see the
    glow, but nothing moves. */
 @layer components {
   .card {
@@ -583,7 +598,7 @@ body:has(dialog:modal) {
 }
 
 /* The first-visit tour's spotlight (TourGuide.jsx): a clear box over the element of the step,
-   with a saffron ring. Its very wide shadow (--tour-dim, set in @layer base above) dims the
+   with a red ring. Its very wide shadow (--tour-dim, set in @layer base above) dims the
    rest of the screen. Under the pointer, or for a moment after a tap (tapReaction.js), a
    second ring glows around it. People who ask for less motion see the ring at once. */
 @layer components {
@@ -652,7 +667,7 @@ body:has(dialog:modal) {
     );
   }
 
-  /* The waves at the edges of the navy bands (WaveDivider.jsx). A layer is twice as wide as the
+  /* The waves at the edges of the green bands (WaveDivider.jsx). A layer is twice as wide as the
      screen and draws the same wave twice, so sliding it left by half its width (one screen)
      brings back exactly the picture it started from, and the loop never jumps. --wave-time is
      how long one slide takes. wave-swell stretches the layer up and down from the band's edge

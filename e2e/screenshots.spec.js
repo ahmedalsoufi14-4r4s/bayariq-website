@@ -4,7 +4,7 @@ import { openSite, products, texts, waitForFonts } from './helpers.js'
 // The design check from CLAUDE.md ("Checks before finishing"): the whole page, the open chat
 // and one tour step, on a phone in Arabic and on a desktop in English, in light and dark
 // mode. screenshots/ is git-ignored; look at them after every design change. Is the 60-30-10
-// split visible, and is saffron rare and on the right things?
+// split visible, and is red rare and on the right things?
 const SCREENS = [
   { width: 360, language: 'ar' },
   { width: 1280, language: 'en' },
