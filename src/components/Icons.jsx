@@ -135,15 +135,6 @@ export function ClockIcon({ className }) {
   )
 }
 
-// A circle with a line through it, for "out of stock".
-export function NoSymbolIcon({ className }) {
-  return (
-    <Icon className={className}>
-      <path d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-    </Icon>
-  )
-}
-
 // An exclamation mark in a circle, for the error message and warnings.
 export function AlertIcon({ className }) {
   return (
@@ -153,18 +144,33 @@ export function AlertIcon({ className }) {
   )
 }
 
-// Category icons, drawn for this site in the same outline style as the Heroicons above.
-// The "icon" field in categories.json names one of them.
-
-export function CarrotIcon({ className }) {
+export function TruckIcon({ className }) {
   return (
     <Icon className={className}>
-      <path d="M11.2 8.8a2.8 2.8 0 0 1 4 4l-11.1 7.5c-.5.3-1-.2-.7-.7Z" />
-      <path d="M7.4 14.7l1.3 1.3M9.3 11.8l1.6 1.6" />
-      <path d="M15.2 8.8 18.5 5.5M15.2 8.8c.3-1.8 0-3.2-1-4.3M15.2 8.8c1.8-.3 3.2 0 4.3 1" />
+      <path d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
     </Icon>
   )
 }
+
+export function PhotoIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+    </Icon>
+  )
+}
+
+export function ShareIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+    </Icon>
+  )
+}
+
+// Category icons: drawn for this site in the same outline style as the Heroicons above, except
+// the bulb, the mobile phone, the puzzle and the gift, which are Heroicons.
+// The "icon" field in categories.json names one of them.
 
 export function MilkIcon({ className }) {
   return (
@@ -172,15 +178,6 @@ export function MilkIcon({ className }) {
       <path d="M9.5 2.75h5v2.5h-5z" />
       <path d="M9.5 5.25 7.2 8.6a2 2 0 0 0-.45 1.27v9.63a1.75 1.75 0 0 0 1.75 1.75h7a1.75 1.75 0 0 0 1.75-1.75V9.87a2 2 0 0 0-.45-1.27L14.5 5.25" />
       <path d="M12 13.5c-1.2 1.4-1.75 2.3-1.75 3a1.75 1.75 0 0 0 3.5 0c0-.7-.55-1.6-1.75-3Z" />
-    </Icon>
-  )
-}
-
-export function BreadIcon({ className }) {
-  return (
-    <Icon className={className}>
-      <path d="M6.5 20.25h11a1 1 0 0 0 1-1v-8.1a3.75 3.75 0 0 0-1.5-6.9H7a3.75 3.75 0 0 0-1.5 6.9v8.1a1 1 0 0 0 1 1Z" />
-      <path d="m9.5 12.5 1.5-1.5M13 15.5l1.5-1.5" />
     </Icon>
   )
 }
@@ -215,13 +212,153 @@ export function SprayIcon({ className }) {
   )
 }
 
+export function SnowflakeIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9" />
+      <path d="M9.75 4.75 12 7l2.25-2.25M9.75 19.25 12 17l2.25 2.25" />
+    </Icon>
+  )
+}
+
+export function CandyIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M8 12a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z" />
+      <path d="M8.4 10.3 3.5 8v8l4.9-2.3M15.6 10.3 20.5 8v8l-4.9-2.3" />
+      <path d="M10.5 12.75c.9.6 2.1-.6 3 0" />
+    </Icon>
+  )
+}
+
+export function DropIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 3.25c-3.2 3.9-5.25 6.9-5.25 9.75a5.25 5.25 0 0 0 10.5 0c0-2.85-2.05-5.85-5.25-9.75Z" />
+      <path d="M9.5 13.25A2.5 2.5 0 0 0 12 15.75" />
+    </Icon>
+  )
+}
+
+export function MugIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M5.25 8.75h10.5v8a3 3 0 0 1-3 3h-4.5a3 3 0 0 1-3-3v-8Z" />
+      <path d="M15.75 10.5h1.5a2.25 2.25 0 0 1 0 4.5h-1.5" />
+      <path d="M8.75 3.75c-.6.9.6 1.6 0 2.5M12.25 3.75c-.6.9.6 1.6 0 2.5" />
+    </Icon>
+  )
+}
+
+export function MortarIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M4 11h16M5.25 11c0 3.2 1.6 5.6 4 6.6v1.9c0 .41.34.75.75.75h4a.75.75 0 0 0 .75-.75v-1.9c2.4-1 4-3.4 4-6.6" />
+      <path d="m12.75 11 4.5-7.25" />
+    </Icon>
+  )
+}
+
+export function LotionIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M8.25 9.75h7.5a1.5 1.5 0 0 1 1.5 1.5v8a2 2 0 0 1-2 2h-6.5a2 2 0 0 1-2-2v-8a1.5 1.5 0 0 1 1.5-1.5Z" />
+      <path d="M10.5 9.75V7.5h3v2.25M12 7.5V4.25M9 4.25h4.25a1.75 1.75 0 0 1 1.75 1.75" />
+      <path d="M9.75 14.25h4.5" />
+    </Icon>
+  )
+}
+
+export function BabyBottleIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M9 8.75h6v9.75a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V8.75Z" />
+      <path d="M8.25 6.5h7.5v2.25h-7.5z" />
+      <path d="M10.5 6.5c0-1.4.5-1.7.5-2.5a1 1 0 0 1 2 0c0 .8.5 1.1.5 2.5" />
+      <path d="M12.75 12H15M12.75 15H15" />
+    </Icon>
+  )
+}
+
+export function RollIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M7.25 4.25h9.5c1.4 0 2.5 1.8 2.5 4v11.5l-2-1.25-2 1.25-2-1.25-2 1.25V8.25" />
+      <path d="M4.75 8.25c0-2.2 1.1-4 2.5-4s2.5 1.8 2.5 4-1.1 4-2.5 4-2.5-1.8-2.5-4Z" />
+      <path d="M7.25 12.25h4" />
+    </Icon>
+  )
+}
+
+export function PotIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M5.25 10.25h13.5v7a3 3 0 0 1-3 3h-7.5a3 3 0 0 1-3-3v-7Z" />
+      <path d="M5.25 13h-1.5M18.75 13h1.5M4.5 10.25h15" />
+      <path d="M7 10.25c.3-2.3 2.3-4 5-4s4.7 1.7 5 4M12 6.25v-1.5" />
+    </Icon>
+  )
+}
+
+export function BulbIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+    </Icon>
+  )
+}
+
+export function MobileIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+    </Icon>
+  )
+}
+
+export function PuzzleIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 0 1-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 0 0 .657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 0 1-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 0 0 5.427-.63 48.05 48.05 0 0 0 .582-4.717.532.532 0 0 0-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 0 0 .658-.663 48.422 48.422 0 0 0-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 0 1-.61-.58v0Z" />
+    </Icon>
+  )
+}
+
+export function ShirtIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M8.25 3.75 3.75 6.5l1.75 4 2-.9v10.15c0 .28.22.5.5.5h8a.5.5 0 0 0 .5-.5V9.6l2 .9 1.75-4-4.5-2.75a3.75 3.75 0 0 1-7.5 0Z" />
+    </Icon>
+  )
+}
+
+export function GiftIcon({ className }) {
+  return (
+    <Icon className={className}>
+      <path d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+    </Icon>
+  )
+}
+
 const CATEGORY_ICONS = {
-  carrot: CarrotIcon,
   milk: MilkIcon,
-  bread: BreadIcon,
-  jar: JarIcon,
+  snowflake: SnowflakeIcon,
   cup: CupIcon,
+  candy: CandyIcon,
+  jar: JarIcon,
+  drop: DropIcon,
+  mug: MugIcon,
+  mortar: MortarIcon,
   spray: SprayIcon,
+  lotion: LotionIcon,
+  'baby-bottle': BabyBottleIcon,
+  roll: RollIcon,
+  pot: PotIcon,
+  bulb: BulbIcon,
+  phone: MobileIcon,
+  puzzle: PuzzleIcon,
+  shirt: ShirtIcon,
+  gift: GiftIcon,
 }
 
 // The icon a category names in categories.json. An unknown name (for example a typo)

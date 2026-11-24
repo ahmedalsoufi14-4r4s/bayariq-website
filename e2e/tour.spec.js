@@ -1,8 +1,7 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import {
   findLowContrastText,
   openSite,
-  products,
   texts,
   tourSteps,
   waitForFonts,
@@ -14,10 +13,8 @@ const t = texts.ar
 // empty storage: a first visit, so the tour opens by itself.
 test.use({ storageState: { cookies: [], origins: [] } })
 
-// The steps the tour shows: "Add to cart" only when a product is in stock.
-const steps = tourSteps.filter(
-  (step) => step.id !== 'add' || products.some((product) => product.inStock),
-)
+// The tour waits for the first products, so every step has its element, "Add to cart" too.
+const steps = tourSteps
 const SPOTLIGHT_PADDING = 8
 
 function tour(page, language = 'ar') {

@@ -1,8 +1,10 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import { buildAnswer } from '../src/lib/chatAnswers.js'
 import { BRANCH_TOPICS, TOPICS } from '../src/lib/chatQuestions.js'
 import { fillIn } from '../src/lib/text.js'
 import {
+  categories,
+  hiddenBranches,
   offers,
   openSite,
   products,
@@ -260,15 +262,15 @@ test('typed questions are answered in Arabic, and in English after the language 
 test('"do you have X?" shows the product, and its Add to cart button fills the cart', async ({
   page,
 }) => {
-  const product = products.find((item) => item.inStock)
+  const [product] = products
   await page.goto('./')
   await openChat(page)
 
-  await askTyped(page, `هل عندكم ${product.name_ar}؟`)
+  await askTyped(page, `هل عندكم ${product.name}؟`)
   await expect(answerText(page, t.chat.products)).toBeVisible()
   await chatLog(page)
     .getByRole('button', {
-      name: `${t.cart.add}: ${product.name_ar}`,
+      name: `${t.cart.add}: ${product.name}`,
       exact: true,
     })
     .click()
@@ -277,7 +279,7 @@ test('"do you have X?" shows the product, and its Add to cart button fills the c
     page.getByRole('button', { name: t.cart.open }),
   ).toHaveAccessibleName(`${t.cart.open} 1`)
   await expect(page.getByRole('status')).toHaveText(
-    `${t.cart.added} ${product.name_ar} (1)`,
+    `${t.cart.added} ${product.name} (1)`,
   )
   await expect(chatLog(page).getByText(`${t.cart.inCart} 1`)).toBeVisible()
 
@@ -296,7 +298,117 @@ test('"do you have X?" shows the product, and its Add to cart button fills the c
     .click()
   const drawer = page.getByRole('dialog', { name: t.cart.title })
   await expect(drawer).toBeVisible()
-  await expect(drawer.getByText(product.name_ar, { exact: true })).toBeVisible()
+  await expect(drawer.getByText(product.name, { exact: true })).toBeVisible()
+})
+
+test('the branch picker offers the three branches, and each answer has a button to message that branch', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await openChat(page)
+  expect(store.branches).toHaveLength(3)
+
+  for (const branch of store.branches) {
+    await chip(page, t.chat.topics.contact).click()
+    await expect(newestChips(page)).toHaveCount(3)
+    await chip(page, branchLabel(branch)).click()
+    await expect(
+      chatLog(page)
+        .getByRole('link', {
+          name: fillIn(t.chat.messageBranch, { branch: branchLabel(branch) }),
+        })
+        .last(),
+    ).toHaveAttribute('href', `https://wa.me/${branch.whatsapp}`)
+    await chip(page, t.chat.moreQuestions).click()
+  }
+
+  // The hidden branch is not a branch here: its name is not understood.
+  await askTyped(page, hiddenBranches[0].district_ar)
+  await expect(answerText(page, t.chat.unknown)).toBeVisible()
+})
+
+test('delivery answers give the zones, the minimum, free delivery and the hours', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await openChat(page)
+  await askTyped(page, `هل فرع ${store.branches[0].district_ar} يوصّل؟`)
+
+  for (const line of [
+    'حتى 3 كم من الفرع: 5 ر.س',
+    'من 3 إلى 5 كم: 10 ر.س',
+    'أقل طلب للتوصيل: 50 ر.س',
+    'توصيل مجاني للطلبات من 200 ر.س فأكثر',
+  ]) {
+    await expect(chatLog(page).getByText(line, { exact: true })).toBeVisible()
+  }
+  await expect(
+    chatLog(page).getByText(fillIn(t.chat.deliveryTooFar, { km: 5 })),
+  ).toBeVisible()
+})
+
+test('offers and social accounts are answered with "coming soon", in both languages', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await openChat(page)
+  await chip(page, t.chat.topics.offers).click()
+  await expect(answerText(page, t.chat.noOffers)).toBeVisible()
+  await expect(chatLog(page)).toContainText('العروض: قريبًا')
+  await askTyped(page, 'وش حساباتكم في انستقرام؟')
+  await expect(answerText(page, t.chat.social)).toBeVisible()
+
+  await page.getByRole('button', { name: t.switchLanguage }).click()
+  await expect(chatLog(page, 'en')).toContainText('Offers: coming soon')
+  await expect(chatLog(page, 'en')).toContainText(
+    'Our social accounts: coming soon',
+  )
+})
+
+test('the featured products are the chat’s product examples', async ({
+  page,
+}) => {
+  await page.goto('./')
+  await openChat(page)
+  await chip(page, t.chat.topics.featured).click()
+  await expect(answerText(page, t.chat.featured)).toBeVisible()
+  await expect(chatLog(page).getByRole('listitem')).toHaveCount(5)
+  for (const product of products.slice(0, 5)) {
+    await expect(
+      chatLog(page).getByText(product.name, { exact: true }),
+    ).toBeVisible()
+  }
+
+  // The example in the greeting, in both languages, finds the first featured product.
+  expect(t.chat.greeting).toContain('هل عندكم حليب المراعي؟')
+  await askTyped(page, 'هل عندكم حليب المراعي؟')
+  await expect(answerText(page, t.chat.products)).toBeVisible()
+  await expect(chatLog(page).getByRole('listitem').nth(5)).toContainText(
+    products[0].name,
+  )
+  await page.getByRole('button', { name: t.switchLanguage }).click()
+  expect(texts.en.chat.greeting).toContain('Do you have Almarai milk?')
+  await askTyped(page, 'Do you have Almarai milk?', 'en')
+  await expect(answerText(page, texts.en.chat.products, 'en')).toBeVisible()
+})
+
+test('only questions about products load the categories', async ({ page }) => {
+  const files = []
+  page.on('request', (request) => {
+    if (request.url().includes('/data/products/')) files.push(request.url())
+  })
+  await page.goto('./')
+  await openChat(page)
+  await askTyped(page, 'متى تفتحون؟')
+  await expect(answerText(page, t.chat.whichBranch)).toBeVisible()
+  await askTyped(page, 'شكرا')
+  await expect(answerText(page, t.chat.thanks)).toBeVisible()
+  expect(files).toEqual([])
+
+  // A product from the last category is found too.
+  await askTyped(page, 'هل عندكم بالون؟')
+  await expect(answerText(page, t.chat.products)).toBeVisible()
+  expect(files).toHaveLength(categories.length)
 })
 
 for (const width of [360, 1280]) {
@@ -340,11 +452,9 @@ for (const width of [360, 1280]) {
     const product = products[0]
     await page
       .locator('#products')
-      .getByRole('button', { name: product.name_ar, exact: true })
+      .getByRole('button', { name: product.name, exact: true })
       .click()
-    await expect(
-      page.getByRole('dialog', { name: product.name_ar }),
-    ).toBeVisible()
+    await expect(page.getByRole('dialog', { name: product.name })).toBeVisible()
     expect(await drawnOnTop(page, buttonBox, 'dialog:modal')).toBe(true)
   })
 }
@@ -355,7 +465,7 @@ test('at 360px every control in the chat is at least 44px for fingers', async ({
   await page.setViewportSize({ width: 360, height: 800 })
   await page.goto('./')
   await openChat(page)
-  await askTyped(page, products[0].name_ar)
+  await askTyped(page, products[0].name)
   const panel = chatPanel(page)
   await expect(answerText(page, t.chat.products)).toBeVisible()
   // Some text in the box, so its clear button shows and is measured too.
@@ -475,7 +585,7 @@ test.describe('with motion allowed', () => {
     await page.goto('./')
     await openChat(page)
     const panel = chatPanel(page)
-    await askTyped(page, products[0].name_ar)
+    await askTyped(page, products[0].name)
     await expect(answerText(page, t.chat.products)).toBeVisible()
     // Wait until the panel and the messages have finished moving in.
     await expect

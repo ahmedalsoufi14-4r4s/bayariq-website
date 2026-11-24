@@ -3,78 +3,138 @@
   "name_en": "Aswaq Bayariq Al Khair",
   "website": "https://ahmedalsoufi14-4r4s.github.io/bayariq-website/",
   "social": "NEEDS-AHMED",
+  "delivery": {
+    "zones": [
+      { "maxKm": 3, "fee": 5 },
+      { "maxKm": 5, "fee": 10 }
+    ],
+    "minimumOrder": 50,
+    "freeFrom": 200,
+    "hours": [
+      {
+        "days_ar": "من السبت إلى الخميس",
+        "days_en": "Saturday to Thursday",
+        "time_ar": "9 صباحًا – 12 منتصف الليل",
+        "time_en": "9 AM – 12 AM"
+      },
+      {
+        "days_ar": "الجمعة",
+        "days_en": "Friday",
+        "time_ar": "1:30 ظهرًا – 12 منتصف الليل",
+        "time_en": "1:30 PM – 12 AM"
+      }
+    ]
+  },
   "branches": [
     {
-      "id": "al-hamdaniyah",
-      "name_ar": "أسواق بيارق الخير",
-      "name_en": "Aswaq Bayariq Al Khair",
-      "district_ar": "الحمدانية",
-      "district_en": "Al Hamdaniyah",
-      "phone": "NEEDS-AHMED",
-      "whatsapp": "NEEDS-AHMED",
-      "hours": "NEEDS-AHMED",
-      "openingHours": "NEEDS-AHMED",
-      "address_ar": "NEEDS-AHMED",
-      "address_en": "NEEDS-AHMED",
-      "mapsUrl": "NEEDS-AHMED",
-      "mapsEmbedUrl": "NEEDS-AHMED",
-      "delivers": "NEEDS-AHMED",
-      "delivery_ar": "NEEDS-AHMED",
-      "delivery_en": "NEEDS-AHMED"
-    },
-    {
-      "id": "kilo-14",
-      "name_ar": "أسواق بيارق الخير",
-      "name_en": "Aswaq Bayariq Al Khair",
-      "district_ar": "كيلو 14",
-      "district_en": "Kilo 14",
-      "phone": "NEEDS-AHMED",
-      "whatsapp": "NEEDS-AHMED",
-      "hours": "NEEDS-AHMED",
-      "openingHours": "NEEDS-AHMED",
-      "address_ar": "NEEDS-AHMED",
-      "address_en": "NEEDS-AHMED",
-      "mapsUrl": "NEEDS-AHMED",
-      "mapsEmbedUrl": "NEEDS-AHMED",
-      "delivers": "NEEDS-AHMED",
-      "delivery_ar": "NEEDS-AHMED",
-      "delivery_en": "NEEDS-AHMED"
-    },
-    {
       "id": "al-mahamid",
-      "name_ar": "أسواق بيارق الخير",
+      "active": true,
+      "name_ar": "أسواق بيارق الخير الاقتصادية",
       "name_en": "Aswaq Bayariq Al Khair",
       "district_ar": "المحاميد",
       "district_en": "Al Mahamid",
-      "phone": "NEEDS-AHMED",
-      "whatsapp": "NEEDS-AHMED",
-      "hours": "NEEDS-AHMED",
-      "openingHours": "NEEDS-AHMED",
-      "address_ar": "NEEDS-AHMED",
-      "address_en": "NEEDS-AHMED",
-      "mapsUrl": "NEEDS-AHMED",
-      "mapsEmbedUrl": "NEEDS-AHMED",
-      "delivers": "NEEDS-AHMED",
-      "delivery_ar": "NEEDS-AHMED",
-      "delivery_en": "NEEDS-AHMED"
+      "phone": "+966 53 532 0640",
+      "whatsapp": "966535320640",
+      "hours": [
+        {
+          "days_ar": "كل أيام الأسبوع",
+          "days_en": "Every day",
+          "time_ar": "24 ساعة",
+          "time_en": "24 hours"
+        }
+      ],
+      "openingHours": ["Mo-Su 00:00-23:59"],
+      "address_ar": "طريق المحاميد، أمام عيادة ابتسامة العائلة، جدة 22624",
+      "address_en": "Al Mahamid Road, in front of Family Smile Clinic, Jeddah 22624",
+      "mapsUrl": "https://maps.app.goo.gl/Nx1yPExnFx49q86i8",
+      "latitude": 21.4452077,
+      "longitude": 39.3938651,
+      "delivers": true,
+      "photo": "images/al-mahamid-storefront.webp"
+    },
+    {
+      "id": "kilo-14",
+      "active": true,
+      "name_ar": "أسواق بيارق الخير الاقتصادية",
+      "name_en": "Aswaq Bayariq Al Khair",
+      "district_ar": "كيلو 14",
+      "district_en": "Kilo 14",
+      "phone": "+966 53 532 7437",
+      "whatsapp": "966535327437",
+      "hours": [
+        {
+          "days_ar": "من السبت إلى الخميس",
+          "days_en": "Saturday to Thursday",
+          "time_ar": "5:30 صباحًا – 2 صباحًا",
+          "time_en": "5:30 AM – 2 AM"
+        },
+        {
+          "days_ar": "الجمعة",
+          "days_en": "Friday",
+          "time_ar": "1:30 ظهرًا – 2 صباحًا",
+          "time_en": "1:30 PM – 2 AM"
+        }
+      ],
+      "openingHours": ["Sa-Su 05:30-02:00", "Mo-Th 05:30-02:00", "Fr 13:30-02:00"],
+      "address_ar": "كيلو 14، العين العزيزية، جدة 22375",
+      "address_en": "Kilo 14, Al Ain Al Aziziyah, Jeddah 22375",
+      "mapsUrl": "https://maps.app.goo.gl/6kNngoRJ6NRgvMdf7",
+      "latitude": 21.457299,
+      "longitude": 39.319375,
+      "delivers": true,
+      "photo": "NEEDS-AHMED"
+    },
+    {
+      "id": "al-hamdaniyah",
+      "active": true,
+      "name_ar": "أسواق بيارق الخير الاقتصادية",
+      "name_en": "Aswaq Bayariq Al Khair",
+      "district_ar": "الحمدانية",
+      "district_en": "Al Hamdaniyah",
+      "phone": "+966 53 532 5463",
+      "whatsapp": "966535325463",
+      "hours": [
+        {
+          "days_ar": "كل أيام الأسبوع",
+          "days_en": "Every day",
+          "time_ar": "24 ساعة",
+          "time_en": "24 hours"
+        }
+      ],
+      "openingHours": ["Mo-Su 00:00-23:59"],
+      "address_ar": "حي الكوثر، جدة 22375",
+      "address_en": "Al Kawthar District, Jeddah 22375",
+      "mapsUrl": "https://maps.app.goo.gl/MKZ32QJumYYQQCve6",
+      "latitude": 21.7280607,
+      "longitude": 39.1969206,
+      "delivers": true,
+      "photo": "NEEDS-AHMED"
     },
     {
       "id": "al-harazat",
-      "name_ar": "بيارق التوفيق",
-      "name_en": "Bayariq Al Tawfiq",
+      "active": false,
+      "name_ar": "أسواق بيارق التوفيق التجارية",
+      "name_en": "Aswaq Bayariq Al Tawfiq",
       "district_ar": "الحرازات",
       "district_en": "Al Harazat",
-      "phone": "NEEDS-AHMED",
-      "whatsapp": "NEEDS-AHMED",
-      "hours": "NEEDS-AHMED",
-      "openingHours": "NEEDS-AHMED",
-      "address_ar": "NEEDS-AHMED",
-      "address_en": "NEEDS-AHMED",
-      "mapsUrl": "NEEDS-AHMED",
-      "mapsEmbedUrl": "NEEDS-AHMED",
-      "delivers": "NEEDS-AHMED",
-      "delivery_ar": "NEEDS-AHMED",
-      "delivery_en": "NEEDS-AHMED"
+      "phone": "+966 53 664 2990",
+      "whatsapp": "966536642990",
+      "hours": [
+        {
+          "days_ar": "كل أيام الأسبوع",
+          "days_en": "Every day",
+          "time_ar": "24 ساعة",
+          "time_en": "24 hours"
+        }
+      ],
+      "openingHours": ["Mo-Su 00:00-23:59"],
+      "address_ar": "الحرازات، مقابل قصر خزام، جدة 22394",
+      "address_en": "Al Harazat, opposite Khuzam Palace, Jeddah 22394",
+      "mapsUrl": "https://maps.app.goo.gl/Xwnk4RJBQj9dhRXC9",
+      "latitude": 21.4779504,
+      "longitude": 39.3656334,
+      "delivers": false,
+      "photo": "NEEDS-AHMED"
     }
   ]
 }

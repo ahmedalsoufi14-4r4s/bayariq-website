@@ -1,5 +1,4 @@
 import categories from '../data/categories.json'
-import { useLanguage } from '../i18n/LanguageContext.js'
 import { CategoryIcon } from './Icons.jsx'
 import Photo from './Photo.jsx'
 
@@ -9,13 +8,12 @@ const HOVER_ZOOM =
 
 // Shows the product photo, or the category icon until a photo is added.
 function ProductImage({ product, className = '' }) {
-  const { localize } = useLanguage()
   const category = categories.find((item) => item.id === product.category)
 
   return (
     <Photo
       src={product.image}
-      alt={localize(product, 'name')}
+      alt={product.name}
       width={400}
       height={400}
       className={`aspect-square w-full object-cover ${HOVER_ZOOM} ${className}`}

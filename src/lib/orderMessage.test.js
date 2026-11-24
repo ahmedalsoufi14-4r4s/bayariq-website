@@ -13,24 +13,22 @@ const labels = {
   method: 'Order type:',
   pickup: 'Pickup from the store',
   delivery: 'Delivery',
+  deliveryFee: 'Delivery fee:',
+  freeDelivery: 'Free',
+  feeToConfirm: '{fees} depending on distance (the branch confirms)',
+  distance: 'Distance to the branch: about {distance} km',
+  totalWithDelivery: 'Total with delivery:',
+  location: 'My location on the map:',
   time: 'Preferred time:',
   notes: 'Notes:',
 }
 
-const milk = {
-  name_ar: 'حليب',
-  name_en: 'Milk',
-  unit_ar: '1 لتر',
-  unit_en: '1 L',
-  price: 4.5,
-}
-const bread = {
-  name_ar: 'خبز',
-  name_en: 'Bread',
-  unit_ar: 'كيس',
-  unit_en: 'Bag',
-  price: null,
-}
+const units = { piece: 'piece', kg: 'kg' }
+const milk = { name: 'حليب طازج 1 لتر', unit: 'piece', price: 4.5 }
+const sweets = { name: 'حلويات', unit: 'kg', price: null }
+
+// Product names sit between two invisible marks that keep them right to left.
+const name = (product) => `\u2068${product.name}\u2069`
 
 const fullCustomer = {
   name: ' Sara ',
@@ -52,13 +50,15 @@ describe('buildOrderMessage', () => {
     const message = buildOrderMessage({
       lines: [
         { product: milk, quantity: 2 },
-        { product: bread, quantity: 1 },
+        { product: sweets, quantity: 1 },
       ],
       extraItems: ' Toothpaste ',
       customer: fullCustomer,
       branch: 'Kilo 14 branch',
+      delivery: null,
       language: 'en',
       labels,
+      units,
       currency: 'SAR',
     })
 
@@ -67,8 +67,8 @@ describe('buildOrderMessage', () => {
         'Hello, I would like to order:',
         '',
         'Items:',
-        '- Milk (1 L) × 2 = 9 SAR',
-        '- Bread (Bag) × 1',
+        `- ${name(milk)} (piece) × 2 = 9 SAR`,
+        `- ${name(sweets)} (kg) × 1`,
         '',
         'Other items not on the list:',
         'Toothpaste',
@@ -85,28 +85,32 @@ describe('buildOrderMessage', () => {
     )
   })
 
-  it('uses the product names of the chosen language', () => {
+  it('uses the texts and the currency of the chosen language', () => {
     const message = buildOrderMessage({
       lines: [{ product: milk, quantity: 1 }],
       extraItems: '',
       customer: shortCustomer,
-      branch: 'Al Hamdaniyah branch',
+      branch: 'فرع الحمدانية',
+      delivery: null,
       language: 'ar',
       labels,
+      units: { piece: 'حبة', kg: 'كجم' },
       currency: 'ر.س',
     })
 
-    expect(message).toContain('- حليب (1 لتر) × 1 = 4.50 ر.س')
+    expect(message).toContain(`- ${name(milk)} (حبة) × 1 = 4.50 ر.س`)
   })
 
   it('leaves out the total when nothing has a price, and empty optional fields', () => {
     const message = buildOrderMessage({
-      lines: [{ product: bread, quantity: 3 }],
+      lines: [{ product: sweets, quantity: 3 }],
       extraItems: '',
       customer: shortCustomer,
       branch: 'Al Hamdaniyah branch',
+      delivery: null,
       language: 'en',
       labels,
+      units,
       currency: 'SAR',
     })
 
@@ -115,7 +119,7 @@ describe('buildOrderMessage', () => {
         'Hello, I would like to order:',
         '',
         'Items:',
-        '- Bread (Bag) × 3',
+        `- ${name(sweets)} (kg) × 3`,
         '',
         'Branch: Al Hamdaniyah branch',
         'Name: Sara',
@@ -130,13 +134,70 @@ describe('buildOrderMessage', () => {
       extraItems: 'Toothpaste',
       customer: shortCustomer,
       branch: 'Al Hamdaniyah branch',
+      delivery: null,
       language: 'en',
       labels,
+      units,
       currency: 'SAR',
     })
 
     expect(message).not.toContain('Items:')
     expect(message).toContain('Other items not on the list:\nToothpaste')
+  })
+})
+
+describe('buildOrderMessage: delivery', () => {
+  // 20 milks are 90 SAR.
+  function deliveryMessage(delivery) {
+    return buildOrderMessage({
+      lines: [{ product: milk, quantity: 20 }],
+      extraItems: '',
+      customer: fullCustomer,
+      branch: 'Kilo 14 branch',
+      delivery: { fees: '5 or 10 SAR', ...delivery },
+      language: 'en',
+      labels,
+      units,
+      currency: 'SAR',
+    }).split('\n')
+  }
+
+  it('without a location, leaves the fee to the branch', () => {
+    const message = deliveryMessage({
+      fee: null,
+      distanceKm: null,
+      locationUrl: null,
+    })
+    expect(message).toContain(
+      'Delivery fee: 5 or 10 SAR depending on distance (the branch confirms)',
+    )
+    expect(message.join('\n')).not.toContain('My location')
+    expect(message.join('\n')).not.toContain('Total with delivery')
+  })
+
+  it('with a location, gives the fee, the total with it, the distance and the map link', () => {
+    const message = deliveryMessage({
+      fee: 10,
+      distanceKm: 4.26,
+      locationUrl: 'https://www.google.com/maps?q=21.5,39.2',
+    })
+    const start = message.indexOf('Order type: Delivery')
+    expect(message.slice(start, start + 5)).toEqual([
+      'Order type: Delivery',
+      'Delivery fee: 10 SAR',
+      'Total with delivery: 100 SAR',
+      'Distance to the branch: about 4.3 km',
+      'My location on the map: https://www.google.com/maps?q=21.5,39.2',
+    ])
+  })
+
+  it('says when delivery is free', () => {
+    const message = deliveryMessage({
+      fee: 0,
+      distanceKm: null,
+      locationUrl: null,
+    })
+    expect(message).toContain('Delivery fee: Free')
   })
 })
 

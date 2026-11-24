@@ -1,0 +1,166 @@
+{
+  "store": {
+    "ar": "أسواق بيارق الخير الاقتصادية",
+    "en": "Bayariq Al Khair Markets"
+  },
+  "currency": "SAR",
+  "pricesIncludeVat": true,
+  "updatedAt": "2026-11-22",
+  "sections": [
+    {
+      "id": "supermarket",
+      "name": {
+        "ar": "السوبر ماركت",
+        "en": "Supermarket"
+      },
+      "productCount": 16164,
+      "dataFile": "data/supermarket.json",
+      "categories": [
+        {
+          "id": "dairy",
+          "name": {
+            "ar": "ألبان وأجبان",
+            "en": "Dairy & Cheese"
+          },
+          "count": 1114
+        },
+        {
+          "id": "frozen",
+          "name": {
+            "ar": "مجمدات",
+            "en": "Frozen Food"
+          },
+          "count": 993
+        },
+        {
+          "id": "beverages",
+          "name": {
+            "ar": "مشروبات ومياه",
+            "en": "Beverages & Water"
+          },
+          "count": 1213
+        },
+        {
+          "id": "sweets",
+          "name": {
+            "ar": "حلويات وسناكس",
+            "en": "Sweets & Snacks"
+          },
+          "count": 2780
+        },
+        {
+          "id": "canned",
+          "name": {
+            "ar": "معلبات وصلصات",
+            "en": "Canned Food & Sauces"
+          },
+          "count": 1704
+        },
+        {
+          "id": "oils",
+          "name": {
+            "ar": "زيوت وسمن",
+            "en": "Oils & Ghee"
+          },
+          "count": 229
+        },
+        {
+          "id": "tea-coffee",
+          "name": {
+            "ar": "شاي وقهوة وحبوب",
+            "en": "Tea, Coffee & Grains"
+          },
+          "count": 785
+        },
+        {
+          "id": "spices",
+          "name": {
+            "ar": "بهارات وعطارة",
+            "en": "Spices & Herbs"
+          },
+          "count": 224
+        },
+        {
+          "id": "cleaning",
+          "name": {
+            "ar": "منظفات ومستلزمات المنزل",
+            "en": "Cleaning & Household"
+          },
+          "count": 1246
+        },
+        {
+          "id": "personal-care",
+          "name": {
+            "ar": "عناية شخصية وتجميل",
+            "en": "Personal Care & Beauty"
+          },
+          "count": 1337
+        },
+        {
+          "id": "baby",
+          "name": {
+            "ar": "مستلزمات الأطفال",
+            "en": "Baby Care"
+          },
+          "count": 222
+        },
+        {
+          "id": "paper",
+          "name": {
+            "ar": "ورقيات وبلاستيك",
+            "en": "Paper & Disposables"
+          },
+          "count": 1499
+        },
+        {
+          "id": "housewares",
+          "name": {
+            "ar": "أواني ومستلزمات منزلية",
+            "en": "Housewares & Kitchen"
+          },
+          "count": 1621
+        },
+        {
+          "id": "electrical",
+          "name": {
+            "ar": "أدوات كهربائية وخردوات",
+            "en": "Electrical & Hardware"
+          },
+          "count": 402
+        },
+        {
+          "id": "accessories",
+          "name": {
+            "ar": "إكسسوارات وإلكترونيات",
+            "en": "Accessories & Electronics"
+          },
+          "count": 268
+        },
+        {
+          "id": "toys",
+          "name": {
+            "ar": "ألعاب وأدوات مكتبية",
+            "en": "Toys & Stationery"
+          },
+          "count": 391
+        },
+        {
+          "id": "clothing",
+          "name": {
+            "ar": "ملابس ومفروشات",
+            "en": "Clothing & Linens"
+          },
+          "count": 58
+        },
+        {
+          "id": "gifts",
+          "name": {
+            "ar": "هدايا ومستلزمات الحفلات",
+            "en": "Gifts & Party"
+          },
+          "count": 78
+        }
+      ]
+    }
+  ]
+}

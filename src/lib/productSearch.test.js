@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { filterProducts, normalizeText } from './productSearch.js'
+import searchWords from '../data/searchWords.json'
+import {
+  filterProducts,
+  joinProducts,
+  normalizeText,
+  prepareProducts,
+} from './productSearch.js'
 
 describe('normalizeText', () => {
   it('removes Arabic diacritics and tatweel', () => {
@@ -20,55 +26,78 @@ describe('normalizeText', () => {
   })
 })
 
+describe('normalizeText: digits', () => {
+  it('keeps Arabic digits', () => {
+    expect(normalizeText('كيلو ١٤')).toBe('كيلو ١٤')
+  })
+})
+
 describe('filterProducts', () => {
-  const products = [
-    {
-      id: 'rice',
-      name_ar: 'أرز بسمتي',
-      name_en: 'Basmati rice',
-      category: 'pantry',
-    },
-    {
-      id: 'coffee',
-      name_ar: 'قهوة عربية',
-      name_en: 'Arabic coffee',
-      category: 'pantry',
-    },
-    {
-      id: 'milk',
-      name_ar: 'حليب طازج',
-      name_en: 'Fresh milk',
-      category: 'dairy',
-    },
-  ]
+  const products = prepareProducts([
+    { id: 'sugar', name: 'سكر ابيض ناعم' },
+    { id: 'eggs', name: 'بيض غذاء البركة' },
+    { id: 'rice', name: 'أرز بسمتي' },
+    { id: 'coffee', name: 'قهوة عربية المرسال' },
+    { id: 'milk', name: 'حليب المراعي طازج' },
+  ])
   const ids = (list) => list.map((product) => product.id)
 
-  it('returns every product for "all" and an empty search', () => {
-    expect(ids(filterProducts(products, 'all', ''))).toEqual([
+  it('keeps every product, in order, for an empty search', () => {
+    expect(ids(filterProducts(products, '  '))).toEqual([
+      'sugar',
+      'eggs',
       'rice',
       'coffee',
       'milk',
     ])
   })
 
-  it('keeps only the chosen category', () => {
-    expect(ids(filterProducts(products, 'pantry', ''))).toEqual([
-      'rice',
-      'coffee',
+  it('finds names however the Arabic letters are typed', () => {
+    expect(ids(filterProducts(products, 'ارز'))).toEqual(['rice'])
+    expect(ids(filterProducts(products, 'قهوه'))).toEqual(['coffee'])
+    expect(ids(filterProducts(products, 'حَليب'))).toEqual(['milk'])
+  })
+
+  it('needs every word, in any order', () => {
+    expect(ids(filterProducts(products, 'طازج حليب'))).toEqual(['milk'])
+    expect(ids(filterProducts(products, 'حليب عربية'))).toEqual([])
+  })
+
+  it('puts names with a word that starts with the search first', () => {
+    // "بيض" (eggs) is also inside "ابيض" (white).
+    expect(ids(filterProducts(products, 'بيض'))).toEqual(['eggs', 'sugar'])
+  })
+
+  it('does not mind the Arabic article', () => {
+    const list = prepareProducts([
+      { id: 'article', name: 'حليب المراعي' },
+      { id: 'bare', name: 'حليب مراعي' },
     ])
+    expect(ids(filterProducts(list, 'حليب مراعي'))).toEqual(['article', 'bare'])
   })
 
-  it('finds Arabic names however the letters are typed', () => {
-    expect(ids(filterProducts(products, 'all', 'ارز'))).toEqual(['rice'])
-    expect(ids(filterProducts(products, 'all', 'قهوه'))).toEqual(['coffee'])
-    expect(ids(filterProducts(products, 'all', 'حَليب'))).toEqual(['milk'])
+  it('understands common English words, in any letter case', () => {
+    expect(ids(filterProducts(products, 'MILK'))).toEqual(['milk'])
+    expect(ids(filterProducts(products, 'Almarai milk'))).toEqual(['milk'])
   })
+})
 
-  it('finds English names in any letter case', () => {
-    expect(ids(filterProducts(products, 'all', 'MILK'))).toEqual(['milk'])
+describe('searchWords.json', () => {
+  it('gives every typed word a word of the names', () => {
+    for (const [typed, inNames] of Object.entries(searchWords)) {
+      expect(typed.trim()).not.toBe('')
+      expect(inNames).toMatch(/^[ء-ي ]+$/)
+    }
   })
+})
 
-  it('applies the category and the search together', () => {
-    expect(ids(filterProducts(products, 'dairy', 'ارز'))).toEqual([])
+describe('joinProducts', () => {
+  it('puts the featured products first, then the categories in the order they loaded, each product once', () => {
+    const milk = { id: 'milk', featured: true }
+    const laban = { id: 'laban' }
+    const soap = { id: 'soap' }
+    expect(
+      joinProducts([milk], { cleaning: [soap], dairy: [milk, laban] }),
+    ).toEqual([milk, soap, laban])
   })
 })

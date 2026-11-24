@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import { openSite, texts } from './helpers.js'
 
 const t = texts.ar

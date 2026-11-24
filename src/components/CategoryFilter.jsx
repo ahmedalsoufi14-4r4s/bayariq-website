@@ -35,7 +35,8 @@ function placePill(pill, button) {
   pill.style.translate = `${button.offsetLeft}px ${button.offsetTop}px`
 }
 
-// A row of category buttons. On small screens the row scrolls sideways on its own.
+// The category buttons. On small screens they are one row that scrolls sideways on its own;
+// from md up there is room for them to wrap onto more rows (md:flex-wrap).
 function CategoryFilter({ selected, onSelect }) {
   const { t, localize } = useLanguage()
   const rowRef = useRef(null)
@@ -72,7 +73,7 @@ function CategoryFilter({ selected, onSelect }) {
       ref={rowRef}
       role="group"
       aria-label={t.products.categoriesLabel}
-      className="relative mt-4 flex gap-2 overflow-x-auto pb-2"
+      className="relative mt-4 flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible"
     >
       {/* left-0, not start-0: offsetLeft is always measured from the left, in both languages. */}
       <span

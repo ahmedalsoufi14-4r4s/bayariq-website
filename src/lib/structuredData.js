@@ -1,7 +1,8 @@
+import { withActiveBranches } from './branches.js'
 import { isPlaceholder } from './placeholder.js'
 
 // Builds the schema.org description that search engines read (JSON-LD):
-// the store as an Organization, and each branch as a GroceryStore that belongs to it.
+// the store as an Organization, and each active branch as a GroceryStore that belongs to it.
 // vite.config.js puts it into index.html at build time, so it always matches store.json.
 // Details that are still NEEDS-AHMED are left out instead of being published.
 export function buildStoreJsonLd(store) {
@@ -17,12 +18,13 @@ export function buildStoreJsonLd(store) {
     image,
   }
 
-  const branches = store.branches.map((branch) => {
+  const branches = withActiveBranches(store).branches.map((branch) => {
     const data = {
       '@type': 'GroceryStore',
       '@id': `${store.website}#${branch.id}`,
-      name: `${branch.name_ar} - ${branch.district_ar}`,
-      alternateName: `${branch.name_en} - ${branch.district_en}`,
+      // The full name of the branch, like its Google Maps listing.
+      name: `${branch.name_ar} - فرع ${branch.district_ar}`,
+      alternateName: `${branch.name_en} - ${branch.district_en} branch`,
       parentOrganization: { '@id': organizationId },
       url: store.website,
       image,
@@ -30,6 +32,11 @@ export function buildStoreJsonLd(store) {
         '@type': 'PostalAddress',
         addressLocality: 'جدة',
         addressCountry: 'SA',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: branch.latitude,
+        longitude: branch.longitude,
       },
     }
 

@@ -1,6 +1,13 @@
-import { existsSync, statSync } from 'node:fs'
-import { expect, test } from '@playwright/test'
-import { findLowContrastText, offers, products, texts } from './helpers.js'
+import { existsSync, readdirSync, statSync } from 'node:fs'
+import { expect, test } from './test.js'
+import { isPlaceholder } from '../src/lib/placeholder.js'
+import {
+  findLowContrastText,
+  offers,
+  products,
+  store,
+  texts,
+} from './helpers.js'
 
 const t = texts.ar
 const MAX_PHOTO_BYTES = 200 * 1024
@@ -63,25 +70,16 @@ test.describe('with motion allowed', () => {
   test('a photo shows a softly pulsing skeleton until it has loaded', async ({
     page,
   }) => {
-    const product = products.find((item) => item.image)
-    test.skip(!product, 'no product photos yet')
-    // Holds the photo back until the skeleton has been checked.
+    // Holds the hero's photo back until the skeleton has been checked.
     let releasePhoto
     const photoHeld = new Promise((resolve) => (releasePhoto = resolve))
-    await page.route(`**/${product.image}`, async (route) => {
+    await page.route('**/images/*.webp', async (route) => {
       await photoHeld
       await route.continue()
     })
-    await page.goto('./')
-    const photo = page
-      .locator('#products article')
-      .filter({
-        has: page.getByRole('heading', { name: product.name_ar, exact: true }),
-      })
-      .locator('img')
+    await page.goto('./', { waitUntil: 'commit' })
+    const photo = page.locator('#home img').first()
 
-    // Photos are lazy-loaded, so the card must be on screen before the photo is requested.
-    await photo.scrollIntoViewIfNeeded()
     await expect(photo).toHaveCSS('animation-name', 'pulse')
     releasePhoto()
     await expect(photo).toHaveCSS('animation-name', 'none')
@@ -136,10 +134,17 @@ test('keyboard focus shows a clear outline', async ({ page }) => {
   await expect(focused).toHaveCSS('outline-width', '2px')
 })
 
-test('every product and offer photo is a WebP file under 200 KB in public/', () => {
-  const photos = [...products, ...offers]
-    .map((item) => item.image)
-    .filter(Boolean)
+test('every photo of the site is a WebP file under 200 KB in public/', () => {
+  const photos = [
+    ...[...products, ...offers].map((item) => item.image).filter(Boolean),
+    ...store.branches
+      .map((branch) => branch.photo)
+      .filter((photo) => !isPlaceholder(photo)),
+    ...readdirSync(new URL('../public/images', import.meta.url)).map(
+      (file) => `images/${file}`,
+    ),
+  ]
+  expect(photos.length).toBeGreaterThan(2)
 
   for (const photo of photos) {
     const file = new URL(`../public/${photo}`, import.meta.url)
@@ -160,20 +165,17 @@ test('every photo on the page is lazy-loaded and has alt text', async ({
   }
 })
 
-test('a product photo that fails to load is replaced by the category icon', async ({
+test('a photo that fails to load is replaced: on a branch card, by "coming soon"', async ({
   page,
 }) => {
-  const product = products.find((item) => item.image)
-  test.skip(!product, 'no product photos yet')
-  await page.route(`**/${product.image}`, (route) => route.abort())
+  await page.route('**/images/*.webp', (route) => route.abort())
   await page.goto('./')
-  const card = page.locator('#products article').filter({
-    has: page.getByRole('heading', { name: product.name_ar, exact: true }),
-  })
+  const card = page.locator('#contact article').first()
 
   // Photos are lazy-loaded, so the card must be on screen before the photo is requested.
   await card.scrollIntoViewIfNeeded()
   await expect(card.locator('img')).toHaveCount(0)
+  await expect(card.getByText(t.contact.photoComingSoon)).toBeVisible()
 })
 
 test('the page only uses the font weights it loads (regular and bold)', async ({

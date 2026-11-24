@@ -3,8 +3,10 @@ import {
   findBranch,
   findProducts,
   matchQuestion,
+  needsProducts,
   toWords,
 } from './chatQuestions.js'
+import { prepareProducts } from './productSearch.js'
 
 const branches = [
   {
@@ -14,35 +16,17 @@ const branches = [
   },
   { id: 'kilo-14', district_ar: 'كيلو 14', district_en: 'Kilo 14' },
   { id: 'al-mahamid', district_ar: 'المحاميد', district_en: 'Al Mahamid' },
-  { id: 'al-harazat', district_ar: 'الحرازات', district_en: 'Al Harazat' },
 ]
 
-const products = [
-  {
-    id: 'milk',
-    name_ar: 'حليب طازج',
-    name_en: 'Fresh milk',
-    category: 'dairy',
-  },
-  {
-    id: 'bread',
-    name_ar: 'خبز عربي',
-    name_en: 'Arabic bread',
-    category: 'bakery',
-  },
-  {
-    id: 'rice',
-    name_ar: 'أرز بسمتي',
-    name_en: 'Basmati rice',
-    category: 'pantry',
-  },
-  {
-    id: 'coffee',
-    name_ar: 'قهوة عربية',
-    name_en: 'Arabic coffee',
-    category: 'pantry',
-  },
-]
+const products = prepareProducts([
+  { id: 'milk', name: 'حليب طازج' },
+  { id: 'bread', name: 'خبز عربي' },
+  { id: 'rice', name: 'أرز بسمتي' },
+  { id: 'coffee', name: 'قهوة عربية' },
+  { id: 'tissues', name: 'مناديل فاين' },
+  { id: 'sweets', name: 'حلويات مخبز الحمدانية' },
+  { id: 'cable', name: 'وصلة توصيل كهرباء' },
+])
 
 function ask(text) {
   return matchQuestion(text, { branches, products })
@@ -73,6 +57,10 @@ describe('matchQuestion: topics', () => {
     ['Any deals this week?', 'offers'],
     ['أبغى رقم الجوال', 'contact'],
     ['What is your phone number?', 'contact'],
+    ['ما هي حساباتكم؟', 'social'],
+    ['عندكم انستقرام؟', 'social'],
+    ['Are you on Instagram?', 'social'],
+    ['ما هي منتجاتكم المميزة؟', 'featured'],
   ])('"%s" is about %s', (text, topic) => {
     expect(ask(text).topic).toBe(topic)
   })
@@ -115,10 +103,14 @@ describe('matchQuestion: branches', () => {
     expect(ask('كيلو14').branchId).toBe('kilo-14')
   })
 
-  it('takes a district on its own as a question about where that branch is', () => {
-    expect(ask('الحرازات')).toEqual({
+  it('takes a district on its own as a question about where that branch is, even when a product has its name', () => {
+    expect(ask('المحاميد')).toEqual({
       topic: 'branches',
-      branchId: 'al-harazat',
+      branchId: 'al-mahamid',
+    })
+    expect(ask('الحمدانية')).toEqual({
+      topic: 'branches',
+      branchId: 'al-hamdaniyah',
     })
   })
 
@@ -136,9 +128,9 @@ describe('matchQuestion: branches', () => {
 describe('matchQuestion: products', () => {
   it('turns "do you have X?" into a product search for X', () => {
     expect(ask('هل عندكم حليب؟')).toEqual({ topic: 'products', query: 'حليب' })
-    expect(ask('Do you have fresh milk?')).toEqual({
+    expect(ask('Do you have milk?')).toEqual({
       topic: 'products',
-      query: 'fresh milk',
+      query: 'milk',
     })
     // The Arabic article is left out, so "الأرز" finds "أرز بسمتي".
     expect(ask('عندكم الأرز؟')).toEqual({ topic: 'products', query: 'ارز' })
@@ -153,9 +145,26 @@ describe('matchQuestion: products', () => {
     expect(ask('هل يوجد حليب في فرع الحمدانية؟').topic).toBe('products')
   })
 
-  it('keeps a "do you have" question about a topic on that topic', () => {
+  it('keeps a "do you have" question about a topic on that topic, even when a product has that word', () => {
     expect(ask('هل عندكم عروض؟').topic).toBe('offers')
     expect(ask('Do you have delivery?').topic).toBe('delivery')
+    expect(ask('هل عندكم توصيل لحي الكوثر؟').topic).toBe('delivery')
+  })
+
+  it('does not find a question word inside a product name', () => {
+    // "اين" (where) is inside "فاين" (Fine).
+    expect(ask('مناديل فاين')).toEqual({
+      topic: 'products',
+      query: 'مناديل فاين',
+    })
+    expect(ask('أين أنتم؟').topic).toBe('branches')
+  })
+
+  it('finds the product in a longer question with a greeting', () => {
+    expect(ask('السلام عليكم، كم سعر الحليب؟')).toEqual({
+      topic: 'products',
+      query: 'حليب',
+    })
   })
 
   it('still searches when the product is not on the list, so the answer can say so', () => {
@@ -190,15 +199,42 @@ describe('matchQuestion: everything else', () => {
   })
 })
 
+describe('needsProducts', () => {
+  it('is true when only the product list can tell what the question is about', () => {
+    expect(needsProducts('هل عندكم حليب؟', branches)).toBe(true)
+    expect(needsProducts('حليب', branches)).toBe(true)
+    expect(needsProducts('هل يوجد حليب في فرع الحمدانية؟', branches)).toBe(true)
+  })
+
+  it('is false for questions about the store, so they never wait for the products', () => {
+    for (const text of [
+      'متى تفتحون؟',
+      'هل عندكم توصيل؟',
+      'وين فرع كيلو 14؟',
+      'الحمدانية',
+      'شكراً جزيلاً',
+      'السلام عليكم',
+      '؟؟',
+    ]) {
+      expect(needsProducts(text, branches), text).toBe(false)
+    }
+  })
+})
+
 describe('findProducts', () => {
   const ids = (found) => found.map((product) => product.id)
 
   it('searches with all the words together first', () => {
-    expect(ids(findProducts('arabic coffee', products))).toEqual(['coffee'])
+    expect(ids(findProducts('عربية قهوة', products))).toEqual(['coffee'])
   })
 
-  it('then with each word on its own, in the order of the product list', () => {
-    expect(ids(findProducts('خبز حليب', products))).toEqual(['milk', 'bread'])
+  it('understands common English words, although the names are in Arabic', () => {
+    expect(ids(findProducts('milk', products))).toEqual(['milk'])
+  })
+
+  it('then finds the products with the most of the words, in the order of the list', () => {
+    expect(ids(findProducts('قهوة حليب', products))).toEqual(['milk', 'coffee'])
+    expect(ids(findProducts('خبز عربي فرنسي', products))).toEqual(['bread'])
   })
 
   it('finds nothing for an empty or one-letter search', () => {

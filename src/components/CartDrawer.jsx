@@ -7,6 +7,7 @@ import { formatPrice } from '../lib/price.js'
 import EmptyState from './EmptyState.jsx'
 import { CartIcon, CloseIcon, MinusIcon, PlusIcon } from './Icons.jsx'
 import OrderForm from './OrderForm.jsx'
+import ProductName from './ProductName.jsx'
 import { BUTTON_MAIN, ICON_BUTTON, TEXT_BUTTON } from './styles.js'
 
 // The round + and − buttons. Under the pointer the plus turns a quarter and the minus spins
@@ -22,7 +23,7 @@ const ROLL = 'motion-safe:animate-roll'
 // Like the product details, it is a <dialog> opened with showModal().
 // The "drawer" class makes it slide in (see index.css). Its title sits on a green band.
 function CartDrawer() {
-  const { t, localize } = useLanguage()
+  const { t } = useLanguage()
   const {
     lines,
     extraItems,
@@ -93,16 +94,18 @@ function CartDrawer() {
         ) : (
           <ul className="-mt-3 divide-y divide-line">
             {lines.map(({ product, quantity }) => {
-              const name = localize(product, 'name')
+              const { name } = product
               return (
                 <li
                   key={product.id}
                   className="flex items-start justify-between gap-3 py-3"
                 >
                   <div>
-                    <p>{name}</p>
+                    <p>
+                      <ProductName product={product} />
+                    </p>
                     <p className="text-sm text-muted">
-                      {localize(product, 'unit')} ·{' '}
+                      {t.products.units[product.unit]} ·{' '}
                       {product.price === null
                         ? t.products.priceOnRequest
                         : formatPrice(product.price * quantity, t.currency)}

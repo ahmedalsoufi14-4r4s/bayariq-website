@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import {
   categories,
   openSite,
@@ -6,10 +6,11 @@ import {
   store,
   texts,
   tokenColor,
+  waitForProducts,
 } from './helpers.js'
 
 const t = texts.ar
-const inStockProduct = products.find((product) => product.inStock)
+const firstProduct = products[0]
 
 // Waits until a card has finished fading in (see reveal.js, on the card or on its list item),
 // so it does not rise away from under the mouse or the finger.
@@ -139,9 +140,9 @@ test('the search box shows a clear button while it has text', async ({
   await expect(search).toHaveValue('')
   await expect(search).toBeFocused()
   await expect(clear).toHaveCount(0)
-  await expect(page.locator('#products').getByRole('article')).toHaveCount(
-    products.length,
-  )
+  await expect(
+    page.locator('#products').getByRole('heading', { level: 3 }).first(),
+  ).toHaveText(products[0].name)
 })
 
 test('at 360px the header, menu, filter, product, cart and order-form controls are at least 44px for fingers', async ({
@@ -151,7 +152,7 @@ test('at 360px the header, menu, filter, product, cart and order-form controls a
   await page.goto('./')
   await page
     .locator('#products')
-    .getByRole('button', { name: `${t.cart.add}: ${inStockProduct.name_ar}` })
+    .getByRole('button', { name: `${t.cart.add}: ${firstProduct.name}` })
     .click()
   await page.getByRole('button', { name: t.cart.open }).click()
   const drawer = page.getByRole('dialog', { name: t.cart.title })
@@ -241,7 +242,7 @@ test.describe('with motion allowed', () => {
 
     await page
       .locator('#products')
-      .getByRole('button', { name: `${t.cart.add}: ${inStockProduct.name_ar}` })
+      .getByRole('button', { name: `${t.cart.add}: ${firstProduct.name}` })
       .click()
     await cartButton.click()
     const drawer = page.getByRole('dialog', { name: t.cart.title })
@@ -274,11 +275,11 @@ test.describe('with motion allowed', () => {
     page,
   }) => {
     await page.goto('./')
-    const [first, second] = products.filter((product) => product.inStock)
+    const [first, second] = products
     for (const product of [first, second]) {
       await page
         .locator('#products')
-        .getByRole('button', { name: `${t.cart.add}: ${product.name_ar}` })
+        .getByRole('button', { name: `${t.cart.add}: ${product.name}` })
         .click()
     }
     await page.getByRole('button', { name: t.cart.open }).click()
@@ -300,7 +301,7 @@ test.describe('with motion allowed', () => {
       ],
       [
         drawer.getByRole('button', {
-          name: `${t.cart.remove} ${first.name_ar}`,
+          name: `${t.cart.remove} ${first.name}`,
         }),
         '0.95',
       ],
@@ -351,8 +352,11 @@ test.describe('with motion allowed', () => {
   test('every card and box on the page lifts, tilts and glows under the pointer, and its icon moves', async ({
     page,
   }) => {
+    // Tall enough for a whole branch card, so its corner is on screen too.
+    await page.setViewportSize({ width: 1280, height: 1100 })
     await page.goto('./')
-    // Why shop with us, the offers (or the "no offers" box), the products and the branches.
+    await waitForProducts(page)
+    // Why shop with us, the offers (or the "coming soon" card), the products and the branches.
     for (const area of [
       page.getByRole('region', { name: t.highlights.title }),
       page.locator('#offers'),
@@ -390,7 +394,7 @@ test.describe('with motion allowed', () => {
     }
   })
 
-  test('the logo and the hero tiles react to the pointer too', async ({
+  test('the logo and the hero photos react to the pointer too', async ({
     page,
   }) => {
     await page.goto('./')
@@ -400,13 +404,13 @@ test.describe('with motion allowed', () => {
     await logo.hover()
     await expect(logo.locator('span').first()).toHaveCSS('rotate', '-6deg')
 
-    // The tiles bob all the time, so the mouse goes to the middle of one without waiting
+    // The photos bob all the time, so the mouse goes to the middle of one without waiting
     // for it to stand still.
-    const tile = page.locator('#home .tile-bob').first()
-    const box = await tile.boundingBox()
+    const frame = page.locator('#home .tile-bob').first()
+    const box = await frame.boundingBox()
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-    await expect(tile).toHaveCSS('scale', '1.1')
-    await expect(tile.locator('svg')).toHaveCSS('animation-name', 'spin-once')
+    await expect(frame).toHaveCSS('scale', '1.04')
+    await expect(frame.locator('img')).toHaveCSS('scale', '1.06')
   })
 })
 

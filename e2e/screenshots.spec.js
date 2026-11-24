@@ -1,5 +1,11 @@
-import { expect, test } from '@playwright/test'
-import { openSite, products, texts, waitForFonts } from './helpers.js'
+import { expect, test } from './test.js'
+import {
+  openSite,
+  products,
+  texts,
+  waitForFonts,
+  waitForProducts,
+} from './helpers.js'
 
 // The design check from CLAUDE.md ("Checks before finishing"): the whole page, the open chat
 // and one tour step, on a phone in Arabic and on a desktop in English, in light and dark
@@ -24,6 +30,19 @@ for (const theme of ['light', 'dark']) {
         await page.setViewportSize({ width, height: 800 })
         await openSite(page, language)
         await waitForFonts(page)
+        await waitForProducts(page)
+        // Photos are lazy-loaded: scrolling past them first brings them into the screenshot.
+        for (const photo of await page.locator('img').all()) {
+          await photo.scrollIntoViewIfNeeded()
+        }
+        await page.evaluate(() => window.scrollTo(0, 0))
+        await expect
+          .poll(() =>
+            page
+              .locator('img')
+              .evaluateAll((photos) => photos.every((photo) => photo.complete)),
+          )
+          .toBe(true)
         await page.screenshot({
           path: `screenshots/page-${name}.png`,
           fullPage: true,
@@ -34,7 +53,7 @@ for (const theme of ['light', 'dark']) {
         const chat = page.getByRole('dialog', { name: t.chat.title })
         await chat
           .getByRole('textbox', { name: t.chat.inputLabel })
-          .fill(products[0][`name_${language}`])
+          .fill(products[0].name)
         await chat.getByRole('button', { name: t.chat.send }).click()
         await expect(
           chat.getByText(t.chat.products, { exact: true }),

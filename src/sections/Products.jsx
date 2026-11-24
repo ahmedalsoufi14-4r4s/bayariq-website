@@ -1,35 +1,43 @@
 import { useRef, useState } from 'react'
 import CategoryFilter from '../components/CategoryFilter.jsx'
 import EmptyState from '../components/EmptyState.jsx'
-import { CloseIcon, SearchIcon } from '../components/Icons.jsx'
+import { AlertIcon, CloseIcon, SearchIcon } from '../components/Icons.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import ProductDialog from '../components/ProductDialog.jsx'
+import ProductSkeletons from '../components/ProductSkeletons.jsx'
 import { reveal } from '../components/reveal.js'
 import SectionHeading from '../components/SectionHeading.jsx'
 import { BUTTON_OUTLINE, ICON_BUTTON } from '../components/styles.js'
-import products from '../data/products.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
-import { filterProducts } from '../lib/productSearch.js'
+import { useProductList } from '../products/useProductList.js'
 
-// NEEDS-AHMED: products.json and categories.json hold sample items until the real list arrives.
+// How many pulsing boxes show while products load.
+const SKELETON_COUNT = 8
+
+// Which products show, and loading them, is in useProductList.js. This draws them.
 function Products() {
   const { t } = useLanguage()
-  const [category, setCategory] = useState('all')
-  const [query, setQuery] = useState('')
+  const {
+    category,
+    query,
+    visible,
+    total,
+    hasMore,
+    isLoading,
+    hasFailed,
+    chooseCategory,
+    search,
+    showAll,
+    showMore,
+    tryAgain,
+  } = useProductList()
   const [selectedProduct, setSelectedProduct] = useState(null)
   const searchRef = useRef(null)
-
-  // Not stored in state: worked out again on every render from the filter and the search text.
-  const visibleProducts = filterProducts(products, category, query)
-
-  function showAll() {
-    setCategory('all')
-    setQuery('')
-  }
+  const isSearching = query.trim() !== ''
 
   // The clear button disappears with the text, so focus goes back to the search box.
   function clearSearch() {
-    setQuery('')
+    search('')
     searchRef.current.focus()
   }
 
@@ -54,7 +62,7 @@ function Products() {
             id="product-search"
             type="search"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => search(event.target.value)}
             placeholder={t.products.searchPlaceholder}
             className="peer w-full rounded-full border border-line bg-surface py-3 ps-11 pe-14 shadow-sm transition duration-200 ease-out hover:border-muted focus:border-main-ink focus:ring-4 focus:ring-main-ink/15"
           />
@@ -72,26 +80,35 @@ function Products() {
           )}
         </div>
 
-        <CategoryFilter selected={category} onSelect={setCategory} />
+        <CategoryFilter selected={category} onSelect={chooseCategory} />
       </div>
 
-      {/* aria-live makes screen readers read the new count after each change.
+      {/* aria-live makes screen readers read the new count after each change. aria-busy makes
+          them wait while a search still loads categories and the count keeps growing.
           A new key makes React draw a new number, so it rolls in on every change. */}
       {/* text-ink, not text-muted: this line sits right on the page, over the moving
           circles, and the darker text stays AA wherever they are (e2e/design.spec.js). */}
-      <p aria-live="polite" className="mt-4 text-sm text-ink">
-        {t.products.results}{' '}
-        <span
-          key={visibleProducts.length}
-          className="inline-block motion-safe:animate-roll"
-        >
-          {visibleProducts.length}
-        </span>
+      <p
+        aria-live="polite"
+        aria-busy={isLoading}
+        className="mt-4 text-sm text-ink"
+      >
+        {isLoading && !isSearching ? (
+          t.products.loading
+        ) : (
+          <>
+            {t.products.results}{' '}
+            <span key={total} className="inline-block motion-safe:animate-roll">
+              {total}
+            </span>
+            {isLoading && ` · ${t.products.searching}`}
+          </>
+        )}
       </p>
 
-      {visibleProducts.length > 0 ? (
+      {visible.length > 0 && (
         <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {visibleProducts.map((product) => (
+          {visible.map((product) => (
             // Cards fade in as they scroll into view. Cards that arrive together, like a row,
             // start one after another (see reveal.js), and so do the cards a filter brings back.
             <li key={product.id} ref={reveal} className="reveal">
@@ -99,7 +116,13 @@ function Products() {
             </li>
           ))}
         </ul>
-      ) : (
+      )}
+
+      {visible.length === 0 && isLoading && (
+        <ProductSkeletons count={SKELETON_COUNT} />
+      )}
+
+      {visible.length === 0 && !isLoading && !hasFailed && (
         <div className="mt-4">
           <EmptyState Icon={SearchIcon} text={t.products.noResults}>
             <button
@@ -110,6 +133,33 @@ function Products() {
               {t.products.showAll}
             </button>
           </EmptyState>
+        </div>
+      )}
+
+      {/* When a file does not load (for example offline), what has loaded stays on the page. */}
+      {hasFailed && (
+        <div role="alert" className="mt-4">
+          <EmptyState Icon={AlertIcon} text={t.products.loadFailed}>
+            <button
+              type="button"
+              onClick={tryAgain}
+              className={`${BUTTON_OUTLINE} px-5 py-2`}
+            >
+              {t.products.tryAgain}
+            </button>
+          </EmptyState>
+        </div>
+      )}
+
+      {hasMore && !hasFailed && visible.length > 0 && (
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={showMore}
+            className={`${BUTTON_OUTLINE} px-8 py-3`}
+          >
+            {t.products.showMore}
+          </button>
         </div>
       )}
 

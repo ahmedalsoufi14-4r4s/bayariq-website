@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { withActiveBranches } from '../src/lib/branches.js'
 
 function readJson(relativePath) {
   return JSON.parse(
@@ -7,9 +8,16 @@ function readJson(relativePath) {
 }
 
 // The tests read the same data and texts as the site, so they keep passing when the content changes.
-export const store = readJson('../src/data/store.json')
+const allBranches = readJson('../src/data/store.json')
+export const store = withActiveBranches(allBranches)
+// The branches that must not appear anywhere ("active": false).
+export const hiddenBranches = allBranches.branches.filter(
+  (branch) => !branch.active,
+)
 export const categories = readJson('../src/data/categories.json')
-export const products = readJson('../src/data/products.json')
+// The catalog the site loads first, and the featured products in it, which the page starts with.
+export const catalog = readJson('../public/data/catalog.json')
+export const products = catalog.featured
 export const offers = readJson('../src/data/offers.json')
 export const tourSteps = readJson('../src/data/tour.json')
 export const texts = {
@@ -19,6 +27,16 @@ export const texts = {
 
 // Same key as in src/i18n/LanguageProvider.jsx.
 const LANGUAGE_KEY = 'bayariq-language'
+
+// The products of one category, as the site loads them.
+export function categoryProducts(id) {
+  return readJson(`../public/data/products/${id}.json`)
+}
+
+// Waits until the first products are on the page: they are loaded after the page itself.
+export function waitForProducts(page) {
+  return page.locator('#products article').first().waitFor()
+}
 
 // Opens the home page in the given language.
 // Returns a list that collects every console error and uncaught page error.

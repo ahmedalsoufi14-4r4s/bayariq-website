@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import TourGuide from '../components/TourGuide.jsx'
 import tourSteps from '../data/tour.json'
+import { useProducts } from '../products/ProductsContext.js'
 import { TourContext } from './TourContext.js'
 
 // GitHub Pages sites of the same user share one localStorage, so the key has a unique prefix.
@@ -28,6 +29,9 @@ function rememberTourSeen() {
 // Shows the tour by itself on the first visit, and lets the chat helper and the footer
 // start it again (startTour from useTour()).
 function TourProvider({ children }) {
+  const { status } = useProducts()
+  // The first products are on the page, or could not be loaded: either way, nothing more to wait for.
+  const isPageReady = status !== 'loading'
   // How many tours have started. Each one gets a fresh TourGuide (its key), from step one.
   const [run, setRun] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
@@ -39,7 +43,7 @@ function TourProvider({ children }) {
   // link that started it. useCallback keeps the same function on every render, so the
   // first-visit effect below runs only once.
   const startTour = useCallback((returnFocusTo) => {
-    // Only the steps whose element is on the page: "Add to cart" needs a product in stock.
+    // Only the steps whose element is on the page: "Add to cart" needs a product.
     const available = tourSteps.filter((step) =>
       document.querySelector(step.target),
     )
@@ -59,10 +63,11 @@ function TourProvider({ children }) {
     element?.focus({ preventScroll: true })
   }
 
-  // The first visit: the tour starts by itself once the web font has loaded, so the page
-  // has its final layout. It is remembered right away, so it never shows twice.
+  // The first visit: the tour starts by itself once the first products and the web font have
+  // loaded, so the page has its final layout and every step has its element. It is remembered
+  // right away, so it never shows twice.
   useEffect(() => {
-    if (hasSeenTour()) return
+    if (!isPageReady || hasSeenTour()) return
     let cancelled = false
     document.fonts.ready.then(() => {
       if (!cancelled) startTour(null)
@@ -70,7 +75,7 @@ function TourProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [startTour])
+  }, [startTour, isPageReady])
 
   return (
     <TourContext value={{ startTour, isRunning }}>

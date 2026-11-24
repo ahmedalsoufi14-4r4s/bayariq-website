@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import { store, texts } from './helpers.js'
 
 test('language button switches between Arabic and English and remembers the choice', async ({

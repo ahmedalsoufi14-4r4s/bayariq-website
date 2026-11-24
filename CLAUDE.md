@@ -1,16 +1,16 @@
 # Bayariq Al Khair Supermarket Website
 
 ## Project
-- Real website for أسواق بيارق الخير الاقتصادية (Aswaq Bayariq Al Khair), a supermarket in Jeddah, Saudi Arabia, with four branches: Al Hamdaniyah (الحمدانية), Kilo 14 (كيلو 14) and Al Mahamid (المحاميد) are called أسواق بيارق الخير, and Al Harazat (الحرازات) is called بيارق التوفيق (Bayariq Al Tawfiq). The store belongs to Ahmed's family.
+- Real website for أسواق بيارق الخير الاقتصادية (Aswaq Bayariq Al Khair), a supermarket in Jeddah, Saudi Arabia, with three branches on the site: Al Mahamid (المحاميد), Kilo 14 (كيلو 14) and Al Hamdaniyah (الحمدانية). A fourth, Al Harazat (الحرازات), called أسواق بيارق التوفيق التجارية (Bayariq Al Tawfiq), is hidden for now (`"active": false` in `store.json`) and must not appear anywhere on the site. The store belongs to Ahmed's family.
 - Developer: Ahmed, a software engineering student. He must be able to read and explain every line, so keep the code simple, readable and well named.
 - Goal: a fast, professional, mobile-first site where customers browse products and offers, find the nearest branch, and send their order on WhatsApp to the branch they choose.
 - This rebuilds an older HTML/CSS/JS version (in `old/`, if present). Use it only to see which features it had (language switch, search, category filter, product popup, offers timer, dark mode, map). Do not copy its code.
 
 ## Tech
 - React + Vite, JavaScript (no TypeScript), Tailwind CSS.
-- No backend, database or payments. All content lives in JSON files in `src/data/`.
+- No backend, database or payments. All content lives in JSON files: in `src/data/`, and the products in `public/data/` (made from `data/` by `npm run products`, loaded with `fetch` one category at a time).
 - Hosting: GitHub Pages through GitHub Actions. Set Vite `base` to the repo name. Use HashRouter if routes are ever needed.
-- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch rules, Arabic search, JSON-LD, chatbot matching and answers, tour placement).
+- Tests: Vitest for pure logic only (cart totals, WhatsApp message, branch and delivery rules, Arabic search, JSON-LD, chatbot matching and answers, tour placement).
 - Browser checks: Playwright (Chromium), tests in `e2e/`.
 - Ask before adding any dependency not listed here. Prefer none.
 
@@ -26,28 +26,31 @@
 - Images: the store's own photos or free-license images only. WebP, under 200 KB, lazy-loaded, with alt text in both languages.
 
 ## Data files
-- `store.json`: store names (ar/en), website, social links, and `branches`: one entry per branch with id, name (ar/en), district (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours (`hours` rows plus the short `openingHours` form for search engines), address, Google Maps link and embed link, and delivery info (`delivers`: true or false, plus details). Every branch detail Ahmed has not given yet is `NEEDS-AHMED`.
-- `categories.json`: id, name_ar, name_en, icon (the name of a category icon in `src/components/Icons.jsx`, like `carrot`).
-- `products.json`: id, name_ar, name_en, category, price (number or null), unit_ar, unit_en, image, featured, inStock.
+- `store.json`: store names (ar/en), website, social links, `delivery` (zones with their fees, minimum order, free delivery, hours) and `branches`: one entry per branch with id, `active`, name (ar/en), district (ar/en), phone, whatsapp (international digits only, like 9665XXXXXXXX), opening hours (`hours` rows plus the short `openingHours` form for search engines), address, Google Maps link, `latitude` and `longitude` (for the map and the distances), `delivers` (true or false) and `photo`. Every detail Ahmed has not given yet is `NEEDS-AHMED`. A branch with `"active": false` is taken out while the site is built (a plugin in `vite.config.js`), so it is not even in the JavaScript file.
+- `categories.json`: id, name_ar, name_en, icon (the name of a category icon in `src/components/Icons.jsx`, like `milk`). The category `spices` is the Attara category (عطارة).
+- Products: the POS export is in `data/` (supermarket only; `data/README.md` explains each file). `npm run products` writes `public/data/catalog.json` (categories with counts, and the featured products) and one `public/data/products/<category>.json` per category. A product is id, name (Arabic only for now), category, price, unit (`piece` or `kg`), and `featured: true` for the featured ones. Never load all the products as one file. `data/*.xlsx` is git-ignored, because the repository is public.
+- `searchWords.json`: words people type and the word the product names use ("milk" to "حليب").
+- Nafhat Bun (نفحة بن) is not part of the site. Its data is kept in `extras/nafhat-bun/`, outside `public/`.
 - `offers.json`: id, title_ar, title_en, details_ar, details_en, image, validUntil (ISO date). Hide expired offers automatically.
 
 ## WhatsApp order
-- Customers add products to a cart (saved in localStorage), change quantities, and write a note for items that are not listed.
+- Customers add products to a cart (saved in localStorage, each item with a copy of its product; opening the cart loads today's prices), change quantities, and write a note for items that are not listed.
 - Order form: branch (required), name, district, pickup or delivery (delivery only when the chosen branch delivers), preferred time, notes.
 - "Send order" builds a clear message in the current language with items, quantities, an estimated total (priced items only) and the customer details and the chosen branch, then opens `https://wa.me/<that branch's number>?text=<encoded message>`. "Send order" stays disabled until the chosen branch has a real WhatsApp number.
-- Keep the message builder and the branch rules pure functions in `src/lib/` with unit tests.
+- Delivery (rules in `store.json`, logic in `src/lib/delivery.js`): 5 SAR up to 3 km, 10 SAR up to 5 km, nothing further; minimum 50 SAR, free from 200 SAR. "Use my location" is optional: the distance is a straight line measured in the browser, too far suggests pickup or the nearest branch that delivers, and the map link goes into the WhatsApp message. The location is never saved or sent anywhere else.
+- Keep the message builder, the branch rules and the delivery rules pure functions in `src/lib/` with unit tests.
 
 ## Quick-answer chatbot
-- No AI, no server, no new dependencies. Every answer comes only from `store.json`, `offers.json` and `products.json`, never invented. A NEEDS-AHMED detail is answered with a polite "coming soon"; a branch with a real WhatsApp number gets a button to message that branch.
+- No AI, no server, no new dependencies. Every answer comes only from `store.json`, `offers.json` and the products, never invented. A NEEDS-AHMED detail is answered with a polite "coming soon"; a branch with a real WhatsApp number gets a button to message that branch.
 - A red chat button in the bottom corner (end side) opens a non-modal `<dialog>` (`show()`, not `showModal()`), so the page still scrolls and the cart still works. It sits below the sticky header and never covers the cart button; the cart drawer and dialogs open above it (top layer). The footer has extra bottom padding so the button never hides its text.
-- Topic chips: opening hours, branches and locations, delivery, how to order, current offers, contact a branch. Branch topics ask which branch first (one chip per branch), unless the question names one. Final answers end with an "other questions" chip; greetings, thanks and unmatched questions show the topic chips again.
-- Typed questions match simple Arabic and English keywords after the product search's `normalizeText` (plus Arabic digits). "Do you have X?" uses the product search (`filterProducts`) and shows matches with Add to cart; a product not on the list points to the cart's box for unlisted items.
+- Topic chips: opening hours, branches and locations, delivery, how to order, current offers, featured products, contact a branch. Typed questions about the social accounts are answered too ("coming soon"). Branch topics ask which branch first (one chip per branch), unless the question names one. Final answers end with an "other questions" chip; greetings, thanks and unmatched questions show the topic chips again.
+- Typed questions match simple Arabic and English keywords after the product search's `normalizeText` (plus Arabic digits). "Do you have X?" uses the product search (`filterProducts`), waits until every category has loaded (`needsProducts` says which questions need that), and shows matches with Add to cart; a product not on the list points to the cart's box for unlisted items.
 - Pure logic: `src/lib/chatQuestions.js` (`matchQuestion`: what was asked) and `src/lib/chatAnswers.js` (`buildAnswer`: the answer), with unit tests, so an AI can replace them later. Messages store the question, and the answer is built at render time, so the whole conversation follows the language switch.
 - Motion: the panel slides up from the button, messages pop in, typing dots play before each answer; with reduced motion nothing moves and answers show at once. Messages are in a `role="log"` live region; the whole bot works with the keyboard; Escape closes it and focus returns to the chat button.
 
 ## First-visit tour
-- Built by hand, no dependency. The steps (order, CSS selector of the element, icon) are in `src/data/tour.json`; all text is under `tour` in `ar.json` and `en.json`. Elements the tour points at carry `data-tour="…"`. A step whose element is missing (for example no product in stock) is left out.
-- `src/tour/TourProvider.jsx` starts it once per browser (localStorage key `bayariq-tour-seen`, saved as soon as it starts, after the web font has loaded) and gives `startTour()` to the "take the tour again" chip in the chat and the footer link. `src/components/TourGuide.jsx` draws it; the placement math is in `src/lib/tourPosition.js` with unit tests.
+- Built by hand, no dependency. The steps (order, CSS selector of the element, icon) are in `src/data/tour.json`; all text is under `tour` in `ar.json` and `en.json`. Elements the tour points at carry `data-tour="…"`. A step whose element is missing (for example when the products could not be loaded) is left out.
+- `src/tour/TourProvider.jsx` starts it once per browser (localStorage key `bayariq-tour-seen`, saved as soon as it starts, after the web font and the first products have loaded) and gives `startTour()` to the "take the tour again" chip in the chat and the footer link. `src/components/TourGuide.jsx` draws it; the placement math is in `src/lib/tourPosition.js` with unit tests.
 - It is a `showModal()` dialog: above everything, announced by screen readers (each step is read from an `aria-live` region), focus on "Next", Escape skips. Afterwards the page scrolls back to where it was and focus returns to what started it. The chat panel steps aside while it runs.
 - The spotlight is a box whose very wide shadow dims the page; it and the tooltip glide between steps (translate, width, height, like the category pill), the tooltip is a card and the spotlight's ring glows on hover and tap. The tooltip stays on screen at 360 px (under, above, or at the bottom), and everything is instant with reduced motion.
 - Every Playwright test starts with the tour marked as seen (`storageState` in `playwright.config.js`); `e2e/tour.spec.js` starts empty to test the tour.

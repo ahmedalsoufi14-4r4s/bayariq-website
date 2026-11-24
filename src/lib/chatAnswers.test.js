@@ -5,9 +5,10 @@ import en from '../i18n/en.json'
 import { buildAnswer, getQuestionLabel, MAX_PRODUCTS } from './chatAnswers.js'
 import { TOPICS } from './chatQuestions.js'
 import { formatDate } from './offers.js'
+import { prepareProducts } from './productSearch.js'
 import { fillIn } from './text.js'
 
-// A branch whose details are all still NEEDS-AHMED, like the real branches today.
+// A branch whose details are all still NEEDS-AHMED.
 const comingSoonBranch = {
   id: 'north',
   district_ar: 'الشمال',
@@ -19,8 +20,6 @@ const comingSoonBranch = {
   address_en: 'NEEDS-AHMED',
   mapsUrl: 'NEEDS-AHMED',
   delivers: 'NEEDS-AHMED',
-  delivery_ar: 'NEEDS-AHMED',
-  delivery_en: 'NEEDS-AHMED',
 }
 
 // A branch with every detail filled in. The numbers are made up for this test only.
@@ -28,7 +27,7 @@ const filledBranch = {
   id: 'south',
   district_ar: 'الجنوب',
   district_en: 'South',
-  phone: '+966120000000',
+  phone: '+966 12 000 0000',
   whatsapp: '966500000000',
   hours: [
     {
@@ -42,22 +41,37 @@ const filledBranch = {
   address_en: 'Test Street',
   mapsUrl: 'https://maps.example.com/south',
   delivers: true,
-  delivery_ar: 'داخل الحي فقط',
-  delivery_en: 'Within the district only',
 }
 
-const store = { branches: [comingSoonBranch, filledBranch] }
+const delivery = {
+  zones: [
+    { maxKm: 3, fee: 5 },
+    { maxKm: 5, fee: 10 },
+  ],
+  minimumOrder: 50,
+  freeFrom: 200,
+  hours: [
+    {
+      days_ar: 'الجمعة',
+      days_en: 'Friday',
+      time_ar: '1:30 – 12',
+      time_en: '1:30 PM – 12 AM',
+    },
+  ],
+}
 
-// One milk, and more juices than one answer shows.
-const products = [
-  { id: 'milk', name_ar: 'حليب طازج', name_en: 'Fresh milk', price: null },
+const store = { delivery, branches: [comingSoonBranch, filledBranch] }
+
+// Two featured products, and more juices than one answer shows.
+const products = prepareProducts([
+  { id: 'milk', name: 'حليب المراعي طازج', price: 14.5, featured: true },
+  { id: 'tea', name: 'شاي ربيع', price: 5, featured: true },
   ...Array.from({ length: MAX_PRODUCTS + 1 }, (_, index) => ({
     id: `juice-${index}`,
-    name_ar: `عصير ${index}`,
-    name_en: `Juice ${index}`,
-    price: null,
+    name: `عصير ${index}`,
+    price: 3,
   })),
-]
+])
 
 const offers = [
   {
@@ -155,7 +169,7 @@ describe('buildAnswer: details that are still missing', () => {
       whatsapp: null,
     }
     const name = branchLabel(bare)
-    const changes = { store: { branches: [bare] } }
+    const changes = { store: { delivery, branches: [bare] } }
     const ask = (topic) => answer({ topic, branchId: 'bare' }, 'ar', changes)
 
     expect(ask('hours').text).toBe(
@@ -225,17 +239,28 @@ describe('buildAnswer: details that are filled in', () => {
     })
   })
 
-  it('says the branch delivers, with its delivery details', () => {
-    expect(answer({ topic: 'delivery', branchId: 'south' })).toMatchObject({
+  it('says the branch delivers, with the fee of each zone, the minimum, free delivery and the hours', () => {
+    expect(answer({ topic: 'delivery', branchId: 'south' })).toEqual({
       text: fillIn(ar.chat.delivers, { branch: south }),
-      note: 'داخل الحي فقط',
+      list: [
+        'حتى 3 كم من الفرع: 5 ر.س',
+        'من 3 إلى 5 كم: 10 ر.س',
+        'أقل طلب للتوصيل: 50 ر.س',
+        'توصيل مجاني للطلبات من 200 ر.س فأكثر',
+        'أوقات التوصيل، الجمعة: 1:30 – 12',
+      ],
+      note: fillIn(ar.chat.deliveryTooFar, { km: 5 }),
       links: [whatsApp],
+      chips: MORE_QUESTIONS,
     })
+    expect(
+      answer({ topic: 'delivery', branchId: 'south' }, 'en').list,
+    ).toContain('Free delivery for orders of 200 SAR or more')
   })
 
   it('says when a branch does not deliver, and that pickup works', () => {
     const changes = {
-      store: { branches: [{ ...filledBranch, delivers: false }] },
+      store: { delivery, branches: [{ ...filledBranch, delivers: false }] },
     }
     expect(
       answer({ topic: 'delivery', branchId: 'south' }, 'ar', changes).text,
@@ -246,7 +271,7 @@ describe('buildAnswer: details that are filled in', () => {
     const result = answer({ topic: 'contact', branchId: 'south' })
     expect(result.text).toBe(fillIn(ar.chat.contact, { branch: south }))
     expect(result.list).toEqual([
-      fillIn(ar.chat.phone, { phone: '⁦+966120000000⁩' }),
+      fillIn(ar.chat.phone, { phone: '\u2066+966 12 000 0000\u2069' }),
     ])
     expect(result.links).toEqual([
       whatsApp,
@@ -297,11 +322,37 @@ describe('buildAnswer: questions about the whole store', () => {
     ])
   })
 
-  it('says there are no offers when none is running', () => {
+  it('says offers are coming soon when none is running', () => {
     expect(answer({ topic: 'offers' }, 'ar', { offers: [] })).toEqual({
       text: ar.chat.noOffers,
       chips: MORE_QUESTIONS,
     })
+  })
+
+  it('says the social accounts are coming soon', () => {
+    expect(answer({ topic: 'social' })).toEqual({
+      text: ar.chat.social,
+      chips: MORE_QUESTIONS,
+    })
+    expect(ar.chat.social).toContain('قريبًا')
+    expect(en.chat.social).toContain('coming soon')
+    expect(ar.chat.noOffers).toContain('قريبًا')
+    expect(en.chat.noOffers).toContain('coming soon')
+  })
+
+  it('shows the featured products as examples', () => {
+    expect(answer({ topic: 'featured' })).toEqual({
+      text: ar.chat.featured,
+      products: products.slice(0, 2),
+      note: ar.chat.moreFeatured,
+      chips: MORE_QUESTIONS,
+    })
+  })
+
+  it('says the products could not be loaded when there are no featured ones', () => {
+    expect(answer({ topic: 'featured' }, 'ar', { products: [] }).text).toBe(
+      ar.products.loadFailed,
+    )
   })
 
   it('shows the products found, at most MAX_PRODUCTS, with a note when there are more', () => {

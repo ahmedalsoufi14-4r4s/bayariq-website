@@ -1,6 +1,6 @@
 # أسواق بيارق الخير الاقتصادية · Aswaq Bayariq Al Khair
 
-The website of a neighborhood supermarket with four branches in Jeddah: Al Hamdaniyah, Kilo 14 and Al Mahamid (أسواق بيارق الخير), and Al Harazat (بيارق التوفيق). Customers browse products and offers, find the nearest branch, and send their order to that branch on WhatsApp.
+The website of a neighborhood supermarket with three branches in Jeddah: Al Mahamid, Kilo 14 and Al Hamdaniyah. Customers browse products and offers, find the nearest branch, and send their order to that branch on WhatsApp.
 
 **Live site: [ahmedalsoufi14-4r4s.github.io/bayariq-website](https://ahmedalsoufi14-4r4s.github.io/bayariq-website/)**
 
@@ -13,11 +13,12 @@ The website of a neighborhood supermarket with four branches in Jeddah: Al Hamda
 ## Features
 
 - Arabic first (right to left), with an English switch. The choice is remembered.
-- Product list with category filter and a search that ignores Arabic letter variants (أ إ آ, ة, ى) and diacritics.
-- Offers with a "valid until" date. Expired offers hide themselves.
+- About 16,000 products in 18 categories, from the shop's POS system. They load one category at a time (the first screen needs 2 KB of product data), and the search looks through all of them: it ignores Arabic letter variants (أ إ آ, ة, ى) and diacritics, and understands common English words.
+- Delivery rules by distance: 5 SAR up to 3 km, 10 SAR up to 5 km, from 50 SAR, free from 200 SAR. With "use my location" (optional) the order form shows the exact fee, or suggests the nearest branch that delivers. The location is never saved or sent, except as a map link in the customer's own WhatsApp message.
+- Offers with a "valid until" date. Expired offers hide themselves, and until there are offers a card says they are coming soon.
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
-- A card for each branch with its own name, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
-- A quick-answer chat helper behind the red button in the corner: opening hours, branches and locations, delivery, how to order, current offers, contacting a branch, and "do you have X?" with an Add to cart button. Tap a chip or type a question in Arabic or English. No AI and no server: every answer comes from the data files, and missing details are answered with "coming soon".
+- A card for each branch with its photo, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
+- A quick-answer chat helper behind the red button in the corner: opening hours, branches and locations, delivery, how to order, current offers, featured products, contacting a branch, and "do you have X?" with an Add to cart button. Tap a chip or type a question in Arabic or English. No AI and no server: every answer comes from the data files, and missing details (offers, social accounts) are answered with "coming soon".
 - A short guided tour on the first visit: seven steps with a spotlight and a tooltip (the menu, language and dark mode, search and categories, Add to cart, the cart and WhatsApp order, the branches, the chat helper). It shows once, works with the keyboard and on phones, and "take the tour again" is in the chat helper and the footer.
 - The store's own colors, sampled from its logo, in a 60-30-10 split: white `#ffffff`, the logo green `#048157` and red (`#e00000` for buttons, a touch deeper than the logo's `#fb0000` so white text on it passes AA). Defined once as color tokens in `src/index.css`, with a dark mode that keeps the same split. The logo's bag-and-leaf mark is redrawn as an SVG for the header and the favicon, and the full logo sits in the footer.
 - The page feels alive: soft green and red circles float behind it, layered waves move along the edges of the green bands, and cards fade in as they scroll into view. Every card, button, link and input reacts to the mouse (and cards to a tap on phones), a red pill slides to the chosen category, and the menu highlights the section on screen. Dialogs slide and fade. All motion is off for people who ask their device for less. Keyboard friendly, AA contrast checked on every piece of text.
@@ -36,32 +37,35 @@ npm install
 npm run dev        # http://localhost:5173/bayariq-website/
 ```
 
-| Command                | What it does                                                                                                                                  |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`          | Starts the development server.                                                                                                                |
-| `npm run build`        | Builds the site into `dist/`.                                                                                                                 |
-| `npm run lint`         | Checks the code with ESLint.                                                                                                                  |
-| `npm run format:check` | Checks the formatting with Prettier (`npm run format` fixes it).                                                                              |
-| `npm test`             | Runs the unit tests (cart, WhatsApp message, Arabic search, offers, JSON-LD, chat helper, tour).                                              |
-| `npm run check`        | Builds the site and runs the Playwright checks in Arabic and English at 360 px and 1280 px.                                                   |
-| `npm run images`       | Remakes the logo files (from `photos/logo.png`), the share image, the iPhone icon and the README screenshots (after a logo or design change). |
+| Command                | What it does                                                                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`          | Starts the development server.                                                                                                             |
+| `npm run build`        | Builds the site into `dist/`.                                                                                                              |
+| `npm run lint`         | Checks the code with ESLint.                                                                                                               |
+| `npm run format:check` | Checks the formatting with Prettier (`npm run format` fixes it).                                                                           |
+| `npm test`             | Runs the unit tests (cart, WhatsApp message, delivery, Arabic search, offers, JSON-LD, chat helper, tour).                                 |
+| `npm run check`        | Builds the site and runs the Playwright checks in Arabic and English at 360 px and 1280 px.                                                |
+| `npm run images`       | Remakes the logo files (from `photos/logo.png`), the photos (from `photos/`), the share image, the iPhone icon and the README screenshots. |
+| `npm run products`     | Remakes the product files in `public/data/` and `attara-moves.md` from the POS data in `data/`.                                            |
+| `npm run price-check`  | Remakes `price-check.md`: names with a pack count and a price that looks like one piece.                                                   |
 
 The first `npm run check` needs Chromium: `npx playwright install chromium`.
 
 ## Change the content
 
-All content lives in `src/data/` and `src/i18n/`. Nothing in the components needs to change.
+All content lives in `src/data/`, `src/i18n/` and, for the products, `data/`. Nothing in the components needs to change.
 
-| File                          | Holds                                                                                                                                     |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/data/store.json`         | Store name, website, social links, and the branches: name, district, phone, WhatsApp number, opening hours, address, map links, delivery. |
-| `src/data/products.json`      | Products: names in both languages, category, price (or `null`), unit, photo.                                                              |
-| `src/data/categories.json`    | Categories, each with the name of its icon in `src/components/Icons.jsx`.                                                                 |
-| `src/data/offers.json`        | Offers with a last day (`validUntil`, `YYYY-MM-DD`).                                                                                      |
-| `src/data/tour.json`          | The steps of the first-visit tour: their order and the element each one points at.                                                        |
-| `src/i18n/ar.json`, `en.json` | Every text on the page, in Arabic and English.                                                                                            |
+| File                          | Holds                                                                                                                                                                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/data/store.json`         | Store name, website, social links, the delivery rules, and the branches: name, district, phone, WhatsApp number, opening hours, address, map link and coordinates, photo. A branch with `"active": false` is hidden everywhere. |
+| `data/`                       | The products from the POS system, and which are featured, hidden or moved into Attara ([data/README.md](data/README.md)). Run `npm run products` after a change.                                                                |
+| `src/data/searchWords.json`   | Words people type and the word the product names use for them, like "milk" and "حليب".                                                                                                                                          |
+| `src/data/categories.json`    | Categories, each with the name of its icon in `src/components/Icons.jsx`.                                                                                                                                                       |
+| `src/data/offers.json`        | Offers with a last day (`validUntil`, `YYYY-MM-DD`).                                                                                                                                                                            |
+| `src/data/tour.json`          | The steps of the first-visit tour: their order and the element each one points at.                                                                                                                                              |
+| `src/i18n/ar.json`, `en.json` | Every text on the page, in Arabic and English.                                                                                                                                                                                  |
 
-Photos go in `public/images/` as WebP under 200 KB ([squoosh.app](https://squoosh.app) converts them for free). `npm run check` fails if a photo is missing, too big or not WebP.
+Originals of photos go in `photos/` and in the list in `scripts/make-photos.js`; `npm run images` makes the WebP files in `public/images/`. `npm run check` fails if a photo is missing, over 200 KB or not WebP.
 
 Values tagged `NEEDS-AHMED` are still missing. The site hides them or shows "قريبًا / Coming soon" until they are filled in. [NEEDS_FROM_AHMED.md](NEEDS_FROM_AHMED.md) lists them all.
 
@@ -72,13 +76,17 @@ src/
   sections/    page sections (hero, offers, products, store info)
   components/  smaller parts (header, cards, dialogs, cart drawer, order form, chat helper)
   cart/        cart state, saved in the browser
+  products/    loading the products, one category at a time
   tour/        first-visit tour state (shown once, can be started again)
   i18n/        language switch and all texts
   lib/         pure functions with unit tests
-  data/        store details, products, categories, offers, tour steps
+  data/        store details, categories, offers, tour steps, search words
 e2e/           Playwright browser checks
-scripts/       makes the share image, icon and screenshots
-public/        favicon, share image, fonts, photos
+data/          the POS product data that `npm run products` reads
+extras/        kept, but not part of the site (the Nafhat Bun products)
+photos/        the original photos and logo
+scripts/       makes the images and the product files
+public/        favicon, share image, fonts, photos, product files
 ```
 
 ## Deployment

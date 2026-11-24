@@ -6,6 +6,7 @@ import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatPrice } from '../lib/price.js'
 import { CloseIcon, PlusIcon } from './Icons.jsx'
 import ProductImage from './ProductImage.jsx'
+import ProductName from './ProductName.jsx'
 import { BUTTON_ACCENT, ICON_BUTTON } from './styles.js'
 
 // Product details in the browser's built-in <dialog>. Opened with showModal(), it keeps
@@ -33,18 +34,14 @@ function ProductDialog({ product, onClose }) {
   if (product) {
     const category = categories.find((item) => item.id === product.category)
     details = [
-      // A category id with a typo in products.json leaves the category row out instead of crashing.
+      // A category id that is not in categories.json leaves the category row out instead of crashing.
       ...(category ? [[t.products.category, localize(category, 'name')]] : []),
-      [t.products.unit, localize(product, 'unit')],
+      [t.products.unit, t.products.units[product.unit]],
       [
         t.products.price,
         product.price === null
           ? t.products.priceOnRequest
           : formatPrice(product.price, t.currency),
-      ],
-      [
-        t.products.availability,
-        product.inStock ? t.products.inStock : t.products.outOfStock,
       ],
     ]
   }
@@ -61,7 +58,7 @@ function ProductDialog({ product, onClose }) {
         <div className="p-5">
           <div className="flex items-start justify-between gap-4">
             <h2 id="product-dialog-title" className="text-xl font-bold">
-              {localize(product, 'name')}
+              <ProductName product={product} />
             </h2>
             <button
               type="button"
@@ -93,7 +90,6 @@ function ProductDialog({ product, onClose }) {
           <button
             type="button"
             onClick={() => add(product)}
-            disabled={!product.inStock}
             className={`${BUTTON_ACCENT} mt-5 w-full px-5 py-3`}
           >
             <PlusIcon className="size-5" />

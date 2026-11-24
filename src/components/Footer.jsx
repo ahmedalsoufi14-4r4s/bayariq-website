@@ -1,6 +1,8 @@
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
+import { isPlaceholder } from '../lib/placeholder.js'
 import { useTour } from '../tour/TourContext.js'
+import { ShareIcon } from './Icons.jsx'
 import WaveDivider from './WaveDivider.jsx'
 
 function Footer() {
@@ -30,18 +32,28 @@ function Footer() {
               className="h-auto w-72 sm:w-80"
             />
           </div>
-          <p>
-            © {year} {localize(store, 'name')}. {t.footer.rights}
-          </p>
-          {/* Starts the first-visit tour again. Focus comes back to this link afterwards.
-              Its underline gets thicker on hover, and it shrinks a little while pressed. */}
-          <button
-            type="button"
-            onClick={(event) => startTour(event.currentTarget)}
-            className="min-h-11 underline underline-offset-4 transition duration-150 ease-out hover:decoration-2 motion-safe:active:scale-95"
-          >
-            {t.tour.again}
-          </button>
+          <div className="flex flex-col items-start gap-2 md:items-end">
+            {/* NEEDS-AHMED: the social accounts ("social" in store.json). A small card in a
+                darker green, so it reacts like every box; its icon wiggles. */}
+            {isPlaceholder(store.social) && (
+              <p className="card flex items-center gap-2 rounded-2xl bg-main-hover px-4 py-3">
+                <ShareIcon className="size-5 shrink-0 motion-safe:card-active:animate-wiggle" />
+                {t.footer.social}
+              </p>
+            )}
+            {/* Starts the first-visit tour again. Focus comes back to this link afterwards.
+                Its underline gets thicker on hover, and it shrinks a little while pressed. */}
+            <button
+              type="button"
+              onClick={(event) => startTour(event.currentTarget)}
+              className="min-h-11 underline underline-offset-4 transition duration-150 ease-out hover:decoration-2 motion-safe:active:scale-95"
+            >
+              {t.tour.again}
+            </button>
+            <p>
+              © {year} {localize(store, 'name')}. {t.footer.rights}
+            </p>
+          </div>
         </div>
       </footer>
     </>

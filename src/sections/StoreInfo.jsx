@@ -4,7 +4,7 @@ import SectionHeading from '../components/SectionHeading.jsx'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 
-// "Our branches": one card for each branch in store.json.
+// "Our branches": one card for each active branch in store.json.
 function StoreInfo() {
   const { t } = useLanguage()
 
@@ -16,7 +16,7 @@ function StoreInfo() {
     >
       <SectionHeading id="contact-title">{t.contact.title}</SectionHeading>
 
-      <ul className="mt-8 grid gap-6 md:grid-cols-2">
+      <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {store.branches.map((branch) => (
           <li key={branch.id} ref={reveal} className="reveal">
             <BranchCard branch={branch} />

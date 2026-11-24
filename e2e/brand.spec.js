@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import {
   openSite,
   products,
@@ -10,8 +10,7 @@ import {
 } from './helpers.js'
 
 const t = texts.ar
-const inStockProduct = products.find((product) => product.inStock)
-const outOfStockProduct = products.find((product) => !product.inStock)
+const firstProduct = products[0]
 
 // The exact logo colors from src/index.css (--color-logo-green and --color-logo-red).
 const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
@@ -102,12 +101,11 @@ for (const theme of ['light', 'dark']) {
       await page
         .locator('#products')
         .getByRole('button', {
-          name: `${t.cart.add}: ${inStockProduct.name_ar}`,
+          name: `${t.cart.add}: ${firstProduct.name}`,
         })
         .click()
       const redOnGreen = [
         page.locator('#home').getByRole('link', { name: t.hero.browse }),
-        page.locator('#home .tile-bob[class*="bg-accent"]'),
         page.locator('header').getByText('1', { exact: true }),
         page.getByRole('button', { name: t.chat.open }),
       ]
@@ -160,23 +158,10 @@ for (const language of ['ar', 'en']) {
   })
 }
 
-test('warnings and statuses show an icon with their text, never color alone', async ({
+test('warnings show an icon with their text, never color alone', async ({
   page,
 }) => {
   await openSite(page, 'ar')
-  if (outOfStockProduct) {
-    const badge = page
-      .locator('#products article')
-      .filter({
-        has: page.getByRole('heading', {
-          name: outOfStockProduct.name_ar,
-          exact: true,
-        }),
-      })
-      .getByText(t.products.outOfStock)
-    await expect(badge.locator('svg')).toHaveCount(1)
-  }
-
   // Why "send order" is off: an icon and the reason in words.
   await page.getByRole('button', { name: t.cart.open }).click()
   const hint = page.locator('#send-hint')

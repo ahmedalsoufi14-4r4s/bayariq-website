@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import {
   categories,
   findLowContrastText,
@@ -8,22 +8,23 @@ import {
   tokenColor,
   totalLayoutShift,
   waitForFonts,
+  waitForProducts,
 } from './helpers.js'
 
 const t = texts.ar
 const THEMES = ['light', 'dark']
-const inStockProduct = products.find((product) => product.inStock)
+const firstProduct = products[0]
 const featuredProduct = products.find((product) => product.featured)
 
 function addButton(page, product) {
   return page
     .locator('#products')
-    .getByRole('button', { name: `${t.cart.add}: ${product.name_ar}` })
+    .getByRole('button', { name: `${t.cart.add}: ${product.name}` })
 }
 
 function productCard(page, product) {
   return page.locator('#products article').filter({
-    has: page.getByRole('heading', { name: product.name_ar, exact: true }),
+    has: page.getByRole('heading', { name: product.name, exact: true }),
   })
 }
 
@@ -63,7 +64,7 @@ for (const theme of THEMES) {
       }
 
       // Red: Add to cart, the active filter, the "featured" badge and the cart count.
-      await expect(addButton(page, inStockProduct)).toHaveCSS(
+      await expect(addButton(page, firstProduct)).toHaveCSS(
         'background-color',
         accent,
       )
@@ -81,7 +82,7 @@ for (const theme of THEMES) {
           productCard(page, featuredProduct).getByText(t.products.featured),
         ).toHaveCSS('background-color', accent)
       }
-      await addButton(page, inStockProduct).click()
+      await addButton(page, firstProduct).click()
       await expect(
         page.locator('header').getByText('1', { exact: true }),
       ).toHaveCSS('background-color', accent)
@@ -92,16 +93,17 @@ for (const theme of THEMES) {
     }) => {
       await page.setViewportSize({ width: 360, height: 800 })
       await page.goto('./')
+      await waitForProducts(page)
       expect(await findLowContrastText(page)).toEqual([])
 
       await page
         .locator('#products')
-        .getByRole('button', { name: products[0].name_ar, exact: true })
+        .getByRole('button', { name: products[0].name, exact: true })
         .click()
       expect(await findLowContrastText(page)).toEqual([])
       await page.keyboard.press('Escape')
 
-      await addButton(page, inStockProduct).click()
+      await addButton(page, firstProduct).click()
       await page.getByRole('button', { name: t.cart.open }).click()
       await expect(
         page.getByRole('dialog', { name: t.cart.title }),
@@ -114,7 +116,7 @@ for (const theme of THEMES) {
       const chat = page.getByRole('dialog', { name: t.chat.title })
       await chat
         .getByRole('textbox', { name: t.chat.inputLabel })
-        .fill(inStockProduct.name_ar)
+        .fill(firstProduct.name)
       await chat.getByRole('button', { name: t.chat.send }).click()
       await expect(
         chat.getByText(t.chat.products, { exact: true }),
@@ -127,6 +129,7 @@ for (const theme of THEMES) {
     }) => {
       await page.setViewportSize({ width: 360, height: 800 })
       await page.goto('./')
+      await waitForProducts(page)
       const heroCircles = page.locator('#home .circle')
       const pageCircles = page.locator('.circle:not(#home .circle)')
       await expect(heroCircles).not.toHaveCount(0)
@@ -185,6 +188,7 @@ test.describe('with motion allowed', () => {
   }) => {
     await page.setViewportSize({ width: 360, height: 800 })
     await page.goto('./')
+    await waitForProducts(page)
     const lastCard = page.locator('#products li').last()
 
     await expect(lastCard).toHaveCSS('opacity', '0')
@@ -199,6 +203,7 @@ test.describe('with motion allowed', () => {
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('./')
+    await waitForProducts(page)
     const cards = page.locator('#products li')
 
     await cards.first().scrollIntoViewIfNeeded()
@@ -221,12 +226,12 @@ test.describe('with motion allowed', () => {
     page,
   }) => {
     await page.goto('./')
-    const button = addButton(page, inStockProduct)
+    const button = addButton(page, firstProduct)
     await button.scrollIntoViewIfNeeded()
     // Wait until the card has finished fading in, so it does not rise away from under the mouse.
     const listItem = page.locator('#products li').filter({
       has: page.getByRole('button', {
-        name: `${t.cart.add}: ${inStockProduct.name_ar}`,
+        name: `${t.cart.add}: ${firstProduct.name}`,
       }),
     })
     await expect(listItem).toHaveAttribute('data-revealed', 'true')
@@ -235,7 +240,7 @@ test.describe('with motion allowed', () => {
       .toBe(0)
 
     await button.hover()
-    await expect(productCard(page, inStockProduct)).toHaveCSS(
+    await expect(productCard(page, firstProduct)).toHaveCSS(
       'translate',
       '0px -6px',
     )
@@ -253,10 +258,10 @@ test.describe('with motion allowed', () => {
     await page.goto('./')
     await page
       .locator('#products')
-      .getByRole('button', { name: products[0].name_ar, exact: true })
+      .getByRole('button', { name: products[0].name, exact: true })
       .click()
 
-    const dialog = page.getByRole('dialog', { name: products[0].name_ar })
+    const dialog = page.getByRole('dialog', { name: products[0].name })
     await expect(dialog).toHaveCSS('transition-property', /opacity, translate/)
     await expect(dialog).toHaveCSS('opacity', '1')
   })
@@ -267,9 +272,9 @@ test.describe('with motion allowed', () => {
     await page.goto('./')
     await page
       .locator('#products')
-      .getByRole('button', { name: inStockProduct.name_ar, exact: true })
+      .getByRole('button', { name: firstProduct.name, exact: true })
       .click()
-    const dialog = page.getByRole('dialog', { name: inStockProduct.name_ar })
+    const dialog = page.getByRole('dialog', { name: firstProduct.name })
     const add = dialog.getByRole('button', { name: t.cart.add })
 
     await add.click()
@@ -291,6 +296,7 @@ test.describe('with motion allowed', () => {
     // This test is about the animations, so it starts measuring once the web font is in.
     // A font that arrives late is checked on its own in e2e/layout.spec.js.
     await waitForFonts(page)
+    await waitForProducts(page)
     await recordLayoutShifts(page)
 
     // Scroll down the whole page so every section and card animates in.
@@ -310,7 +316,8 @@ test('visitors who ask for less motion see every card at once, and nothing moves
 }) => {
   // playwright.config.js asks for reduced motion in every test.
   await page.goto('./')
-  const button = addButton(page, inStockProduct)
+  await waitForProducts(page)
+  const button = addButton(page, firstProduct)
 
   await expect(page.locator('#products li').last()).toHaveCSS('opacity', '1')
   await button.hover()
@@ -339,6 +346,7 @@ test.describe('dark mode screenshot', () => {
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('./')
+    await waitForProducts(page)
     await page.locator('#products').screenshot({
       path: 'screenshots/products-dark.png',
       style: 'header { visibility: hidden; }',

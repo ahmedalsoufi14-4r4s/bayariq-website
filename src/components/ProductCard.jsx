@@ -1,14 +1,14 @@
 import { useCart } from '../cart/CartContext.js'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { formatPrice } from '../lib/price.js'
-import { NoSymbolIcon, PlusIcon } from './Icons.jsx'
+import { PlusIcon } from './Icons.jsx'
 import ProductImage from './ProductImage.jsx'
+import ProductName from './ProductName.jsx'
 import { BUTTON_ACCENT, CARD } from './styles.js'
 
 function ProductCard({ product, onOpen }) {
-  const { t, localize } = useLanguage()
+  const { t } = useLanguage()
   const { add, getQuantity } = useCart()
-  const name = localize(product, 'name')
   const quantity = getQuantity(product.id)
 
   return (
@@ -21,20 +21,11 @@ function ProductCard({ product, onOpen }) {
         <ProductImage product={product} />
       </div>
 
-      <div className="absolute start-2 top-2 flex flex-wrap gap-1 text-xs">
-        {product.featured && (
-          <span className="rounded-full bg-accent px-2 py-1 font-bold text-on-accent">
-            {t.products.featured}
-          </span>
-        )}
-        {/* A status never relies on color alone: an icon and clear text, for color-blind visitors. */}
-        {!product.inStock && (
-          <span className="flex items-center gap-1 rounded-full bg-ink px-2 py-1 text-surface">
-            <NoSymbolIcon className="size-3.5" />
-            {t.products.outOfStock}
-          </span>
-        )}
-      </div>
+      {product.featured && (
+        <span className="absolute start-2 top-2 rounded-full bg-accent px-2 py-1 text-xs font-bold text-on-accent">
+          {t.products.featured}
+        </span>
+      )}
 
       {/* A small confirmation: it slides in when the product is added, and again on each change. */}
       {quantity > 0 && (
@@ -55,10 +46,10 @@ function ProductCard({ product, onOpen }) {
             onClick={() => onOpen(product)}
             className="text-start after:absolute after:inset-0"
           >
-            {name}
+            <ProductName product={product} />
           </button>
         </h3>
-        <p className="text-sm text-muted">{localize(product, 'unit')}</p>
+        <p className="text-sm text-muted">{t.products.units[product.unit]}</p>
         <p className="mt-auto pt-2 font-bold text-main-ink">
           {product.price === null
             ? t.products.priceOnRequest
@@ -69,8 +60,7 @@ function ProductCard({ product, onOpen }) {
           type="button"
           data-tour="add"
           onClick={() => add(product)}
-          disabled={!product.inStock}
-          aria-label={`${t.cart.add}: ${name}`}
+          aria-label={`${t.cart.add}: ${product.name}`}
           className={`${BUTTON_ACCENT} relative z-10 mt-2 min-h-11 px-3 text-sm`}
         >
           <PlusIcon className="size-4" />

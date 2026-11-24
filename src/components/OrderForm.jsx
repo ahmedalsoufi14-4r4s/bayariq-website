@@ -3,11 +3,25 @@ import { useCart } from '../cart/CartContext.js'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { getSendHintKey } from '../lib/branches.js'
+import { getEstimatedTotal } from '../lib/cart.js'
+import {
+  formatFees,
+  getDeliveryFee,
+  getDistanceKm,
+  getLocationUrl,
+  getMissingAmount,
+  getZone,
+  reachesMinimum,
+} from '../lib/delivery.js'
 import { buildOrderMessage, buildWhatsAppUrl } from '../lib/orderMessage.js'
-import { isPlaceholder } from '../lib/placeholder.js'
+import { formatPrice } from '../lib/price.js'
 import { fillIn } from '../lib/text.js'
+import DeliveryInfo from './DeliveryInfo.jsx'
 import { AlertIcon, ChatIcon } from './Icons.jsx'
 import { BUTTON_ACCENT } from './styles.js'
+import { useCustomerLocation } from './useCustomerLocation.js'
+
+const { delivery } = store
 
 // The border darkens on hover; on focus it turns green and a soft ring fades in around it.
 // py-2.5 makes the one-line fields 46px tall, easy to tap.
@@ -18,11 +32,12 @@ const INPUT =
 // highlight under the pointer, and while pressed (active:) it lights up and shrinks a little,
 // so a tap on a phone shows too. -mx-2 and px-2 give the highlight some room without moving the text.
 const RADIO_LABEL =
-  'flex min-h-11 cursor-pointer items-center gap-2 -mx-2 rounded-lg px-2 transition duration-150 ease-out hover:bg-main-soft active:bg-main-soft motion-safe:active:scale-98'
+  'flex min-h-11 cursor-pointer items-center gap-2 -mx-2 rounded-lg px-2 transition duration-150 ease-out hover:bg-main-soft active:bg-main-soft motion-safe:active:scale-98 has-disabled:cursor-not-allowed has-disabled:text-muted'
 
 function OrderForm() {
   const { t, language, localize } = useLanguage()
   const { lines, extraItems, setExtraItems } = useCart()
+  const customerLocation = useCustomerLocation()
   const [customer, setCustomer] = useState({
     branch: '',
     name: '',
@@ -32,11 +47,23 @@ function OrderForm() {
     notes: '',
   })
 
+  const total = getEstimatedTotal(lines)
   const branch = store.branches.find((item) => item.id === customer.branch)
-  // Delivery is only offered when the chosen branch delivers ("delivers": true in store.json).
-  const canDeliver = branch?.delivers === true
-  // A branch that does not deliver always means pickup, even if delivery was picked for another branch.
-  const method = canDeliver ? customer.method : 'pickup'
+  // Delivery is only offered when the chosen branch delivers ("delivers": true in store.json),
+  // and only for orders that reach the minimum.
+  const branchDelivers = branch?.delivers === true
+  const isBelowMinimum = !reachesMinimum(total, delivery)
+  // Without delivery the order is always picked up, even if delivery was chosen before.
+  const method = branchDelivers && !isBelowMinimum ? customer.method : 'pickup'
+
+  // How far the customer is from the chosen branch, or null without a location.
+  const { place } = customerLocation
+  const distanceKm = place && branch ? getDistanceKm(place, branch) : null
+  const isOutsideArea =
+    method === 'delivery' &&
+    distanceKm !== null &&
+    !getZone(distanceKm, delivery)
+
   const hasOrder = lines.length > 0 || extraItems.trim() !== ''
   // Never send orders to a made-up number: the button stays disabled until the
   // chosen branch has its real WhatsApp number (see src/lib/branches.js).
@@ -44,16 +71,20 @@ function OrderForm() {
     branches: store.branches,
     branch,
     hasOrder,
+    isOutsideArea,
   })
 
   function branchLabel(item) {
     return fillIn(t.contact.branch, { district: localize(item, 'district') })
   }
 
+  function change(name, value) {
+    setCustomer((current) => ({ ...current, [name]: value }))
+  }
+
   // One handler for every field: the input's name says which value to update.
   function handleChange(event) {
-    const { name, value } = event.target
-    setCustomer((current) => ({ ...current, [name]: value }))
+    change(event.target.name, event.target.value)
   }
 
   function handleSubmit(event) {
@@ -63,8 +94,19 @@ function OrderForm() {
       extraItems,
       customer: { ...customer, method },
       branch: branchLabel(branch),
+      // Only for delivery. The location goes into the message and nowhere else.
+      delivery:
+        method === 'delivery'
+          ? {
+              fee: getDeliveryFee({ total, distanceKm, delivery }),
+              fees: formatFees(delivery, language, t.currency),
+              distanceKm,
+              locationUrl: place && getLocationUrl(place),
+            }
+          : null,
       language,
       labels: t.order.message,
+      units: t.products.units,
       currency: t.currency,
     })
     window.open(
@@ -138,28 +180,54 @@ function OrderForm() {
         />
       </div>
 
-      {canDeliver ? (
+      {branchDelivers ? (
         <fieldset>
           <legend>{t.order.method}</legend>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
-            {['pickup', 'delivery'].map((option) => (
-              <label key={option} className={RADIO_LABEL}>
-                <input
-                  type="radio"
-                  name="method"
-                  value={option}
-                  checked={method === option}
-                  onChange={handleChange}
-                  className="size-4 accent-main-ink"
-                />
-                {t.order.message[option]}
-              </label>
-            ))}
+            {['pickup', 'delivery'].map((option) => {
+              const isDisabled = option === 'delivery' && isBelowMinimum
+              return (
+                <label key={option} className={RADIO_LABEL}>
+                  <input
+                    type="radio"
+                    name="method"
+                    value={option}
+                    checked={method === option}
+                    onChange={handleChange}
+                    disabled={isDisabled}
+                    aria-describedby={isDisabled ? 'minimum-hint' : undefined}
+                    className="size-4 accent-main-ink"
+                  />
+                  {t.order.message[option]}
+                </label>
+              )
+            })}
           </div>
-          {method === 'delivery' && !isPlaceholder(branch.delivery_ar) && (
-            <p className="mt-2 text-sm text-muted">
-              {localize(branch, 'delivery')}
+          {/* Why delivery is off: an icon and clear text, never color alone. */}
+          {isBelowMinimum && (
+            <p
+              id="minimum-hint"
+              className="mt-1 flex items-start gap-1.5 text-sm text-muted"
+            >
+              <AlertIcon className="mt-0.5 size-4 shrink-0" />
+              {fillIn(t.order.delivery.minimum, {
+                minimum: formatPrice(delivery.minimumOrder, t.currency),
+                missing: formatPrice(
+                  getMissingAmount(total, delivery.minimumOrder),
+                  t.currency,
+                ),
+              })}
             </p>
+          )}
+          {method === 'delivery' && (
+            <DeliveryInfo
+              total={total}
+              distanceKm={distanceKm}
+              customerLocation={customerLocation}
+              branchLabel={branchLabel}
+              onChooseBranch={(item) => change('branch', item.id)}
+              onChoosePickup={() => change('method', 'pickup')}
+            />
           )}
         </fieldset>
       ) : (

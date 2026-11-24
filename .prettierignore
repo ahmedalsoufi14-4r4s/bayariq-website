@@ -1,3 +1,10 @@
 dist
 package-lock.json
 CLAUDE.md
+
+# Data files and the lists that scripts write (npm run products, npm run price-check).
+data
+extras
+public/data
+attara-moves.md
+price-check.md

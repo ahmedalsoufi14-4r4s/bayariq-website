@@ -1,32 +1,50 @@
-// The cart items are an object of product id -> quantity, for example { 'fresh-milk': 2 }.
-// Every function returns a new object instead of changing the old one,
-// because React only notices a change when it gets a new object.
+// The cart items are a list of { product, quantity }, in the order the products were added.
+// Each keeps a copy of its product, because the product files are loaded one category at a time
+// and the cart must show right away when the visitor comes back.
+// Every function returns a new list instead of changing the old one,
+// because React only notices a change when it gets a new list.
 
-export function addItem(items, productId) {
-  return { ...items, [productId]: (items[productId] ?? 0) + 1 }
+// The parts of a product that the cart and the order message need.
+function copyProduct({ id, name, category, price, unit }) {
+  return { id, name, category, price, unit }
+}
+
+export function getQuantity(items, productId) {
+  return items.find((item) => item.product.id === productId)?.quantity ?? 0
+}
+
+export function addItem(items, product) {
+  const quantity = getQuantity(items, product.id)
+  return quantity > 0
+    ? setQuantity(items, product.id, quantity + 1)
+    : [...items, { product: copyProduct(product), quantity: 1 }]
 }
 
 // A quantity of 0 or less removes the product.
 export function setQuantity(items, productId, quantity) {
   if (quantity <= 0) return removeItem(items, productId)
-  return { ...items, [productId]: quantity }
+  return items.map((item) =>
+    item.product.id === productId ? { ...item, quantity } : item,
+  )
 }
 
 export function removeItem(items, productId) {
-  const rest = { ...items }
-  delete rest[productId]
-  return rest
+  return items.filter((item) => item.product.id !== productId)
 }
 
-// Joins the cart with the product data, in the order the products were added.
-// Ids that are no longer in products.json are skipped.
-export function getCartLines(items, products) {
-  return Object.entries(items)
-    .map(([id, quantity]) => ({
-      product: products.find((product) => product.id === id),
-      quantity,
-    }))
-    .filter((line) => line.product && line.quantity > 0)
+// The cart as it shows: once a product's category has loaded, its saved copy is replaced by the
+// product of today (with today's price), and a product that is no longer in it is left out.
+// byCategory is { dairy: [products], ... }, with only the categories loaded so far.
+export function getCartLines(items, byCategory) {
+  return items
+    .map(({ product, quantity }) => {
+      const loaded = byCategory[product.category]
+      const current = loaded
+        ? loaded.find((item) => item.id === product.id)
+        : product
+      return { product: current, quantity }
+    })
+    .filter((line) => line.product)
 }
 
 export function getItemCount(lines) {

@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test'
-import { openSite, store, texts } from './helpers.js'
+import { expect, test } from './test.js'
+import { hiddenBranches, openSite, store, texts } from './helpers.js'
 
 const MAX_SHARE_IMAGE_BYTES = 200 * 1024
 
@@ -77,6 +77,12 @@ test.describe('without JavaScript', () => {
       expect(description).toContain(branch.district_ar)
       expect(shareText).toContain(branch.district_ar)
     }
+    for (const branch of hiddenBranches) {
+      expect(description).not.toContain(branch.district_ar)
+      expect(shareText).not.toContain(branch.district_ar)
+    }
+    expect(description).toContain('ثلاثة فروع')
+    expect(shareText).toContain('ثلاثة فروع')
   })
 
   test('JSON-LD describes the store and each branch as a GroceryStore, without placeholders', async ({
@@ -94,11 +100,18 @@ test.describe('without JavaScript', () => {
     expect(organization.url).toBe(store.website)
     expect(branches.map((branch) => branch.name)).toEqual(
       store.branches.map(
-        (branch) => `${branch.name_ar} - ${branch.district_ar}`,
+        (branch) => `${branch.name_ar} - فرع ${branch.district_ar}`,
       ),
     )
-    for (const branch of branches) {
+    for (const [index, branch] of branches.entries()) {
+      const { phone, openingHours, address_ar, mapsUrl, latitude, longitude } =
+        store.branches[index]
       expect(branch.parentOrganization).toEqual({ '@id': organization['@id'] })
+      expect(branch.telephone).toBe(phone)
+      expect(branch.openingHours).toEqual(openingHours)
+      expect(branch.address.streetAddress).toBe(address_ar)
+      expect(branch.hasMap).toBe(mapsUrl)
+      expect(branch.geo).toMatchObject({ latitude, longitude })
     }
     expect(json).not.toContain('NEEDS-AHMED')
   })

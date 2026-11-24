@@ -12,7 +12,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "check": "playwright test",
-    "images": "node scripts/make-images.js"
+    "images": "node scripts/make-images.js",
+    "products": "node scripts/build-products.js",
+    "price-check": "node scripts/check-prices.js"
   },
   "dependencies": {
     "react": "^19.3.1",

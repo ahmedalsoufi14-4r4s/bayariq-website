@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 
 // Everything that moves in the background: the circles behind the page and in the hero, the
 // layered waves at the edges of the green bands, and the star pattern and tiles in the hero.
@@ -116,6 +116,19 @@ test.describe('with motion allowed', () => {
   }) => {
     await page.goto('./')
     const moving = page.locator(MOVING)
+    // The hero photos fade and rise in once; that entrance is not part of the background.
+    await expect
+      .poll(() =>
+        page
+          .locator('#home .reveal')
+          .evaluateAll((frames) =>
+            frames.every(
+              (frame) =>
+                frame.dataset.revealed && frame.getAnimations().length === 0,
+            ),
+          ),
+      )
+      .toBe(true)
 
     await setTabHidden(page, true)
     for (const element of await moving.all()) {

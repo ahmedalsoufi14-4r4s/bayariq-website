@@ -1,11 +1,11 @@
 import { useCart } from '../cart/CartContext.js'
 import categories from '../data/categories.json'
 import offers from '../data/offers.json'
-import products from '../data/products.json'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 import { buildAnswer, getQuestionLabel } from '../lib/chatAnswers.js'
 import { formatPrice } from '../lib/price.js'
+import { useProducts } from '../products/ProductsContext.js'
 import {
   CartIcon,
   CategoryIcon,
@@ -14,6 +14,7 @@ import {
   PhoneIcon,
   PlusIcon,
 } from './Icons.jsx'
+import ProductName from './ProductName.jsx'
 import { BUTTON_ACCENT, BUTTON_MAIN, BUTTON_OUTLINE, CARD } from './styles.js'
 
 // Messages grow in from a little below (pop-in in index.css).
@@ -50,9 +51,8 @@ function TypingDots() {
 // the product cards). It is a card, so it lifts and glows under the pointer or a tap, and
 // its icon hops.
 function ChatProduct({ product }) {
-  const { t, localize } = useLanguage()
+  const { t } = useLanguage()
   const { add, getQuantity } = useCart()
-  const name = localize(product, 'name')
   const quantity = getQuantity(product.id)
   const category = categories.find((item) => item.id === product.category)
 
@@ -61,14 +61,16 @@ function ChatProduct({ product }) {
       <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-main-soft text-main-ink motion-safe:card-active:animate-hop">
         <CategoryIcon name={category?.icon} className="size-6" />
       </span>
-      <div className="flex-1">
-        <p className="font-bold">{name}</p>
+      {/* min-w-40 keeps room for long names: the button then moves to its own line. */}
+      <div className="min-w-40 flex-1">
+        <p className="font-bold">
+          <ProductName product={product} />
+        </p>
         <p className="text-sm text-muted">
-          {localize(product, 'unit')} ·{' '}
+          {t.products.units[product.unit]} ·{' '}
           {product.price === null
             ? t.products.priceOnRequest
             : formatPrice(product.price, t.currency)}
-          {!product.inStock && ` · ${t.products.outOfStock}`}
         </p>
         {/* A new key makes React draw a new line, so it slides in again on every change. */}
         {quantity > 0 && (
@@ -83,9 +85,8 @@ function ChatProduct({ product }) {
       <button
         type="button"
         onClick={() => add(product)}
-        disabled={!product.inStock}
-        aria-label={`${t.cart.add}: ${name}`}
-        className={`${BUTTON_ACCENT} min-h-11 px-3 text-sm`}
+        aria-label={`${t.cart.add}: ${product.name}`}
+        className={`${BUTTON_ACCENT} min-h-11 grow px-3 text-sm`}
       >
         <PlusIcon className="size-4" />
         {t.cart.add}
@@ -102,6 +103,7 @@ function ChatProduct({ product }) {
 function ChatMessage({ message, isTyping, onAsk }) {
   const { t, language } = useLanguage()
   const { openCart } = useCart()
+  const { products } = useProducts()
   const context = { store, offers, products, t, language, now: new Date() }
 
   if (message.from === 'visitor') {

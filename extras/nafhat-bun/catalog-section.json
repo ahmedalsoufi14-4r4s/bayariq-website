@@ -1,0 +1,115 @@
+{
+  "id": "nafhat-bun",
+  "name": {
+    "ar": "نفحة بن",
+    "en": "Nafhat Bun"
+  },
+  "productCount": 2734,
+  "dataFile": "data/nafhat-bun.json",
+  "categories": [
+    {
+      "id": "nb-own",
+      "name": {
+        "ar": "منتجات نفحة بن",
+        "en": "Nafhat Bun Products"
+      },
+      "count": 124
+    },
+    {
+      "id": "nb-coffee-tea",
+      "name": {
+        "ar": "قهوة وشاي",
+        "en": "Coffee & Tea"
+      },
+      "count": 263
+    },
+    {
+      "id": "nb-spices",
+      "name": {
+        "ar": "بهارات وتوابل",
+        "en": "Spices"
+      },
+      "count": 280
+    },
+    {
+      "id": "nb-herbs",
+      "name": {
+        "ar": "أعشاب",
+        "en": "Herbs"
+      },
+      "count": 187
+    },
+    {
+      "id": "nb-nuts",
+      "name": {
+        "ar": "مكسرات وفواكه مجففة",
+        "en": "Nuts & Dried Fruit"
+      },
+      "count": 147
+    },
+    {
+      "id": "nb-dates",
+      "name": {
+        "ar": "تمور ومعمول",
+        "en": "Dates & Maamoul"
+      },
+      "count": 131
+    },
+    {
+      "id": "nb-honey-oils",
+      "name": {
+        "ar": "عسل وزيوت",
+        "en": "Honey & Oils"
+      },
+      "count": 219
+    },
+    {
+      "id": "nb-grains",
+      "name": {
+        "ar": "حبوب وبقوليات",
+        "en": "Grains & Pulses"
+      },
+      "count": 62
+    },
+    {
+      "id": "nb-organic",
+      "name": {
+        "ar": "منتجات عضوية",
+        "en": "Organic"
+      },
+      "count": 85
+    },
+    {
+      "id": "nb-traditional",
+      "name": {
+        "ar": "منتجات شعبية وألبان",
+        "en": "Traditional & Dairy"
+      },
+      "count": 154
+    },
+    {
+      "id": "nb-incense",
+      "name": {
+        "ar": "بخور وعود",
+        "en": "Incense & Oud"
+      },
+      "count": 53
+    },
+    {
+      "id": "nb-care",
+      "name": {
+        "ar": "عناية طبيعية وتجميل",
+        "en": "Natural Care & Beauty"
+      },
+      "count": 942
+    },
+    {
+      "id": "nb-other",
+      "name": {
+        "ar": "منتجات متنوعة",
+        "en": "More Products"
+      },
+      "count": 87
+    }
+  ]
+}

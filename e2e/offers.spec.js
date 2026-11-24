@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import { offers, texts } from './helpers.js'
 
 const t = texts.ar
@@ -32,14 +32,38 @@ test('before any offer ends, every offer shows, soonest ending first', async ({
   )
 })
 
-test('after every offer has ended, a "no offers" message shows', async ({
+test('without a running offer, a card says the offers are coming soon', async ({
   page,
 }) => {
   await page.clock.setFixedTime(new Date('2100-01-01T12:00:00+03:00'))
   await page.goto('./')
 
-  await expect(offerTitles(page)).toHaveCount(0)
-  await expect(page.getByText(t.offers.none)).toBeVisible()
+  const card = page.locator('#offers .card')
+  await expect(card).toHaveCount(1)
+  await expect(
+    card.getByRole('heading', { name: t.offers.comingSoon, exact: true }),
+  ).toBeVisible()
+  await expect(card.getByText(t.offers.comingSoonText)).toBeVisible()
+
+  await page.getByRole('button', { name: t.switchLanguage }).click()
+  await expect(
+    card.getByRole('heading', { name: 'Offers: coming soon', exact: true }),
+  ).toBeVisible()
+})
+
+test('the footer says the social accounts are coming soon, in both languages', async ({
+  page,
+}) => {
+  await page.goto('./')
+  const footer = page.locator('footer')
+  await expect(
+    footer.getByText('حساباتنا على وسائل التواصل: قريبًا', { exact: true }),
+  ).toBeVisible()
+
+  await page.getByRole('button', { name: t.switchLanguage }).click()
+  await expect(
+    footer.getByText('Our social accounts: coming soon', { exact: true }),
+  ).toBeVisible()
 })
 
 test('an offer shows until the end of its last day and hides the next day', async ({

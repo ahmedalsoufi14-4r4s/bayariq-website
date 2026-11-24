@@ -8,7 +8,6 @@ import { fillIn } from '../lib/text.js'
 
 // Each id is a key in the "highlights" texts. motion is what the icon does while the card
 // is under the pointer or tapped (card-active: in index.css).
-// NEEDS-AHMED: the family should confirm these points, especially "prices".
 const HIGHLIGHTS = [
   {
     id: 'prices',

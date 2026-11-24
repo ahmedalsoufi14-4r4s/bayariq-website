@@ -3,6 +3,7 @@
 //   public/logo.webp             the same logo at the size the footer shows it (Footer.jsx)
 //   public/og-image.png          the preview card shown when the link is shared (1200 × 630)
 //   public/apple-touch-icon.png  the icon an iPhone shows when the site is added to the home screen
+//   public/images/*.webp         the store's photos, from the originals in photos/ (make-photos.js)
 //   docs/screenshots/*.jpg       the screenshots in README.md
 // Run it with `npm run images` after changing the logo, the store name or the look of the site.
 import { Buffer } from 'node:buffer'
@@ -10,9 +11,13 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 import { build, preview } from 'vite'
+import { withActiveBranches } from '../src/lib/branches.js'
+import { makePhotos } from './make-photos.js'
 
-const store = JSON.parse(
-  readFileSync(new URL('../src/data/store.json', import.meta.url), 'utf8'),
+const store = withActiveBranches(
+  JSON.parse(
+    readFileSync(new URL('../src/data/store.json', import.meta.url), 'utf8'),
+  ),
 )
 const favicon = readFileSync(
   new URL('../public/favicon.svg', import.meta.url),
@@ -236,10 +241,11 @@ async function makeReadmeScreenshots(browser) {
 
 const browser = await chromium.launch()
 await makeLogo(browser)
+await makePhotos(browser)
 await makeShareImage(browser)
 await makeAppleTouchIcon(browser)
 await makeReadmeScreenshots(browser)
 await browser.close()
 console.log(
-  'Made photos/logo-transparent.png, public/logo.webp, public/og-image.png, public/apple-touch-icon.png and docs/screenshots/.',
+  'Made photos/logo-transparent.png, public/logo.webp, public/images/, public/og-image.png, public/apple-touch-icon.png and docs/screenshots/.',
 )

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './test.js'
 import {
   openSite,
   products,
@@ -7,6 +7,7 @@ import {
   texts,
   totalLayoutShift,
   waitForFonts,
+  waitForProducts,
 } from './helpers.js'
 
 const LANGUAGES = ['ar', 'en']
@@ -57,12 +58,6 @@ for (const language of LANGUAGES) {
   }
 }
 
-// One product that can be added and, if there is one, one out-of-stock product with a disabled button.
-const PRODUCTS_TO_CHECK = [
-  products.find((product) => product.inStock),
-  products.find((product) => !product.inStock),
-].filter(Boolean)
-
 for (const width of WIDTHS) {
   test(`at ${width}px the sticky header stays on top of product cards scrolled under it`, async ({
     page,
@@ -71,9 +66,10 @@ for (const width of WIDTHS) {
     await page.setViewportSize({ width, height: 400 })
     await page.goto('./')
 
-    for (const product of PRODUCTS_TO_CHECK) {
+    // The first and the last card of the featured products.
+    for (const product of [products[0], products.at(-1)]) {
       const addButton = page.locator('#products').getByRole('button', {
-        name: `${texts.ar.cart.add}: ${product.name_ar}`,
+        name: `${texts.ar.cart.add}: ${product.name}`,
       })
 
       // Scroll until the middle of the button sits behind the middle of the header,
@@ -95,7 +91,7 @@ for (const width of WIDTHS) {
       })
 
       expect(result.isUnderHeader).toBe(true)
-      expect(result.isHeaderOnTop, product.name_en).toBe(true)
+      expect(result.isHeaderOnTop, product.name).toBe(true)
     }
   })
 }
@@ -122,9 +118,9 @@ for (const width of WIDTHS) {
 
     await page
       .locator('#products')
-      .getByRole('button', { name: product.name_ar, exact: true })
+      .getByRole('button', { name: product.name, exact: true })
       .click()
-    const productDialog = page.getByRole('dialog', { name: product.name_ar })
+    const productDialog = page.getByRole('dialog', { name: product.name })
     await expect(productDialog).toBeVisible()
     expect(await coversHeader(productDialog)).toBe(true)
     await page.keyboard.press('Escape')
@@ -152,6 +148,7 @@ for (const language of LANGUAGES) {
       await openSite(page, language)
       await recordLayoutShifts(page, { fromPageStart: true })
       await waitForFonts(page)
+      await waitForProducts(page)
 
       expect(await totalLayoutShift(page)).toBeLessThan(0.01)
     })

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import products from '../data/products.json'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
-import { matchQuestion } from '../lib/chatQuestions.js'
+import { matchQuestion, needsProducts } from '../lib/chatQuestions.js'
+import { useProducts } from '../products/ProductsContext.js'
 import { useTour } from '../tour/TourContext.js'
 import ChatMessage from './ChatMessage.jsx'
 import { ChatIcon, CloseIcon, SendIcon } from './Icons.jsx'
@@ -38,6 +38,7 @@ function prefersReducedMotion() {
 // small chat panel above it. Every answer comes from the data files (src/lib/chatAnswers.js).
 function ChatBot() {
   const { t } = useLanguage()
+  const { products, loadAll } = useProducts()
   const { startTour, isRunning: isTourRunning } = useTour()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([GREETING])
@@ -77,12 +78,13 @@ function ChatBot() {
   }, [messages, typingId, isPanelOpen])
 
   // Adds the visitor's question and the helper's answer to it. typedText is what the visitor
-  // typed; a tapped chip has none, and its label shows instead (ChatMessage.jsx).
+  // typed; a tapped chip has none, and its label shows instead (ChatMessage.jsx). question is null
+  // while the products it needs are still loading: the typing dots show until setAnswer.
   // Messages are never removed, so their count gives each new one its own id.
   function ask(question, typedText) {
     // The "take the tour again" chip closes the chat and starts the tour instead.
     // Focus comes back to the chat button when the tour ends.
-    if (question.topic === 'tour') {
+    if (question?.topic === 'tour') {
       close()
       startTour(buttonRef.current)
       return
@@ -95,13 +97,36 @@ function ChatBot() {
     ])
     // With less motion asked for, the answer shows at once, without the dots.
     setTypingId(prefersReducedMotion() ? null : id + 1)
+    return id + 1
+  }
+
+  // Gives a waiting answer its question, so it can show.
+  function setAnswer(id, question) {
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === id ? { ...message, question } : message,
+      ),
+    )
+  }
+
+  // A question that could be about a product waits until every category has loaded (only the
+  // first time). When that fails, for example offline, the products loaded so far have to do.
+  async function askTyped(text) {
+    const { branches } = store
+    if (!needsProducts(text, branches)) {
+      ask(matchQuestion(text, { branches, products }), text)
+      return
+    }
+    const id = ask(null, text)
+    const list = await loadAll().catch(() => products)
+    setAnswer(id, matchQuestion(text, { branches, products: list }))
   }
 
   function handleSubmit(event) {
     event.preventDefault()
     const text = draft.trim()
     if (text === '') return
-    ask(matchQuestion(text, { branches: store.branches, products }), text)
+    askTyped(text)
     setDraft('')
     // The send button turns off once the box is empty. If it was clicked, it had the focus,
     // which would then be lost, so focus goes back to the box for the next question.
@@ -185,7 +210,7 @@ function ChatBot() {
               <ChatMessage
                 key={message.id}
                 message={message}
-                isTyping={message.id === typingId}
+                isTyping={message.id === typingId || message.question === null}
                 onAsk={ask}
               />
             ))}

@@ -3,6 +3,7 @@ import { buildStoreJsonLd } from './structuredData.js'
 
 const placeholderBranch = {
   id: 'north',
+  active: true,
   name_ar: 'متجر تجريبي',
   name_en: 'Test Store',
   district_ar: 'الشمال',
@@ -11,6 +12,8 @@ const placeholderBranch = {
   openingHours: 'NEEDS-AHMED',
   address_ar: 'NEEDS-AHMED',
   mapsUrl: 'NEEDS-AHMED',
+  latitude: 21.5,
+  longitude: 39.2,
 }
 
 const store = {
@@ -31,6 +34,7 @@ const store = {
       address_ar: 'شارع تجريبي',
       mapsUrl: 'https://maps.app.goo.gl/example',
     },
+    { ...placeholderBranch, id: 'closed', active: false },
   ],
 }
 
@@ -54,10 +58,22 @@ describe('buildStoreJsonLd', () => {
     expect(data['@graph']).toHaveLength(3)
     expect(north['@type']).toBe('GroceryStore')
     expect(north['@id']).toBe('https://example.com/shop/#north')
-    expect(north.name).toBe('متجر تجريبي - الشمال')
-    expect(north.alternateName).toBe('Test Store - North')
+    expect(north.name).toBe('متجر تجريبي - فرع الشمال')
+    expect(north.alternateName).toBe('Test Store - North branch')
     expect(north.parentOrganization).toEqual({ '@id': organization['@id'] })
-    expect(south.name).toBe('متجر آخر - الجنوب')
+    expect(south.name).toBe('متجر آخر - فرع الجنوب')
+  })
+
+  it('leaves out a branch that is not active', () => {
+    expect(JSON.stringify(data)).not.toContain('closed')
+  })
+
+  it('gives each branch its coordinates', () => {
+    expect(north.geo).toEqual({
+      '@type': 'GeoCoordinates',
+      latitude: 21.5,
+      longitude: 39.2,
+    })
   })
 
   it('leaves out branch details that are still placeholders', () => {

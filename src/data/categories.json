@@ -1,38 +1,110 @@
 [
   {
-    "id": "fruits-vegetables",
-    "name_ar": "خضار وفواكه",
-    "name_en": "Fruits & vegetables",
-    "icon": "carrot"
-  },
-  {
     "id": "dairy",
     "name_ar": "ألبان وأجبان",
-    "name_en": "Dairy & cheese",
+    "name_en": "Dairy & Cheese",
     "icon": "milk"
   },
   {
-    "id": "bakery",
-    "name_ar": "مخبوزات",
-    "name_en": "Bakery",
-    "icon": "bread"
+    "id": "frozen",
+    "name_ar": "مجمدات",
+    "name_en": "Frozen Food",
+    "icon": "snowflake"
   },
   {
-    "id": "pantry",
-    "name_ar": "مواد غذائية",
-    "name_en": "Pantry",
-    "icon": "jar"
-  },
-  {
-    "id": "drinks",
-    "name_ar": "مشروبات",
-    "name_en": "Drinks",
+    "id": "beverages",
+    "name_ar": "مشروبات ومياه",
+    "name_en": "Beverages & Water",
     "icon": "cup"
   },
   {
+    "id": "sweets",
+    "name_ar": "حلويات وسناكس",
+    "name_en": "Sweets & Snacks",
+    "icon": "candy"
+  },
+  {
+    "id": "canned",
+    "name_ar": "معلبات وصلصات",
+    "name_en": "Canned Food & Sauces",
+    "icon": "jar"
+  },
+  {
+    "id": "oils",
+    "name_ar": "زيوت وسمن",
+    "name_en": "Oils & Ghee",
+    "icon": "drop"
+  },
+  {
+    "id": "tea-coffee",
+    "name_ar": "شاي وقهوة وحبوب",
+    "name_en": "Tea, Coffee & Grains",
+    "icon": "mug"
+  },
+  {
+    "id": "spices",
+    "name_ar": "عطارة: بهارات ومكسرات وأعشاب",
+    "name_en": "Attara: Spices, Nuts & Herbs",
+    "icon": "mortar"
+  },
+  {
     "id": "cleaning",
-    "name_ar": "منظفات",
-    "name_en": "Cleaning",
+    "name_ar": "منظفات ومستلزمات المنزل",
+    "name_en": "Cleaning & Household",
     "icon": "spray"
+  },
+  {
+    "id": "personal-care",
+    "name_ar": "عناية شخصية وتجميل",
+    "name_en": "Personal Care & Beauty",
+    "icon": "lotion"
+  },
+  {
+    "id": "baby",
+    "name_ar": "مستلزمات الأطفال",
+    "name_en": "Baby Care",
+    "icon": "baby-bottle"
+  },
+  {
+    "id": "paper",
+    "name_ar": "ورقيات وبلاستيك",
+    "name_en": "Paper & Disposables",
+    "icon": "roll"
+  },
+  {
+    "id": "housewares",
+    "name_ar": "أواني ومستلزمات منزلية",
+    "name_en": "Housewares & Kitchen",
+    "icon": "pot"
+  },
+  {
+    "id": "electrical",
+    "name_ar": "أدوات كهربائية وخردوات",
+    "name_en": "Electrical & Hardware",
+    "icon": "bulb"
+  },
+  {
+    "id": "accessories",
+    "name_ar": "إكسسوارات وإلكترونيات",
+    "name_en": "Accessories & Electronics",
+    "icon": "phone"
+  },
+  {
+    "id": "toys",
+    "name_ar": "ألعاب وأدوات مكتبية",
+    "name_en": "Toys & Stationery",
+    "icon": "puzzle"
+  },
+  {
+    "id": "clothing",
+    "name_ar": "ملابس ومفروشات",
+    "name_en": "Clothing & Linens",
+    "icon": "shirt"
+  },
+  {
+    "id": "gifts",
+    "name_ar": "هدايا ومستلزمات الحفلات",
+    "name_en": "Gifts & Party",
+    "icon": "gift"
   }
 ]

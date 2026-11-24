@@ -1,14 +1,18 @@
+import { getCallUrl } from './branches.js'
 import { BRANCH_TOPICS, TOPICS, findProducts } from './chatQuestions.js'
+import { getMaxKm } from './delivery.js'
 import { formatDate, getActiveOffers } from './offers.js'
 import { isPlaceholder } from './placeholder.js'
+import { formatPrice } from './price.js'
 import { fillIn } from './text.js'
 
-// Builds the chat helper's answers, using only the site's data files: store.json, offers.json
-// and products.json. A detail that is still NEEDS-AHMED (or missing) is never shown: the answer
-// says it is coming soon. See chatQuestions.js for the question objects.
+// Builds the chat helper's answers, using only the site's data: store.json, offers.json and the
+// products loaded so far. A detail that is still NEEDS-AHMED (or missing) is never shown: the
+// answer says it is coming soon. See chatQuestions.js for the question objects.
 //
-// context is { store, offers, products, t, language, now }: the three data files, the texts of
-// the current language (ar.json or en.json), 'ar' or 'en', and today's date for the offers.
+// context is { store, offers, products, t, language, now }: the two data files, the products
+// (featured ones first), the texts of the current language (ar.json or en.json), 'ar' or 'en',
+// and today's date for the offers.
 
 // At most this many products in one answer. The products section shows them all.
 export const MAX_PRODUCTS = 5
@@ -41,7 +45,7 @@ function isKnown(value) {
 // Keeps a phone number in its own left-to-right run inside Arabic text, so "012 345 6789"
 // never shows its groups in reverse order. The two marks around it are invisible.
 function leftToRight(text) {
-  return `⁦${text}⁩`
+  return `\u2066${text}\u2069`
 }
 
 // "فرع الحمدانية" or "Al Hamdaniyah branch", like on the branch cards.
@@ -103,14 +107,40 @@ function locationAnswer(branch, name, { t, language }) {
   }
 }
 
+// The delivery rules in store.json as rows: the fee of each zone, the minimum order, free
+// delivery and the hours.
+function deliveryRules({ delivery }, { t, language }) {
+  const price = (amount) => formatPrice(amount, t.currency)
+  return [
+    ...delivery.zones.map(({ maxKm, fee }, index) =>
+      index === 0
+        ? fillIn(t.chat.deliveryZone, { km: maxKm, fee: price(fee) })
+        : fillIn(t.chat.deliveryNextZone, {
+            from: delivery.zones[index - 1].maxKm,
+            km: maxKm,
+            fee: price(fee),
+          }),
+    ),
+    fillIn(t.chat.deliveryMinimum, { minimum: price(delivery.minimumOrder) }),
+    fillIn(t.chat.deliveryFree, { amount: price(delivery.freeFrom) }),
+    ...delivery.hours.map((row) =>
+      fillIn(t.chat.deliveryHours, {
+        days: localize(row, 'days', language),
+        time: localize(row, 'time', language),
+      }),
+    ),
+  ]
+}
+
 // "delivers" is true or false in store.json; anything else means it is not known yet.
-function deliveryAnswer(branch, name, { t, language }) {
+function deliveryAnswer(branch, name, context) {
+  const { store, t } = context
   const links = whatsAppLinks(branch, name, t)
   if (branch.delivers === true) {
-    const details = localize(branch, 'delivery', language)
     return {
       text: fillIn(t.chat.delivers, { branch: name }),
-      note: isKnown(details) ? details : undefined,
+      list: deliveryRules(store, context),
+      note: fillIn(t.chat.deliveryTooFar, { km: getMaxKm(store.delivery) }),
       links,
     }
   }
@@ -129,7 +159,7 @@ function contactAnswer(branch, name, { t }) {
   if (hasPhone) {
     links.push({
       type: 'call',
-      href: `tel:${branch.phone}`,
+      href: getCallUrl(branch.phone),
       label: fillIn(t.chat.callBranch, { branch: name }),
     })
   }
@@ -155,7 +185,8 @@ function orderAnswer({ store, t }) {
   }
 }
 
-// Only offers that have not ended, soonest ending first (like the offers section).
+// Only offers that have not ended, soonest ending first (like the offers section). Without any,
+// the answer says they are coming soon.
 function offersAnswer({ offers, t, language, now }) {
   const activeOffers = getActiveOffers(offers, now)
   if (activeOffers.length === 0) return { text: t.chat.noOffers }
@@ -167,6 +198,17 @@ function offersAnswer({ offers, t, language, now }) {
         date: formatDate(offer.validUntil, t.dateLocale),
       }),
     ),
+  }
+}
+
+// A few of the featured products, as examples of what the store sells.
+function featuredAnswer({ products, t }) {
+  const featured = products.filter((product) => product.featured)
+  if (featured.length === 0) return { text: t.products.loadFailed }
+  return {
+    text: t.chat.featured,
+    products: featured.slice(0, MAX_PRODUCTS),
+    note: t.chat.moreFeatured,
   }
 }
 
@@ -202,6 +244,10 @@ function topicAnswer(question, branch, context) {
       return orderAnswer(context)
     case 'offers':
       return offersAnswer(context)
+    case 'social':
+      return { text: context.t.chat.social }
+    case 'featured':
+      return featuredAnswer(context)
     case 'products':
       return productsAnswer(question.query, context)
     default:

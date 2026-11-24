@@ -1,4 +1,4 @@
-import EmptyState from '../components/EmptyState.jsx'
+import ComingSoonCard from '../components/ComingSoonCard.jsx'
 import { TagIcon } from '../components/Icons.jsx'
 import OfferCard from '../components/OfferCard.jsx'
 import { reveal } from '../components/reveal.js'
@@ -10,7 +10,7 @@ import { getActiveOffers } from '../lib/offers.js'
 
 // A green band between two waves, so the offers stand out from the rest of the page.
 // The <> </> (a fragment) returns the waves and the band side by side without an extra element.
-// NEEDS-AHMED: offers.json stays empty (the page says "no offers right now") until real offers arrive.
+// NEEDS-AHMED: offers.json stays empty (the page says "Offers: coming soon") until real offers arrive.
 function Offers() {
   const { t } = useLanguage()
   const activeOffers = getActiveOffers(offers, new Date())
@@ -36,7 +36,11 @@ function Offers() {
             </ul>
           ) : (
             <div ref={reveal} className="reveal mt-8">
-              <EmptyState Icon={TagIcon} text={t.offers.none} />
+              <ComingSoonCard
+                Icon={TagIcon}
+                title={t.offers.comingSoon}
+                text={t.offers.comingSoonText}
+              />
             </div>
           )}
         </div>
