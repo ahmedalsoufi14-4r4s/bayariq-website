@@ -64,14 +64,13 @@ test('every credit names the product, the source and the license, and no source 
     expect(photo.sourceUrl).not.toMatch(
       /danube|carrefour|tamimi|panda|othaim|lulu|nana|ninja|amazon|noon/i,
     )
-    if (photo.sourceName === OPEN_FOOD_FACTS) {
-      expect(photo.license).toBe('CC BY-SA 3.0')
-      expect(photo.sourceUrl).toMatch(
-        /^https:\/\/world\.openfoodfacts\.org\/product\/\d{8,13}$/,
-      )
-    } else {
-      expect(photo.license).toBe('All rights reserved')
-    }
+    // Only openly licensed photos. A manufacturer's photo (all rights reserved) needs the
+    // company's permission first.
+    expect(photo.sourceName, photo.productId).toBe(OPEN_FOOD_FACTS)
+    expect(photo.license, photo.productId).toBe('CC BY-SA 3.0')
+    expect(photo.sourceUrl, photo.productId).toMatch(
+      /^https:\/\/world\.openfoodfacts\.org\/product\/\d{8,13}$/,
+    )
   }
 })
 
@@ -229,13 +228,16 @@ for (const language of ['ar', 'en']) {
       )
       await expect(page.getByRole('listitem')).toHaveCount(photoCredits.length)
 
-      const openPhotos = photoCredits.filter(
-        (photo) => photo.sourceName === OPEN_FOOD_FACTS,
-      )
       const section = page.getByRole('region', {
         name: credits.openFoodFacts.title,
       })
-      await expect(section.getByRole('listitem')).toHaveCount(openPhotos.length)
+      await expect(section.getByRole('listitem')).toHaveCount(
+        photoCredits.length,
+      )
+      // No photos from manufacturers' websites, so no empty group for them.
+      await expect(
+        page.getByRole('heading', { name: credits.makers.title }),
+      ).toHaveCount(0)
       // What the license asks for: the author, the license with its link, and the changes.
       await expect(section).toContainText(credits.openFoodFacts.text)
       await expect(section).toContainText(credits.openFoodFacts.changes)

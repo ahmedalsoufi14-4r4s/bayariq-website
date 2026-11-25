@@ -15,7 +15,7 @@ The website of a neighborhood supermarket with three branches in Jeddah: Al Maha
 - Arabic first (right to left), with an English switch. The choice is remembered.
 - About 16,000 products in 18 categories, from the shop's POS system. They load one category at a time (the first screen needs 2 KB of product data), and the search looks through all of them: it ignores Arabic letter variants (أ إ آ, ة, ى) and diacritics, and understands common English words.
 - Delivery rules by distance: 5 SAR up to 3 km, 10 SAR up to 5 km, from 50 SAR, free from 200 SAR. With "use my location" (optional) the order form shows the exact fee, or suggests the nearest branch that delivers. The location is never saved or sent, except as a map link in the customer's own WhatsApp message.
-- Product photos from Open Food Facts and, for two products, the manufacturer's website, each credited on a "Photo credits" page linked from the footer. A photo is used only when the brand, the product and the size are the same; every other product shows a drawing of its category, in the site's greens, in light and dark mode.
+- Product photos from Open Food Facts, each credited on a "Photo credits" page linked from the footer. A photo is used only when the brand, the product and the size are the same; every other product shows a drawing of its category, in the site's greens, in light and dark mode.
 - Offers with a "valid until" date. Expired offers hide themselves, and until there are offers a card says they are coming soon.
 - Cart with quantities, a note for items that are not listed, and an order form. "Send order" opens WhatsApp with a ready message and an estimated total.
 - A card for each branch with its photo, opening hours, address, map, and call and WhatsApp buttons. The customer picks a branch in the order form, and the order goes to that branch's WhatsApp number.
@@ -101,4 +101,4 @@ One-time setting in the repository: **Settings → Pages → Build and deploymen
 
 - Font: [IBM Plex Sans Arabic](https://github.com/IBM/plex) by IBM, SIL Open Font License ([public/fonts/OFL.txt](public/fonts/OFL.txt)).
 - Icons: [Heroicons](https://heroicons.com) by Tailwind Labs, MIT license. The category icons and drawings are made for this site.
-- Product photos: [Open Food Facts](https://world.openfoodfacts.org) and its contributors, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), with the background removed (the changed photos have the same license). Two come from the manufacturers' websites, all rights reserved. Every photo is listed in [public/data/photo-credits.json](public/data/photo-credits.json).
+- Product photos: [Open Food Facts](https://world.openfoodfacts.org) and its contributors, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), with the background removed (the changed photos have the same license). Every photo is listed in [public/data/photo-credits.json](public/data/photo-credits.json).

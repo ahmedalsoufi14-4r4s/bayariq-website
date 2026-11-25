@@ -1,6 +1,6 @@
 # Product photos: check before the next round
 
-286 of 15973 products have a photo so far: 284 from Open Food Facts and 2 from the manufacturer's own website. Every one was looked at twice. The POS export has no barcodes, so a photo was used only when the brand, the product and the size are the same.
+284 of 15973 products have a photo so far, all from Open Food Facts. Every one was looked at twice. The POS export has no barcodes, so a photo was used only when the brand, the product and the size are the same.
 
 To see all of them: the "Photo credits" page of the site (the link is in the footer). To remove a wrong one, delete its line from `public/data/photo-credits.json` and its file from `public/images/products/`, then run `npm run products`.
 
@@ -13,13 +13,13 @@ To see all of them: the "Photo credits" page of the site (the link is in the foo
 | –                                                                  | حليب نيدو بودرة 1800 جم                       | Category picture. Only the pouch was found, and the POS name does not say tin or pouch.                                                            |
 | –                                                                  | بيض طازج غذاء البركة نص طبق 15 حبة            | Category picture. No photo of this brand of eggs.                                                                                                  |
 | –                                                                  | جبنة بوك قابلة للدهن فيتامين 500 جم           | Category picture. No photo shows the vitamin version, and Puck’s website forbids reuse.                                                            |
-| <img src="public/images/products/1090253.webp" width="110" alt=""> | رز ابو كاس مزة بسمتي 5 كيلو                   | [Abu Kass](https://www.abukass.com/en/product/20237/abu-kass-mazza) (All rights reserved)                                                          |
+| –                                                                  | رز ابو كاس مزة بسمتي 5 كيلو                   | Category picture. Abu Kass’s photo is all rights reserved: waiting for the company’s permission.                                                   |
 | –                                                                  | سكر الاسرة خشن 5 كجم                          | Category picture. No photo of the coarse 5 kg bag.                                                                                                 |
 | –                                                                  | زيت ذرة عافية 3 (2 * 1.5 لتر + 2 * 500 مل)    | Category picture. A bundle (2 × 1.5 L + 2 × 500 ml): no photo of the bundle.                                                                       |
 | –                                                                  | دجاج الوطنية مبرد 1000 جم                     | Category picture. No photo, and the Al Watania website did not answer.                                                                             |
 | <img src="public/images/products/1072280.webp" width="110" alt=""> | خبز التوست لوزين ابيض 600 جم                  | [Open Food Facts](https://world.openfoodfacts.org/product/6281007060257) (CC BY-SA 3.0)                                                            |
 | –                                                                  | اندومي بنكهة الدجاج اوبامي 75 جم              | Category picture. "اوبامي" may be another brand than Indomie: not clear.                                                                           |
-| <img src="public/images/products/1090535.webp" width="110" alt=""> | شاي ربيع إكسبرس المذاق الاصلي خيط 24 * 25 خيط | [Rabea Tea](https://rabea.com/product/rabea-express-tea/) (All rights reserved)                                                                    |
+| –                                                                  | شاي ربيع إكسبرس المذاق الاصلي خيط 24 * 25 خيط | Category picture. Rabea’s photo is all rights reserved: waiting for the company’s permission.                                                      |
 | –                                                                  | قهوة عربية المرسال (الخير) 500 جم             | Category picture. No photo, and no official website found.                                                                                         |
 | –                                                                  | تمر سكري القصيم انيسة 1 كجم                   | Category picture. No photo, and no official website found.                                                                                         |
 | –                                                                  | مياة نوفا كبير 1.5 لتر                        | Category picture. No photo of the 1.5 L bottle, and Nova’s website shows other sizes only.                                                         |
@@ -64,7 +64,7 @@ Is it the same brand, product and size as on your shelf?
 | Sweets & Snacks              | 26           | 2641                      |
 | Canned Food & Sauces         | 53           | 1516                      |
 | Oils & Ghee                  | 6            | 223                       |
-| Tea, Coffee & Grains         | 11           | 718                       |
+| Tea, Coffee & Grains         | 9            | 720                       |
 | Attara: Spices, Nuts & Herbs | 5            | 488                       |
 | Cleaning & Household         | 0            | 1243                      |
 | Personal Care & Beauty       | 0            | 1320                      |
@@ -76,4 +76,4 @@ Is it the same brand, product and size as on your shelf?
 | Toys & Stationery            | 0            | 379                       |
 | Clothing & Linens            | 0            | 56                        |
 | Gifts & Party                | 0            | 74                        |
-| **All**                      | **286**      | **15687**                 |
+| **All**                      | **284**      | **15689**                 |
