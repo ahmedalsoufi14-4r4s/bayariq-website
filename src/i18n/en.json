@@ -277,13 +277,25 @@
     "intro": "The product photos on our site come only from the sources below. A product without a confirmed photo shows a drawing of its category instead.",
     "openFoodFacts": {
       "title": "Open Food Facts",
-      "text": "An open database made by contributors around the world. The photos below were taken by its contributors and are available under the Creative Commons Attribution-ShareAlike 3.0 license (CC BY-SA 3.0).",
-      "changes": "We changed these photos: we removed the background, cropped them, and adjusted the light and size. The changed photos are available under the same license.",
+      "text": "An open database of food products made by contributors around the world. The photos below were taken by its contributors and are available under the Creative Commons Attribution-ShareAlike 3.0 license (CC BY-SA 3.0).",
       "data": "This page contains data from Open Food Facts, available under the Open Database License (ODbL).",
-      "site": "Open Food Facts website",
-      "license": "Photo license: CC BY-SA 3.0",
-      "dataLicense": "Data license: ODbL 1.0"
+      "site": "Open Food Facts website"
     },
+    "openBeautyFacts": {
+      "title": "Open Beauty Facts",
+      "text": "An open database of cosmetics and personal care products, from the team behind Open Food Facts. The photos below were taken by its contributors and are available under the Creative Commons Attribution-ShareAlike 3.0 license (CC BY-SA 3.0).",
+      "data": "This page contains data from Open Beauty Facts, available under the Open Database License (ODbL).",
+      "site": "Open Beauty Facts website"
+    },
+    "openProductsFacts": {
+      "title": "Open Products Facts",
+      "text": "An open database of other products, such as cleaning and household products, from the team behind Open Food Facts. The photos below were taken by its contributors and are available under the Creative Commons Attribution-ShareAlike 3.0 license (CC BY-SA 3.0).",
+      "data": "This page contains data from Open Products Facts, available under the Open Database License (ODbL).",
+      "site": "Open Products Facts website"
+    },
+    "changes": "We changed these photos: we removed the background, cropped them, and adjusted the light and size. The changed photos are available under the same license.",
+    "license": "Photo license: CC BY-SA 3.0",
+    "dataLicense": "Data license: ODbL 1.0",
     "makers": {
       "title": "Manufacturers' websites",
       "text": "These photos come from the manufacturers' official websites, and all rights in them belong to the manufacturers."

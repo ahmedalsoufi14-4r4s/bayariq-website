@@ -19,7 +19,25 @@ const t = texts.ar
 const MAX_PHOTO_BYTES = 40 * 1024
 const MAX_FOLDER_BYTES = 15 * 1024 * 1024
 const PHOTO_FOLDER = new URL('../public/images/products/', import.meta.url)
-const OPEN_FOOD_FACTS = 'Open Food Facts'
+// The open databases photos may come from: their name in photo-credits.json, the key of their
+// texts under `credits`, and their website (the product pages are on the same site).
+const OPEN_SOURCES = [
+  {
+    name: 'Open Food Facts',
+    key: 'openFoodFacts',
+    site: 'https://world.openfoodfacts.org',
+  },
+  {
+    name: 'Open Beauty Facts',
+    key: 'openBeautyFacts',
+    site: 'https://world.openbeautyfacts.org',
+  },
+  {
+    name: 'Open Products Facts',
+    key: 'openProductsFacts',
+    site: 'https://world.openproductsfacts.org',
+  },
+]
 
 const allProducts = categories.flatMap((category) =>
   categoryProducts(category.id),
@@ -66,10 +84,11 @@ test('every credit names the product, the source and the license, and no source 
     )
     // Only openly licensed photos. A manufacturer's photo (all rights reserved) needs the
     // company's permission first.
-    expect(photo.sourceName, photo.productId).toBe(OPEN_FOOD_FACTS)
+    const source = OPEN_SOURCES.find((open) => open.name === photo.sourceName)
+    expect(source, photo.productId).toBeDefined()
     expect(photo.license, photo.productId).toBe('CC BY-SA 3.0')
     expect(photo.sourceUrl, photo.productId).toMatch(
-      /^https:\/\/world\.openfoodfacts\.org\/product\/\d{8,13}$/,
+      new RegExp(`^${source.site.replaceAll('.', '\\.')}/product/\\d{8,13}$`),
     )
   }
 })
@@ -228,34 +247,36 @@ for (const language of ['ar', 'en']) {
       )
       await expect(page.getByRole('listitem')).toHaveCount(photoCredits.length)
 
-      const section = page.getByRole('region', {
-        name: credits.openFoodFacts.title,
-      })
-      await expect(section.getByRole('listitem')).toHaveCount(
-        photoCredits.length,
-      )
+      // One group per open database, with its own photos.
+      for (const source of OPEN_SOURCES) {
+        const own = photoCredits.filter(
+          (photo) => photo.sourceName === source.name,
+        )
+        expect(own.length, source.name).toBeGreaterThan(0)
+        const section = page.getByRole('region', {
+          name: credits[source.key].title,
+        })
+        await expect(section.getByRole('listitem')).toHaveCount(own.length)
+        // What the license asks for: the author, the license with its link, and the changes.
+        await expect(section).toContainText(credits[source.key].text)
+        await expect(section).toContainText(credits.changes)
+        for (const [name, url] of [
+          [credits[source.key].site, source.site],
+          [credits.license, 'https://creativecommons.org/licenses/by-sa/3.0/'],
+          [
+            credits.dataLicense,
+            'https://opendatacommons.org/licenses/odbl/1-0/',
+          ],
+        ]) {
+          await expect(
+            section.getByRole('link', { name, exact: true }),
+          ).toHaveAttribute('href', url)
+        }
+      }
       // No photos from manufacturers' websites, so no empty group for them.
       await expect(
         page.getByRole('heading', { name: credits.makers.title }),
       ).toHaveCount(0)
-      // What the license asks for: the author, the license with its link, and the changes.
-      await expect(section).toContainText(credits.openFoodFacts.text)
-      await expect(section).toContainText(credits.openFoodFacts.changes)
-      for (const [name, url] of [
-        [credits.openFoodFacts.site, 'https://world.openfoodfacts.org'],
-        [
-          credits.openFoodFacts.license,
-          'https://creativecommons.org/licenses/by-sa/3.0/',
-        ],
-        [
-          credits.openFoodFacts.dataLicense,
-          'https://opendatacommons.org/licenses/odbl/1-0/',
-        ],
-      ]) {
-        await expect(
-          section.getByRole('link', { name, exact: true }),
-        ).toHaveAttribute('href', url)
-      }
 
       const links = await page
         .getByRole('listitem')

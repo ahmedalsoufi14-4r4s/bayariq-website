@@ -12,11 +12,12 @@ Everything else is on the site. Until an item below is filled in, the site hides
 
 ## Product photos
 
-- **Check the sample** (Ahmed) → `photo-check.md`: the 18 featured products, 20 photos to compare with the shelf, and the counts by category. No more photos are added until you confirm.
+- **Check the non-food sample** (Ahmed) → `photo-check.md`: 20 non-food photos to compare with the shelf, the counts by category, and what was removed. No more photos are added until you confirm.
+- **Round 1 sizes** (Ahmed, a decision) → `photo-check.md`, "A decision for you": 141 photos of round 1 were matched on the size in the database, not on a size printed on the pack. Keep them, or check them one by one?
 - **A POS export with barcodes** (Family, Ahmed is asking): `الاصناف.xlsx` has no barcode column. When it arrives, photos are matched by exact barcode first, so many more products can get one.
 - **Photos of 16 featured products** (Family): the ones without a photo in `photo-check.md`. Best: a phone photo of each on a white background, or the pictures the suppliers' sales reps give to shops.
-- **Permission from Rabea Tea and Abu Kass** (Family): their photos of شاي ربيع إكسبرس (25 خيط, id 1090535, [page](https://rabea.com/product/rabea-express-tea/)) and رز ابو كاس مزة 5 كيلو (id 1090253, [page](https://www.abukass.com/en/product/20237/abu-kass-mazza)) are all rights reserved, so they were removed and the category drawings show instead. With a yes by email or WhatsApp from each company, the photos can come back.
-- **Permission from other suppliers** (Family): Almarai, Puck, Tide (P&G) and Fine forbid using their website photos without written permission, so none are used.
+- **Permission from Rabea Tea and Abu Kass** (Family): their photos of شاي ربيع إكسبرس (25 خيط, id 1090535, [page](https://rabea.com/product/rabea-express-tea/)) and رز ابو كاس مزة 5 كيلو (id 1090253, [page](https://www.abukass.com/en/product/20237/abu-kass-mazza)) are all rights reserved, so they were removed and the category drawings show instead. No open photo of these exact products exists (see `photo-check.md`). With a yes by email or WhatsApp from each company, the photos can come back.
+- **Permission from other suppliers** (Family): Almarai, Puck, Tide (P&G) and Fine forbid using their website photos without written permission, so none are used. Two Almarai packshots that someone had uploaded to Open Food Facts were taken out too.
 
 ## Content
 

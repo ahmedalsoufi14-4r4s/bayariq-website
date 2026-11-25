@@ -10,9 +10,27 @@ import WaveDivider from '../components/WaveDivider.jsx'
 import store from '../data/store.json'
 import { useLanguage } from '../i18n/LanguageContext.js'
 
-const OPEN_FOOD_FACTS = 'Open Food Facts'
-const LINKS = {
-  site: 'https://world.openfoodfacts.org',
+// The open databases the photos come from. They all use the same licenses: CC BY-SA 3.0 for the
+// photos and ODbL for the data. `key` is the name of its texts under `credits` in ar.json / en.json.
+const OPEN_SOURCES = [
+  {
+    name: 'Open Food Facts',
+    key: 'openFoodFacts',
+    site: 'https://world.openfoodfacts.org',
+  },
+  {
+    name: 'Open Beauty Facts',
+    key: 'openBeautyFacts',
+    site: 'https://world.openbeautyfacts.org',
+  },
+  {
+    name: 'Open Products Facts',
+    key: 'openProductsFacts',
+    site: 'https://world.openproductsfacts.org',
+  },
+]
+const OPEN_SOURCE_NAMES = OPEN_SOURCES.map((source) => source.name)
+const LICENSE_LINKS = {
   license: 'https://creativecommons.org/licenses/by-sa/3.0/',
   dataLicense: 'https://opendatacommons.org/licenses/odbl/1-0/',
 }
@@ -103,13 +121,10 @@ function PhotoCredits() {
       .catch(() => setStatus('failed'))
   }, [])
 
-  const openPhotos = photos.filter(
-    (photo) => photo.sourceName === OPEN_FOOD_FACTS,
-  )
   const makerPhotos = photos.filter(
-    (photo) => photo.sourceName !== OPEN_FOOD_FACTS,
+    (photo) => !OPEN_SOURCE_NAMES.includes(photo.sourceName),
   )
-  const { openFoodFacts, makers } = t.credits
+  const { makers } = t.credits
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -166,24 +181,32 @@ function PhotoCredits() {
           </p>
         )}
 
-        <CreditGroup
-          id="open-food-facts"
-          title={openFoodFacts.title}
-          photos={openPhotos}
-        >
-          <p>{openFoodFacts.text}</p>
-          <p>{openFoodFacts.changes}</p>
-          <p>{openFoodFacts.data}</p>
-          <p className="flex flex-wrap gap-x-6">
-            <OutsideLink href={LINKS.site}>{openFoodFacts.site}</OutsideLink>
-            <OutsideLink href={LINKS.license}>
-              {openFoodFacts.license}
-            </OutsideLink>
-            <OutsideLink href={LINKS.dataLicense}>
-              {openFoodFacts.dataLicense}
-            </OutsideLink>
-          </p>
-        </CreditGroup>
+        {OPEN_SOURCES.map((source) => {
+          const texts = t.credits[source.key]
+          return (
+            <CreditGroup
+              key={source.key}
+              id={source.key}
+              title={texts.title}
+              photos={photos.filter(
+                (photo) => photo.sourceName === source.name,
+              )}
+            >
+              <p>{texts.text}</p>
+              <p>{t.credits.changes}</p>
+              <p>{texts.data}</p>
+              <p className="flex flex-wrap gap-x-6">
+                <OutsideLink href={source.site}>{texts.site}</OutsideLink>
+                <OutsideLink href={LICENSE_LINKS.license}>
+                  {t.credits.license}
+                </OutsideLink>
+                <OutsideLink href={LICENSE_LINKS.dataLicense}>
+                  {t.credits.dataLicense}
+                </OutsideLink>
+              </p>
+            </CreditGroup>
+          )
+        })}
 
         <CreditGroup id="makers" title={makers.title} photos={makerPhotos}>
           <p>{makers.text}</p>
