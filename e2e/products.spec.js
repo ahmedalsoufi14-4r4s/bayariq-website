@@ -47,7 +47,7 @@ function recordDataFiles(page) {
   return files
 }
 
-test('the page starts with the 18 featured products, first and in order, with their prices and category icons', async ({
+test('the page starts with the 18 featured products, first and in order, with their prices and pictures', async ({
   page,
 }) => {
   await page.goto('./')
@@ -64,9 +64,9 @@ test('the page starts with the 18 featured products, first and in order, with th
     await expect(
       card.getByText(formatPrice(product.price, t.currency), { exact: true }),
     ).toBeVisible()
-    // No photos yet: the icon of the category stands in.
-    await expect(card.locator('img')).toHaveCount(0)
-    await expect(card.locator('svg').first()).toBeVisible()
+    // A photo, or the picture of the category instead.
+    const picture = product.image ? 'img' : 'svg[viewBox="0 0 64 64"]'
+    await expect(card.locator(picture)).toBeVisible()
   }
   await expect(page.locator('#products')).toContainText(
     `${t.products.results} ${catalog.productCount}`,

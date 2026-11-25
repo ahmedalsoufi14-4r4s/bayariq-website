@@ -50,6 +50,13 @@ function Footer() {
             >
               {t.tour.again}
             </button>
+            {/* The sources and licenses of the product photos, on their own page. */}
+            <a
+              href={`${import.meta.env.BASE_URL}photo-credits.html`}
+              className="inline-flex min-h-11 items-center underline underline-offset-4 transition duration-150 ease-out hover:decoration-2 motion-safe:active:scale-95"
+            >
+              {t.footer.photoCredits}
+            </a>
             <p>
               © {year} {localize(store, 'name')}. {t.footer.rights}
             </p>

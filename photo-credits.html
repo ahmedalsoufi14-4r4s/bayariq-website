@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- The second page of the site: where the product photos come from (src/credits.jsx).
+         The footer of the shop (index.html) links to it. -->
+    <!-- Same title as "meta" in src/i18n/ar.json. LanguageProvider.jsx switches it to English. -->
+    <title>مصادر الصور | أسواق بيارق الخير الاقتصادية</title>
+    <meta
+      name="description"
+      content="مصادر صور المنتجات في موقع أسواق بيارق الخير الاقتصادية ورخصها."
+    />
+    <link
+      rel="canonical"
+      href="https://ahmedalsoufi14-4r4s.github.io/bayariq-website/photo-credits.html"
+    />
+    <!-- Colors the browser bar on phones: the green of the header (--color-main in src/index.css). -->
+    <meta name="theme-color" content="#048157" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <script>
+      // The same as in index.html: picks light or dark before the page shows.
+      let savedTheme = null
+      try {
+        savedTheme = localStorage.getItem('bayariq-theme')
+      } catch {
+        // Storage is blocked: follow the device setting.
+      }
+      const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches
+      if (savedTheme === 'dark' || (savedTheme !== 'light' && prefersDark)) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
+  </head>
+  <body class="bg-canvas text-ink">
+    <div id="root"></div>
+    <script type="module" src="/src/credits.jsx"></script>
+  </body>
+</html>

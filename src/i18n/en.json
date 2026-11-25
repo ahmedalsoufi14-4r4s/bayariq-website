@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "Aswaq Bayariq Al Khair | Our branches in Jeddah"
+    "title": "Aswaq Bayariq Al Khair | Our branches in Jeddah",
+    "creditsTitle": "Photo credits | Aswaq Bayariq Al Khair"
   },
   "skipToContent": "Skip to main content",
   "nav": {
@@ -268,7 +269,32 @@
   "footer": {
     "rights": "All rights reserved.",
     "social": "Our social accounts: coming soon",
-    "logoAlt": "Aswaq Bayariq Al Khair logo"
+    "logoAlt": "Aswaq Bayariq Al Khair logo",
+    "photoCredits": "Photo credits"
+  },
+  "credits": {
+    "title": "Photo credits",
+    "intro": "The product photos on our site come only from the sources below. A product without a confirmed photo shows a drawing of its category instead.",
+    "openFoodFacts": {
+      "title": "Open Food Facts",
+      "text": "An open database made by contributors around the world. The photos below were taken by its contributors and are available under the Creative Commons Attribution-ShareAlike 3.0 license (CC BY-SA 3.0).",
+      "changes": "We changed these photos: we removed the background, cropped them, and adjusted the light and size. The changed photos are available under the same license.",
+      "data": "This page contains data from Open Food Facts, available under the Open Database License (ODbL).",
+      "site": "Open Food Facts website",
+      "license": "Photo license: CC BY-SA 3.0",
+      "dataLicense": "Data license: ODbL 1.0"
+    },
+    "makers": {
+      "title": "Manufacturers' websites",
+      "text": "These photos come from the manufacturers' official websites, and all rights in them belong to the manufacturers."
+    },
+    "trademarks": "Product names, logos and trademarks belong to their owners. The pack in the branch may look different from the photo.",
+    "source": "Source",
+    "allRightsReserved": "All rights reserved",
+    "count": "Photos:",
+    "back": "Back to the site",
+    "loading": "Loading the list…",
+    "loadFailed": "Could not load the list. Please reload the page and try again."
   },
   "error": {
     "title": "Something went wrong",

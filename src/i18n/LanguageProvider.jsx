@@ -18,21 +18,22 @@ function getSavedLanguage() {
   }
 }
 
-function LanguageProvider({ children }) {
+// title names this page's browser tab title in "meta" (ar.json, en.json).
+function LanguageProvider({ children, title = 'title' }) {
   const [language, setLanguage] = useState(getSavedLanguage)
 
   // Runs before the browser paints, so the page never flashes in the wrong direction.
   useLayoutEffect(() => {
     document.documentElement.lang = language
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'
-    // The browser tab title follows the language too. index.html starts with the Arabic one.
-    document.title = translations[language].meta.title
+    // The browser tab title follows the language too. The HTML files start with the Arabic one.
+    document.title = translations[language].meta[title]
     try {
       localStorage.setItem(STORAGE_KEY, language)
     } catch {
       // Storage is blocked: the site still works, the choice is just not remembered.
     }
-  }, [language])
+  }, [language, title])
 
   function toggleLanguage() {
     setLanguage((current) => (current === 'ar' ? 'en' : 'ar'))

@@ -14,6 +14,7 @@ import {
   PhoneIcon,
   PlusIcon,
 } from './Icons.jsx'
+import Photo from './Photo.jsx'
 import ProductName from './ProductName.jsx'
 import { BUTTON_ACCENT, BUTTON_MAIN, BUTTON_OUTLINE, CARD } from './styles.js'
 
@@ -47,9 +48,9 @@ function TypingDots() {
   )
 }
 
-// A product the helper found, with its category icon and its own Add to cart button (like on
-// the product cards). It is a card, so it lifts and glows under the pointer or a tap, and
-// its icon hops.
+// A product the helper found, with its photo (or its category icon) and its own Add to cart
+// button (like on the product cards). It is a card, so it lifts and glows under the pointer or
+// a tap, and its picture hops.
 function ChatProduct({ product }) {
   const { t } = useLanguage()
   const { add, getQuantity } = useCart()
@@ -58,8 +59,15 @@ function ChatProduct({ product }) {
 
   return (
     <li className={`${CARD} flex flex-wrap items-center gap-x-3 gap-y-2 p-3`}>
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-main-soft text-main-ink motion-safe:card-active:animate-hop">
-        <CategoryIcon name={category?.icon} className="size-6" />
+      <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-main-soft text-main-ink motion-safe:card-active:animate-hop">
+        <Photo
+          src={product.image}
+          alt={product.name}
+          width={400}
+          height={400}
+          className="size-full object-contain"
+          fallback={<CategoryIcon name={category?.icon} className="size-6" />}
+        />
       </span>
       {/* min-w-40 keeps room for long names: the button then moves to its own line. */}
       <div className="min-w-40 flex-1">

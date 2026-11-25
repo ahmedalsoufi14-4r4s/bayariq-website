@@ -597,7 +597,7 @@ test.describe('with motion allowed', () => {
       .toBe(0)
 
     // The helper's greeting, the visitor's question and the found product all lift and
-    // glow; the product's category icon hops.
+    // glow; the product's picture hops.
     const greeting = chatLog(page).locator('.card').first()
     const question = chatLog(page).locator('p.card').last()
     const product = chatLog(page).locator('li.card').first()

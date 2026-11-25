@@ -23,10 +23,12 @@ function hideInactiveBranches() {
 
 // A tiny Vite plugin: adds the store's JSON-LD (see src/lib/structuredData.js) to the
 // <head> of index.html, so search engines can read it without running JavaScript.
+// The photo credits page is not about the store, so it goes without.
 function storeStructuredData() {
   return {
     name: 'store-structured-data',
-    transformIndexHtml() {
+    transformIndexHtml(html, { path }) {
+      if (path.endsWith('/photo-credits.html')) return
       // Escaping "<" means no text in store.json can ever close the <script> tag early.
       const json = JSON.stringify(buildStoreJsonLd(store)).replaceAll(
         '<',
@@ -54,6 +56,10 @@ export default defineConfig({
     hideInactiveBranches(),
     storeStructuredData(),
   ],
+  build: {
+    // The site has two pages: the shop and the photo credits. Each has its own HTML file.
+    rolldownOptions: { input: ['index.html', 'photo-credits.html'] },
+  },
   test: {
     // Vitest unit tests live next to the code in src/. The Playwright tests in e2e/ run with `npm run check`.
     include: ['src/**/*.test.js'],

@@ -140,9 +140,11 @@ test('every photo of the site is a WebP file under 200 KB in public/', () => {
     ...store.branches
       .map((branch) => branch.photo)
       .filter((photo) => !isPlaceholder(photo)),
-    ...readdirSync(new URL('../public/images', import.meta.url)).map(
-      (file) => `images/${file}`,
-    ),
+    // The files directly in images/. The product photos in images/products/ have their own,
+    // stricter test in photos.spec.js.
+    ...readdirSync(new URL('../public/images', import.meta.url))
+      .filter((file) => file !== 'products')
+      .map((file) => `images/${file}`),
   ]
   expect(photos.length).toBeGreaterThan(2)
 

@@ -1,6 +1,7 @@
 // Turns the POS data in data/ into the files the site loads from public/data/:
 //   public/data/catalog.json              the categories with their counts, and the featured products
 //   public/data/products/<category>.json  the products of one category, featured ones first
+// A product with a photo (listed in public/data/photo-credits.json) gets its path as "image".
 // It also writes attara-moves.md, the list of products moved into the Attara category.
 // Run it with `npm run products` after changing anything in data/ or src/data/categories.json.
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
@@ -27,19 +28,25 @@ const posProducts = readJson('data/supermarket.json')
 const categories = readJson('src/data/categories.json')
 const featuredIds = readJson('data/featured-products.json')
 const attaraIds = new Set(readJson('data/attara-moves.json'))
+const photoIds = new Set(
+  readJson('public/data/photo-credits.json').map((photo) => photo.productId),
+)
 // The lists of hidden ids, all in one set: { reason: [ids], ... } -> Set(ids).
 const hiddenIds = new Set(
   Object.values(readJson('data/hidden-products.json')).flat(),
 )
 
 // The products the site shows: without the hidden ones, the attara ones in their new category,
-// and the featured ones marked.
+// the featured ones marked, and the path of the photo if there is one.
 const products = posProducts
   .filter((product) => !hiddenIds.has(product.id))
   .map((product) => ({
     ...product,
     ...(attaraIds.has(product.id) && { category: ATTARA }),
     ...(featuredIds.includes(product.id) && { featured: true }),
+    ...(photoIds.has(product.id) && {
+      image: `images/products/${product.id}.webp`,
+    }),
   }))
 
 // Featured products in the order of data/featured-products.json.
@@ -48,7 +55,7 @@ const featured = featuredIds
   .filter(Boolean)
 
 // Old files go first, so a category that no longer exists leaves nothing behind.
-rmSync(projectFile('public/data'), { recursive: true, force: true })
+rmSync(projectFile('public/data/products'), { recursive: true, force: true })
 mkdirSync(projectFile('public/data/products'), { recursive: true })
 
 const catalogCategories = categories.map((category) => {
@@ -105,6 +112,7 @@ const missing = featuredIds.filter(
 console.log(`Products on the site: ${products.length}`)
 console.log(`Hidden: ${posProducts.length - products.length}`)
 console.log(`Moved into Attara: ${moved.length}`)
+console.log(`With a photo: ${products.filter((item) => item.image).length}`)
 console.log(
   `Featured: ${featured.length}. Skipped: ${missing.join(', ') || 'none'}`,
 )

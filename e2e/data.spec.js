@@ -42,16 +42,20 @@ test('the catalog and the category files agree with categories.json', () => {
 
 test('every product appears once, with a name, a price and a unit', () => {
   expect(idsOnSite.size).toBe(allProducts.length)
-  for (const product of allProducts) {
-    expect(product.name.trim(), product.id).not.toBe('')
-    expect(product.price, product.id).toBeGreaterThan(0)
-    expect(['piece', 'kg'], product.id).toContain(product.unit)
-  }
+  // One expect for all of them: an expect for each of 16,000 products takes minutes.
+  const incomplete = allProducts.filter(
+    (product) =>
+      product.name.trim() === '' ||
+      !(product.price > 0) ||
+      !['piece', 'kg'].includes(product.unit),
+  )
+  expect(incomplete).toEqual([])
 })
 
 test('no single file is big: the 2 MB list is never loaded at once', () => {
   const files = filesUnder('public/data')
-  expect(files).toHaveLength(categories.length + 1)
+  // One per category, the catalog and the photo credits.
+  expect(files).toHaveLength(categories.length + 2)
   for (const file of files) {
     expect(statSync(file).size, file).toBeLessThan(400 * 1024)
   }

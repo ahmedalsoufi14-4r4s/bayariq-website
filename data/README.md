@@ -11,6 +11,8 @@ The source of the product list on the site: the POS item export of 2026-11-22, s
 | `hidden-products.json`   | The ids left out of the site: the 200 in the workbook's "للمراجعة" sheet, and 3 that are not supermarket products (two Nafhat Bun items and one named "deleted")       |
 | `*.xlsx`                 | The POS workbook itself. Git-ignored, because the repository is public                                                                                                |
 
+Which products have a photo is in `public/data/photo-credits.json` (a product id, its source and license per photo); the photos are in `public/images/products/`.
+
 After changing any of these, run `npm run products` (and `npm run price-check` for `price-check.md`).
 
 When the family has reviewed a hidden product, delete its id from `hidden-products.json`.

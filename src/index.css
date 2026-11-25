@@ -221,6 +221,14 @@
   --color-main-ink: #03704b; /* a deeper green for text and icons on light backgrounds (6.1:1 on white) */
   --color-main-soft: #e6f2ec; /* light green tint for icon tiles and photo placeholders */
 
+  /* The tiles behind the category pictures (ProductImage.jsx): each category has one of three
+     soft shades of the green ("tint" in categories.json), a pale leaf, a mint and a grey mist.
+     Product photos have a white background in both modes (photo-paper). */
+  --color-tint-leaf: #e6f2ec;
+  --color-tint-mint: #d8ece2;
+  --color-tint-mist: #eef3f0;
+  --color-photo-paper: #ffffff;
+
   /* 10%: red, only for Add to cart, Send order, badges and active states. The logo red
      (#fb0000) gives white text only 4.1:1, so buttons and badges use this slightly deeper
      red (5.0:1 with white text). Red and green are almost equally light (1.03:1), so red on a
@@ -360,6 +368,9 @@ body:has(dialog:modal) {
     --color-on-main: #f3f8f5;
     --color-main-ink: #7fd6ab;
     --color-main-soft: #163528;
+    --color-tint-leaf: #163528;
+    --color-tint-mint: #1b4030;
+    --color-tint-mist: #17271f;
     /* On the near-black page, see-through green would look darker than the band, so the
        waves behind it are a lighter green: the band's green mixed with the light green of
        --color-main-ink. The green circles need more color to show on the dark page, but

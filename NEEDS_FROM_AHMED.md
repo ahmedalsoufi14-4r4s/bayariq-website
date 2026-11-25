@@ -10,6 +10,14 @@ Everything else is on the site. Until an item below is filled in, the site hides
 - **Photo of the Al Hamdaniyah branch** (Family): the same, in `photos/al-hamdaniyah/`.
 - **Original logo file** (Family) → `photos/logo.png`. The logo on the site is the real one, but from a small, blurry copy. The original from whoever designed it is best as SVG, PDF or AI, otherwise a PNG at least 2000 px wide. Then run `npm run images`.
 
+## Product photos
+
+- **Check the sample** (Ahmed) → `photo-check.md`: the 18 featured products, 20 photos to compare with the shelf, and the counts by category. The next round starts after your OK.
+- **A POS export with barcodes** (Family): `الاصناف.xlsx` has no barcode column. With barcodes, photos match exactly and many more products can get one.
+- **Photos of 14 featured products** (Family): the ones without a photo in `photo-check.md`. Best: a phone photo of each on a white background, or the pictures the suppliers' sales reps give to shops.
+- **Permission from suppliers** (Family): Almarai, Puck, Tide (P&G) and Fine forbid using their website photos without written permission, so none are used. The two from Rabea and Abu Kass are credited as "all rights reserved"; a yes by email or WhatsApp from each is safer.
+- **Cleaning, personal care and paper products** (Ahmed decides): Open Food Facts has food only. Its sister databases Open Beauty Facts and Open Products Facts have the same license. Use them too, yes or no?
+
 ## Content
 
 - **Social media accounts** (Family) → `social` in `src/data/store.json`: which networks and their links. The footer and the chat helper say "coming soon" until then.

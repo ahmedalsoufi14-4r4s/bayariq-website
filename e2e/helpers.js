@@ -18,6 +18,8 @@ export const categories = readJson('../src/data/categories.json')
 // The catalog the site loads first, and the featured products in it, which the page starts with.
 export const catalog = readJson('../public/data/catalog.json')
 export const products = catalog.featured
+// The photos on the site, with their sources and licenses.
+export const photoCredits = readJson('../public/data/photo-credits.json')
 export const offers = readJson('../src/data/offers.json')
 export const tourSteps = readJson('../src/data/tour.json')
 export const texts = {
@@ -38,9 +40,9 @@ export function waitForProducts(page) {
   return page.locator('#products article').first().waitFor()
 }
 
-// Opens the home page in the given language.
+// Opens the home page (or another page of the site) in the given language.
 // Returns a list that collects every console error and uncaught page error.
-export async function openSite(page, language) {
+export async function openSite(page, language, path = './') {
   const errors = []
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
@@ -51,7 +53,7 @@ export async function openSite(page, language) {
     ([key, value]) => localStorage.setItem(key, value),
     [LANGUAGE_KEY, language],
   )
-  await page.goto('./')
+  await page.goto(path)
   return errors
 }
 
