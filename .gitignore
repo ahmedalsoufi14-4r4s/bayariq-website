@@ -31,3 +31,7 @@ dist-ssr
 # The POS workbook holds the shop's internal lists and this repository is public, so it stays
 # on this computer. The ids the site needs from it are in data/hidden-products.json.
 data/*.xlsx
+
+# The phone photos of the featured products are originals with metadata (camera, GPS location),
+# so they stay on this computer. Only the finished 400 × 400 WebP files are committed.
+photos/featured/

@@ -39,7 +39,8 @@ const OPEN_SOURCES = [
     site: 'https://world.openproductsfacts.org',
   },
 ]
-// The store's own photos of featured products. The original is kept in photos/featured/.
+// The store's own photos of featured products. The original stays in photos/featured/ on Ahmed's
+// computer (git-ignored); only the finished WebP file is committed.
 const OWN_PHOTO = 'Bayariq Al Khair (own photo)'
 
 const allProducts = categories.flatMap((category) =>
@@ -105,7 +106,7 @@ test('every credit names the product, the source and (for open databases) the li
   }
 })
 
-test('every product photo is a 400 × 400 WebP under 40 KB, and the folder stays small', () => {
+test('every product photo is a 400 × 400 WebP under 40 KB with no metadata, and the folder stays small', () => {
   let total = 0
   for (const file of readdirSync(PHOTO_FOLDER)) {
     expect(file).toMatch(/^\d+\.webp$/)
@@ -120,6 +121,11 @@ test('every product photo is a 400 × 400 WebP under 40 KB, and the folder stays
     expect(image.toString('latin1', 8, 16), file).toBe('WEBPVP8 ')
     expect(image.readUInt16LE(26) & 0x3fff, file).toBe(400)
     expect(image.readUInt16LE(28) & 0x3fff, file).toBe(400)
+
+    // Nothing but the picture: the file is that one "VP8 " chunk (its size at byte 16, padded to
+    // an even number), so there is no room for EXIF (camera, GPS location), XMP or color profiles.
+    const chunkSize = image.readUInt32LE(16)
+    expect(20 + chunkSize + (chunkSize % 2), file).toBe(size)
   }
   expect(total).toBeLessThan(MAX_FOLDER_BYTES)
 })
