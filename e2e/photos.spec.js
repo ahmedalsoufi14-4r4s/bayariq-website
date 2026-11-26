@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import {
   categories,
   categoryProducts,
@@ -38,6 +39,8 @@ const OPEN_SOURCES = [
     site: 'https://world.openproductsfacts.org',
   },
 ]
+// The store's own photos of featured products. The original is kept in photos/featured/.
+const OWN_PHOTO = 'Bayariq Al Khair (own photo)'
 
 const allProducts = categories.flatMap((category) =>
   categoryProducts(category.id),
@@ -70,12 +73,21 @@ test('every photo used on the site is in photo-credits.json, and nothing else is
   }
 })
 
-test('every credit names the product, the source and the license, and no source is another store', () => {
+test('every credit names the product, the source and (for open databases) the license, and no source is another store', () => {
   const nameOf = Object.fromEntries(
     allProducts.map((product) => [product.id, product.name]),
   )
   for (const photo of photoCredits) {
     expect(photo.productName, photo.productId).toBe(nameOf[photo.productId])
+    if (photo.sourceName === OWN_PHOTO) {
+      // The store's own photo: no website and no license, only where the original is.
+      expect(photo.originalUrl, photo.productId).toMatch(
+        /^photos\/featured\/[^/]+\.(jpe?g|png|webp|heic)$/i,
+      )
+      expect(photo.sourceUrl, photo.productId).toBeUndefined()
+      expect(photo.license, photo.productId).toBeUndefined()
+      continue
+    }
     expect(photo.sourceName, photo.productId).toMatch(/\S/)
     expect(photo.sourceUrl, photo.productId).toMatch(/^https:\/\//)
     expect(photo.originalUrl, photo.productId).toMatch(/^https:\/\//)
@@ -257,6 +269,9 @@ for (const language of ['ar', 'en']) {
           name: credits[source.key].title,
         })
         await expect(section.getByRole('listitem')).toHaveCount(own.length)
+        await expect(section.getByRole('listitem').first()).toContainText(
+          'CC BY-SA 3.0',
+        )
         // What the license asks for: the author, the license with its link, and the changes.
         await expect(section).toContainText(credits[source.key].text)
         await expect(section).toContainText(credits.changes)
@@ -273,20 +288,30 @@ for (const language of ['ar', 'en']) {
           ).toHaveAttribute('href', url)
         }
       }
+      // The store's own photos have a group only once there are some.
+      const ownPhotos = photoCredits.filter(
+        (photo) => photo.sourceName === OWN_PHOTO,
+      )
+      await expect(
+        page
+          .getByRole('region', { name: credits.ownPhotos.title })
+          .getByRole('listitem'),
+      ).toHaveCount(ownPhotos.length)
       // No photos from manufacturers' websites, so no empty group for them.
       await expect(
         page.getByRole('heading', { name: credits.makers.title }),
       ).toHaveCount(0)
 
+      // Every photo from a website links to its page there (own photos have no link).
       const links = await page
         .getByRole('listitem')
         .getByRole('link')
         .evaluateAll((list) => list.map((link) => link.getAttribute('href')))
       expect([...links].sort()).toEqual(
-        photoCredits.map((photo) => photo.sourceUrl).sort(),
-      )
-      await expect(page.getByRole('listitem').first()).toContainText(
-        'CC BY-SA 3.0',
+        photoCredits
+          .filter((photo) => photo.sourceUrl)
+          .map((photo) => photo.sourceUrl)
+          .sort(),
       )
 
       const hasSidewaysScroll = await page.evaluate(
@@ -298,6 +323,66 @@ for (const language of ['ar', 'en']) {
       expect(errors).toEqual([])
     })
   }
+}
+
+// Until the store's own photos are in photo-credits.json, this test gives the page a list with one
+// of them (on a product without a photo) next to one Open Food Facts photo.
+for (const language of ['ar', 'en']) {
+  test(`the store's own photos get their own group, credited without a link or license (${language})`, async ({
+    page,
+  }) => {
+    const openPhoto = photoCredits.find(
+      (photo) => photo.sourceName === 'Open Food Facts',
+    )
+    const ownPhoto = {
+      productId: withoutPhoto.id,
+      productName: withoutPhoto.name,
+      sourceName: OWN_PHOTO,
+      originalUrl: 'photos/featured/example.jpg',
+    }
+    await page.route('**/data/photo-credits.json', (route) =>
+      route.fulfill({ json: [ownPhoto, openPhoto] }),
+    )
+    // Its picture: any product photo will do.
+    await page.route(`**/images/products/${ownPhoto.productId}.webp`, (route) =>
+      route.fulfill({
+        path: fileURLToPath(
+          new URL(`${openPhoto.productId}.webp`, PHOTO_FOLDER),
+        ),
+      }),
+    )
+    const errors = await openSite(page, language, './photo-credits.html')
+    const { credits } = texts[language]
+
+    const section = page.getByRole('region', {
+      name: credits.ownPhotos.title,
+    })
+    await expect(section).toContainText(credits.ownPhotos.text)
+    const card = section.getByRole('listitem')
+    await expect(card).toHaveCount(1)
+    await expect(card).toContainText(ownPhoto.productName)
+    await expect(card).toContainText(
+      `${credits.source}: ${credits.ownPhotos.source}`,
+    )
+    await expect(card.getByRole('link')).toHaveCount(0)
+    await expect(card).not.toContainText('CC BY-SA')
+    await expect(card).not.toContainText(credits.allRightsReserved)
+    await card.locator('img').scrollIntoViewIfNeeded()
+    await expect(card.locator('img')).toHaveJSProperty('naturalWidth', 400)
+    expect(await findLowContrastText(page)).toEqual([])
+    await page.screenshot({ path: `screenshots/credits-own-${language}.png` })
+
+    // The Open Food Facts photo keeps its group, and an own photo is not a manufacturer's.
+    await expect(
+      page
+        .getByRole('region', { name: credits.openFoodFacts.title })
+        .getByRole('listitem'),
+    ).toHaveCount(1)
+    await expect(
+      page.getByRole('heading', { name: credits.makers.title }),
+    ).toHaveCount(0)
+    expect(errors).toEqual([])
+  })
 }
 
 for (const theme of ['light', 'dark']) {

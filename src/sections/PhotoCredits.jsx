@@ -30,6 +30,9 @@ const OPEN_SOURCES = [
   },
 ]
 const OPEN_SOURCE_NAMES = OPEN_SOURCES.map((source) => source.name)
+// The store's own photos (featured products photographed in the branches). There is no website to
+// link to and no license to name, so their cards show only who took them.
+const OWN_PHOTO = 'Bayariq Al Khair (own photo)'
 const LICENSE_LINKS = {
   license: 'https://creativecommons.org/licenses/by-sa/3.0/',
   dataLicense: 'https://opendatacommons.org/licenses/odbl/1-0/',
@@ -47,13 +50,15 @@ function OutsideLink({ href, children }) {
   )
 }
 
-// One photo: the product, where its photo comes from (a link) and the license.
+// One photo: the product, where its photo comes from (a link) and the license. The store's own
+// photos have neither a link nor a license.
 function CreditCard({ photo }) {
   const { t } = useLanguage()
   const license =
     photo.license === 'All rights reserved'
       ? t.credits.allRightsReserved
       : photo.license
+  const isOwnPhoto = photo.sourceName === OWN_PHOTO
 
   return (
     <li className={`${CARD} flex items-center gap-3 p-3`}>
@@ -69,12 +74,20 @@ function CreditCard({ photo }) {
         <p className="font-bold">
           <bdi lang="ar">{photo.productName}</bdi>
         </p>
-        <OutsideLink href={photo.sourceUrl}>
-          {t.credits.source}: <bdi lang="en">{photo.sourceName}</bdi>
-        </OutsideLink>
-        <p className="text-muted">
-          <bdi>{license}</bdi>
-        </p>
+        {isOwnPhoto ? (
+          <p>
+            {t.credits.source}: <bdi>{t.credits.ownPhotos.source}</bdi>
+          </p>
+        ) : (
+          <OutsideLink href={photo.sourceUrl}>
+            {t.credits.source}: <bdi lang="en">{photo.sourceName}</bdi>
+          </OutsideLink>
+        )}
+        {license && (
+          <p className="text-muted">
+            <bdi>{license}</bdi>
+          </p>
+        )}
       </div>
     </li>
   )
@@ -121,8 +134,11 @@ function PhotoCredits() {
       .catch(() => setStatus('failed'))
   }, [])
 
+  const ownPhotos = photos.filter((photo) => photo.sourceName === OWN_PHOTO)
   const makerPhotos = photos.filter(
-    (photo) => !OPEN_SOURCE_NAMES.includes(photo.sourceName),
+    (photo) =>
+      photo.sourceName !== OWN_PHOTO &&
+      !OPEN_SOURCE_NAMES.includes(photo.sourceName),
   )
   const { makers } = t.credits
 
@@ -180,6 +196,14 @@ function PhotoCredits() {
             {t.credits.loadFailed}
           </p>
         )}
+
+        <CreditGroup
+          id="ownPhotos"
+          title={t.credits.ownPhotos.title}
+          photos={ownPhotos}
+        >
+          <p>{t.credits.ownPhotos.text}</p>
+        </CreditGroup>
 
         {OPEN_SOURCES.map((source) => {
           const texts = t.credits[source.key]

@@ -293,6 +293,11 @@
       "data": "This page contains data from Open Products Facts, available under the Open Database License (ODbL).",
       "site": "Open Products Facts website"
     },
+    "ownPhotos": {
+      "title": "Our own photos",
+      "text": "We took these photos ourselves in our branches.",
+      "source": "Bayariq Al Khair (own photo)"
+    },
     "changes": "We changed these photos: we removed the background, cropped them, and adjusted the light and size. The changed photos are available under the same license.",
     "license": "Photo license: CC BY-SA 3.0",
     "dataLicense": "Data license: ODbL 1.0",
