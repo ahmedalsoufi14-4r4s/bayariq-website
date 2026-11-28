@@ -1,6 +1,6 @@
 # Product photos: what was checked
 
-388 of 15973 products have a photo now (round 1: 166 still on the site, round 2: 222). 370 come from Open Food Facts, 15 from Open Beauty Facts and 3 from Open Products Facts, all under CC BY-SA 3.0 and all listed on the "Photo credits" page (the link is in the footer).
+389 of 15973 products have a photo now (round 1: 166 still on the site, round 2: 222, and one featured product from the last search). 371 come from Open Food Facts, 15 from Open Beauty Facts and 3 from Open Products Facts, all under CC BY-SA 3.0 and all listed on the "Photo credits" page (the link is in the footer).
 
 To remove a wrong one, delete its line from `public/data/photo-credits.json` and its file from `public/images/products/`, then run `npm run products`.
 
@@ -180,14 +180,13 @@ You confirmed the 20 samples. The one you asked about:
 
 ## Featured products
 
-Still 2 of 18 with a photo (حليب المراعي طازج 2.85 لتر and خبز التوست لوزين ابيض 600 جم). You'll photograph the other 16 in the store and put the photos in `photos/featured/`. Each will then be matched to its product, cut out on white, made a 400 × 400 WebP under 40 KB and credited as "Bayariq Al Khair (own photo)". Until then they keep the drawing:
+3 of 18 have a photo (حليب المراعي طازج 2.85 لتر, خبز التوست لوزين ابيض 600 جم and, since the last search, جبنة بوك قابلة للدهن فيتامين 500 جم). You'll photograph the other 15 in the store and put the photos in `photos/featured/`. Each will then be matched to its product, cut out on white, made a 400 × 400 WebP under 40 KB and credited as "Bayariq Al Khair (own photo)". Until then they keep the drawing:
 
 | Product                                        | Category                     |
 | ---------------------------------------------- | ---------------------------- |
 | لبن المراعي طازج كامل الدسم 1 لتر              | Dairy & Cheese               |
 | حليب نيدو بودرة 1800 جم                        | Dairy & Cheese               |
 | بيض طازج غذاء البركة نص طبق 15 حبة             | Dairy & Cheese               |
-| جبنة بوك قابلة للدهن فيتامين 500 جم            | Dairy & Cheese               |
 | رز ابو كاس مزة بسمتي 5 كيلو                    | Tea, Coffee & Grains         |
 | سكر الاسرة خشن 5 كجم                           | Tea, Coffee & Grains         |
 | زيت ذرة عافية 3 (2 \* 1.5 لتر + 2 \* 500 مل)   | Oils & Ghee                  |
@@ -201,7 +200,32 @@ Still 2 of 18 with a photo (حليب المراعي طازج 2.85 لتر and خ�
 | صابون تايد اخضر اوتوماتيك 1.5 كيلو             | Cleaning & Household         |
 | مناديل فاين وجه فلافي 9 \* 4 \* 130 منديل      | Paper & Disposables          |
 
-Rabea and Abu Kass are among them: no openly licensed photo of these exact products exists (Open Food Facts has only the older Rabea Express box and an Abu Kass "مزة هندي" bag; Wikimedia Commons has neither), so your own photos are the way to show them.
+### The last search (all 16)
+
+Searched again with the same rule (brand, product, variant and size printed on the pack):
+
+1. **Open Food Facts, Open Beauty Facts, Open Products Facts:** the whole Open Food Facts product file (4.9 million products, any country) by brand and product words, the text read from every Gulf pack photo, and every photographed barcode under each brand's own barcode prefix. Then every candidate's photos at full size.
+2. **Wikimedia Commons and Flickr:** searched in Arabic and English, Flickr through Openverse (which lists Flickr's Creative Commons photos), keeping only licenses that allow commercial use and changes (CC0, CC BY, CC BY-SA).
+3. **Google Images** with the Creative Commons filter could not be searched from here: Google blocks automated requests. Openverse covers the main sources that filter shows (Flickr, Wikimedia).
+
+**Found: جبنة بوك قابلة للدهن فيتامين 500 جم.** Arla's Puck jar "Processed Cream Cheese Spread / جبنة كريم مطبوخة قابلة للدهن" with "VITAMIN D فيتامين" on the front, and "Net Weight: 500g" on the back (another photo of the same barcode). It is a shelf photo, so the site shows only the lower jar, which is whole and has no sticker (another jar in the photo has a shop's price sticker). License checked on the photo's own page: "licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license", photo by foodless ([Open Food Facts, barcode 5711953153020](https://world.openfoodfacts.org/product/5711953153020)).
+
+**Close, but left out:**
+
+| Product                            | What exists, and why it is not used                                                                                                                                                      |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| رز ابو كاس مزة بسمتي 5 كيلو        | The right bag (أرز مزة هندي بسمتي, "NET WEIGHT: 5 KG" on the back, [6281100410072](https://world.openfoodfacts.org/product/6281100410072)), but the front photo cuts off the bag's side. |
+| تمر سكري القصيم انيسة 1 كجم        | Aneesah Farms سكري القصيم طري 1 kg ([6287005130428](https://world.openfoodfacts.org/product/6287005130428)), but the tub is cut off at the edges and the label is a French importer's.   |
+| لبن المراعي طازج كامل الدسم 1 لتر  | The 1 L carton is only in close-ups that cut off the top. The whole photo shows the old 1 L bottle from 2018 (the low-fat 1 L on the site is the carton).                                |
+| حليب نيدو بودرة 1800 جم            | 1800 g tins of "نيدو المدعم غني بالألياف" and of the European "Instant Full Cream" both exist, and the POS name doesn't say which one the store sells.                                   |
+| شاي ربيع إكسبرس 25 خيط             | Only the older box ("Rich Flavor and Smooth Taste", without "المذاق الأصلي"), held in a hand.                                                                                            |
+| صابون تايد اخضر اوتوماتيك 1.5 كيلو | Saudi Tide boxes are Tide Original 1.5 kg (not Automatic) and Tide Automatic with Downy 2.5 kg.                                                                                          |
+| بيبسي بلاستيك وسط 1 لتر            | No Pepsi 1 L with the size printed; the Saudi "1 Liter" bottle on Open Food Facts is Mountain Dew. Commons and Flickr have other countries' bottles and older designs.                   |
+| اندومي بنكهة الدجاج اوبامي 75 جم   | Chicken flavour only as a 10-pack with a shop's price sticker and as a cup; the single 75 g packs on Open Food Facts are other flavors (Special Chicken, Baladi Chicken).                |
+
+Nothing open at all for the other seven: Ghitha Al Baraka eggs, Al Osra coarse sugar 5 kg, the Afia bundle, chilled Al Watania chicken 1000 g, Al Mersal coffee 500 g, Nova 1.5 L and Fine Fluffy. Commons has only logos (Nova, Rabea).
+
+So your own photos are still the way to show these 15.
 
 ## How round 2 was checked
 
@@ -218,7 +242,7 @@ Also removed from round 1 in round 2: جبنة بالقشطة مربعات ال�
 
 | Category                     | With a photo | With the category picture |
 | ---------------------------- | ------------ | ------------------------- |
-| Dairy & Cheese               | 139          | 957                       |
+| Dairy & Cheese               | 140          | 956                       |
 | Frozen Food                  | 36           | 956                       |
 | Beverages & Water            | 54           | 1151                      |
 | Sweets & Snacks              | 43           | 2624                      |
@@ -236,4 +260,4 @@ Also removed from round 1 in round 2: جبنة بالقشطة مربعات ال�
 | Toys & Stationery            | 0            | 379                       |
 | Clothing & Linens            | 0            | 56                        |
 | Gifts & Party                | 0            | 74                        |
-| **All**                      | **388**      | **15585**                 |
+| **All**                      | **389**      | **15584**                 |
